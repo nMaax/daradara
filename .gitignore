@@ -1,0 +1,22 @@
+# System specific files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Python specific files
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build
+venv
+venv/
+__pycache__/
+__pycache__
+
+# Flask specific files
+flask_session/
+instance/
+.webassets-cache
+.webassets-manifest
