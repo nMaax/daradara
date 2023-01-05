@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+<!--TODO cambia 'episodio' nel titolo dell'episodio-->
+{% block title %} - Episode {% endblock %}
+
+{% block content %} 
+
+<div class="row">
+    <div class="col-2">
+        <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="" class="img-fluid">
+    </div>
+    <div class="col">
+        <h1 class="text-center">Titolo episodio</h1>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="row d-flex justify-content-center align-content-center display-6">
+        Descrizione episodio e data
+    </div>
+    <div class="row d-flex justify-content-center align-content-center display-6">
+        Traccia audio
+    </div>
+    <div class="row d-flex justify-content-center align-content-center display-6">
+        Commenti
+    </div>
+</div>
+
+{% endblock %}
