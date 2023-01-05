@@ -20,7 +20,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/profile/<int:id>')
-def profile():
+def profile(id):
     return render_template('profile.html')
 
 @app.route('/profile/new')
@@ -28,8 +28,8 @@ def signup():
     pass
 
 @app.route('/podcast/<int:id>')
-def podcast():
-    pass
+def podcast(id):
+    return render_template('podcast.html')
 
 @app.route('/episode/<int:id>')
 def episode():
