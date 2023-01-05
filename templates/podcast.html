@@ -4,6 +4,7 @@
 {% block title %} - Podcast . . . {% endblock %}
 
 {% block content %} 
+    <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
     <div class="row">
         <!-- Immagine podcast -->
         <div class="col-4">
@@ -25,26 +26,26 @@
             </div>
         </div>
     </div>
-    <!--Episodi-->
+    
+    <!-- Pocast body (episodi) -->
     <div class="row mt-3">
         <div class="row d-flex justify-content-center display-5">Episodi</div>
 
         {% for i in range(1,9) %}
         <div class="row d-flex justify-content-center">
             <div class="row mt-3">
-                <!--I podcast che segui-->
+                <!-- Episodio -->
                 <div class="card mb-3">
                     <div class="row g-0">
+                        <!-- Titolo episodio -->
                         <div class="col-md-4">
                             <p class="text-center display-5">Episodio {{i}}</p>
                         </div>
+                        <!-- Traccia audio -->
                         <div class="col-md-7">
                             <div class="card-body row g-2">
-                                
+                                Traccia audio   
                             </div>
-                        </div>
-                        <div class="col-md-1">
-                            <button class="btn btn-primary">+</button>
                         </div>
                     </div>
                 </div>
