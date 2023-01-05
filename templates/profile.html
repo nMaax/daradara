@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+<!--TODO cambia 'profilo' nel nome utente-->
+{% block title %} - Profile{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+        <!--Propic-->
+        <img src="{{ url_for('static', filename='/misc/red300x300.jpg') }}" alt="" class="img-fluid">
+    </div>
+    <div class="col">
+        <!--Nome e cognome -->
+        <div class="row display-4 my-3">Nome e cognome</div>
+        <!--Bio-->
+        <div class="row">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, tempora. Eius, at. Id repellat consectetur maiores cupiditate at amet tempore sequi excepturi, nihil, sapiente nostrum nam magnam iure ipsa architecto!
+        Ex autem commodi quidem repellendus ad rem unde modi velit rerum, reprehenderit vitae assumenda sint, cumque repudiandae corporis asperiores vero! Accusamus eveniet aliquam fugiat accusantium quidem laudantium libero labore ipsa!
+        Placeat repellat molestias et illo quasi tenetur, ex eaque. Dicta modi iste maiores! Voluptatum adipisci totam voluptate debitis commodi, nisi officiis atque cupiditate quos nostrum officia sit sequi nulla ut?</div>
+    </div>
+</div>
+<div class="row">
+    <div class="row my-3">
+
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-3">
+                    <p class="text-center display-5">I tuoi podcast</p>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body row g-2">
+                        <!--Podcasts-->
+                        {% for i in range (1, 3)%}
+                            <div class="col">
+                            <img src="{{ url_for('static', filename='/misc/red300x300.jpg') }}" class="img-fluid" alt="Image {{i}}" style="max-width: 30px;">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary">+</button>
+                </div>
+            </div>
+        </div>        
+          
+    </div>
+    <div class="row">
+        <!--I podcast che segui-->
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <p class="text-center display-5">I podcast che segui</p>
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body row g-2">
+                        <!--Podcasts-->
+                        {% for i in range (1, 3)%}
+                            <div class="col">
+                            <img src="{{ url_for('static', filename='/misc/red300x300.jpg') }}" class="img-fluid" alt="Image {{i}}" style="max-width: 30px;">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

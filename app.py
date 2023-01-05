@@ -17,4 +17,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('layout.html')
+    return render_template('index.html')
+
+@app.route('/profile/<int:id>')
+def profile():
+    return render_template('profile.html')
+
+@app.route('/profile/new')
+def signup():
+    pass
+
+@app.route('/podcast/<int:id>')
+def podcast():
+    pass
+
+@app.route('/episode/<int:id>')
+def episode():
+    pass
