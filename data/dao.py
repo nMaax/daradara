@@ -3,14 +3,139 @@ import os
 
 FILENAME = 'data.db'
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
-
 PATH = os.path.join(SCRIPT_DIR, FILENAME)
 
 # SELECT
 
+def get_saves(id_user):
+    conn, cursor = connect()
+    saves = False
+
+    try:
+        sql = 'SELECT * FROM saves WHERE id_user = ?'
+        cursor.execute(sql, (id_user,))
+        saves = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return saves
+
+def get_follows(id_user):
+    conn, cursor = connect()
+    follows = False
+
+    try:
+        sql = 'SELECT * FROM follows WHERE id_user = ?'
+        cursor.execute(sql, (id_user,))
+        follows = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return follows
+
+def get_tags(id_podcast):
+    conn, cursor = connect()
+    tags = False
+
+    try:
+        sql = 'SELECT * FROM categories WHERE id_podcast = ?'
+        cursor.execute(sql, (id_podcast,))
+        tags = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return tags
+
+def get_comments(id_ep = None, id_user = None):
+    conn, cursor = connect()
+    comments = False
+    data = None
+
+    sql = 'SELECT * FROM comments'
+    if id_ep != None and id_user != None:
+        sql += ' WHERE id_ep = ? AND id_user = ?'
+        data = (id_ep, id_user)
+    elif id_ep != None and id_user == None:
+        sql += ' WHERE id_ep = ?'
+        data = (id_ep,)
+    elif id_ep == None and id_user != None:
+        sql += ' WHERE id_user = ?'
+        data = (id_user,)
+    
+    try:
+        if data != None:
+            cursor.execute(sql, data)
+        else:
+            cursor.execute(sql)
+        comments = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return comments
+
+def get_comment(id):
+    conn, cursor = connect()
+    comment = False
+
+    try:
+        sql = 'SELECT * FROM comments WHERE id = ?'
+        cursor.execute(sql, (id,))
+        comment = cursor.fetchone()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return comment
+
+def get_episodes(id_podcast):
+    conn, cursor = connect()
+    episodes = False
+
+    try:
+        sql = 'SELECT * FROM episode WHERE id_podcast = ?'
+        cursor.execute(sql, (id_podcast,))
+        episodes = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return episodes
+
+def get_episode(id):
+    conn, cursor = connect()
+    episode = False
+
+    try:
+        sql = 'SELECT * FROM episode WHERE id = ?'
+        cursor.execute(sql, (id,))
+        episode = cursor.fetchone()
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return episode
+
 def get_users():
     output = []
-    for i in range(1, get_last_user_id()):
+    for i in range(1, get_last_id_user() + 1):
         output.append(get_user(id = i))
     return output
 
@@ -19,7 +144,7 @@ def get_user(id):
     user = False
 
     try:
-        sql = 'SELECT * FROM users where id = ?'
+        sql = 'SELECT * FROM users WHERE id = ?'
         cursor.execute(sql, (id,))
         user = cursor.fetchone()
     except Exception as e:
@@ -30,7 +155,7 @@ def get_user(id):
 
     return user
 
-def get_last_user_id():
+def get_last_id_user():
     conn, cursor = connect()
     id = False
 
@@ -48,25 +173,25 @@ def get_last_user_id():
 
 def get_podcasts():
     output = []
-    for i in range(1, get_last_podcast_id()):
+    for i in range(1, get_last_podcast_id() + 1 ):
         output.append(get_podcast(id = i))
     return output
 
 def get_podcast(id):
     conn, cursor = connect()
-    user = False
+    podcast = False
 
     try:
-        sql = 'SELECT * FROM podcasts where id = ?'
+        sql = 'SELECT * FROM podcasts WHERE id = ?'
         cursor.execute(sql, (id,))
-        user = cursor.fetchone()
+        podcast = cursor.fetchone()
     except Exception as e:
         print(e)
         conn.rollback()
 
     close(conn, cursor)
 
-    return user
+    return podcast
 
 def get_last_podcast_id():
     conn, cursor = connect()
