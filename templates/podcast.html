@@ -4,24 +4,25 @@
 {% block title %} - Podcast . . . {% endblock %}
 
 {% block content %} 
+
     <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
     <div class="row">
         <!-- Immagine podcast -->
-        <div class="col-4">
+        <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
             <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="" class="imgfluid">
         </div>
         <!-- Info podcast -->
         <div class="col">
-            <div class="row d-flex justify-content-center align-content-center display-3">
+            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-3">
                 Nome podcast
             </div>
-            <div class="row d-flex justify-content-center align-content-center display-4">
+            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
                 Categorie
             </div>
-            <div class="row d-flex justify-content-center align-content-center display-4">
+            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
                 Descrizione
             </div>
-            <div class="row d-flex justify-content-center align-content-center display-5">
+            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
                 Elimina podcast
             </div>
         </div>

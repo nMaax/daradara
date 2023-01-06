@@ -5,18 +5,22 @@
 {% block content %} 
 <div class="row">
     <!--? Placeholders mentre carica? -->
-    <aside class="col-3">
-        <div class="row d-flex justify-content-center display-6 my-5">Episodi salvati</div>
+    <!--? Aggiungere lo sfocato nelle immagini delle card quando l'immagine non fitta? -->
 
+    <!-- Episodi salvati -->
+    <aside class="col-12 col-lg-3">
+
+        <!-- Title -->
+        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati</div>
+
+        <!-- Body -->
         {% for i in range(1, 6) %}
-        <!--TODO rimuovi lo style specifico-->
-        <div class="card mb-3">
+        <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
-                <div class="col-md-4 d-flex justify-content-around align-items-center">
-                    <!--TODO rimuovi lo style specifico-->
+                <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
                     <img class="img-fluid" src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
                 </div>
-                <div class="col-md-8">
+                <div class="col-10 col-lg-8">
                     <div class="card-body">
                         <h5 class="card-title">Podcast {{i}}</h5>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
@@ -24,22 +28,26 @@
                 </div>
             </div>
         </div>
-        
+
+        <!--? Bottone "Visualizza tutti gli episodi" -->
+
         {% endfor %}
     </aside>
 
-    <main class="col">
-        <div class="row d-flex justify-content-center display-6 my-5">I podcast più in voga</div>
+    <!-- I podcast più in voga / I podcast che segui -->
+    <main class="col-12 col-lg offset-lg-1">
 
+        <!-- Title -->
+        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga</div>
+
+        <!-- Body -->
         {% for i in range(1, 6) %}
-        <!--TODO rimuovi lo style specifico-->
-        <div class="card mb-3">
+        <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
-                <div class="col-md-4 d-flex justify-content-around align-items-center">
-                    <!--TODO rimuovi lo style specifico-->
+                <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
                     <img class="img-fluid" src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
                 </div>
-                <div class="col-md-8">
+                <div class="col-10 col-lg-8">
                     <div class="card-body">
                         <h5 class="card-title">Podcast {{i}}</h5>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
@@ -47,8 +55,10 @@
                 </div>
             </div>
         </div>
-        
         {% endfor %}
+
+        <!--? Bottone "Visualizza tutti i podcast" -->
+
     </main>
 </div>
 {% endblock %}

@@ -5,15 +5,18 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col-2">
-        <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="" class="img-fluid">
+<!-- Header episodio -->
+<div class="row">   
+    <div class="col-4 col-lg-2">
+        <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="podcast image" class="img-fluid">
     </div>
-    <div class="col">
-        <h1 class="text-center">Titolo episodio</h1>
+    <div class="col d-flex justify-content-center align-items-center">
+        <h1>Titolo episodio</h1>
     </div>
 </div>
-<div class="row mt-3">
+
+<!-- Body episodio -->
+<div class="row mt-3 mx-lg-0 mx-2">
     <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
         Descrizione episodio e data
     </div>

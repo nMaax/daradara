@@ -34,3 +34,7 @@ def podcast(id):
 @app.route('/episode/<int:id>')
 def episode(id):
     return render_template('episode.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')

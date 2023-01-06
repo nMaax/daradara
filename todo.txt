@@ -1,0 +1,21 @@
+[X] Definisci struttura html delle pagine
+[X] Aggiungi responsiveness delle pagine html
+[ ] Rendi le pagine html più definite, con margini, bordi e i giusti tag
+
+[X] Definisci db
+[ ] Definisci dao
+    [X] INSERT
+    [ ] SELECT
+    [ ] MODIFY
+    [ ] DELETE
+
+[ ] Aggiungi sistemi di signup e login
+[ ] Aggiungi sistema di aggiunta podcast
+[ ] Aggiugni sistema di aggiunta episodio
+
+[ ] Aggiungi sistema di modifica e rimozione podcast --> Elimina anche gli episodi
+[ ] Aggiugni sistema di modifica e rimozione episodio
+
+[ ] Definsci colori, icone e font
+
+[ ] Definisci pagine di footer e link social
