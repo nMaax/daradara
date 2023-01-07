@@ -4,6 +4,7 @@ Thumbs.db
 .vscode/
 
 # Python specific files
+*.pyc
 *.py[cod]
 *.so
 *.egg
@@ -14,8 +15,11 @@ venv
 venv/
 __pycache__/
 __pycache__
+instance/
 
 # Flask specific files
+*.session
+*.token
 flask_session/
 instance/
 .webassets-cache
