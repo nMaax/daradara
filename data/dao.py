@@ -55,24 +55,24 @@ def get_tags(id_podcast):
 
     return tags
 
-def get_comments(id_ep = None, id_user = None):
+def get_comments(id_ep=None, id_user=None):
     conn, cursor = connect()
     comments = False
     data = None
 
     sql = 'SELECT * FROM comments'
-    if id_ep != None and id_user != None:
+    if id_ep is not None and id_user is not None:
         sql += ' WHERE id_ep = ? AND id_user = ?'
         data = (id_ep, id_user)
-    elif id_ep != None and id_user == None:
+    elif id_ep is not None and id_user is None:
         sql += ' WHERE id_ep = ?'
         data = (id_ep,)
-    elif id_ep == None and id_user != None:
+    elif id_ep is None and id_user is not None:
         sql += ' WHERE id_user = ?'
         data = (id_user,)
     
     try:
-        if data != None:
+        if data is not None:
             cursor.execute(sql, data)
         else:
             cursor.execute(sql)
@@ -315,6 +315,114 @@ def new_user(username, email, password, name, surname, bio, propic):
     try:
         sql = 'INSERT INTO users(username, email, password, name, surname, bio, propic) VALUES (?, ?, ?, ?, ?, ?, ?)'
         cursor.execute(sql, (username, email, password, name, surname, bio, propic))
+        conn.commit()
+        success = True
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return success
+
+# MODIFY
+
+def update_episode(id, title=None, desc=None, audio=None, timestamp=None):
+    if title is not None:
+        update_episode_field(id, 'title', title)
+    if desc is not None:
+        update_episode_field(id, 'description', desc)
+    if audio is not None:
+        update_episode_field(id, 'audio', audio)
+    if timestamp is not None:
+        update_episode_field(id, 'timestamp', timestamp)
+
+def update_episode_field(id, field, value):
+    conn, cursor = connect()
+    success = False
+
+    try:
+        if field == "title":
+            sql = 'UPDATE episodes SET title = ? WHERE id = ?'
+        elif field == "description":
+            sql = 'UPDATE episodes SET description = ? WHERE id = ?'
+        elif field == "audio":
+            sql = 'UPDATE episodes SET audio = ? WHERE id = ?'
+        elif field == "timestamp":
+            sql = 'UPDATE episodes SET timestamp = ? WHERE id = ?'
+        else:
+            raise ValueError("Invalid field name")
+
+        cursor.execute(sql, (value, id))
+        conn.commit()
+        success = True
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return success
+
+def update_podcast(id, title=None, desc=None, img=None):
+    if title is not None:
+        update_podcast_field(id, 'title', title)
+    if desc is not None:
+        update_podcast_field(id, 'desc', desc)
+    if img is not None:
+        update_podcast_field(id, 'img', img)
+
+def update_podcast_field(id, field, value):
+    conn, cursor = connect()
+    success = False
+
+    try:
+        if field == "title":
+            sql = 'UPDATE podcasts SET title = ? WHERE id = ?'
+        elif field == "desc":
+            sql = 'UPDATE podcasts SET desc = ? WHERE id = ?'
+        elif field == "img":
+            sql = 'UPDATE podcasts SET img = ? WHERE id = ?'
+        else:
+            raise ValueError("Invalid field name")
+
+        cursor.execute(sql, (value, id))
+        conn.commit()
+        success = True
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return success
+
+# DELETE
+
+def delete_episode(id):
+    conn, cursor = connect()
+    success = False
+
+    try:
+        sql = 'DELETE FROM episodes WHERE id = ?'
+        cursor.execute(sql, (id,))
+        conn.commit()
+        success = True
+    except Exception as e:
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+
+    return success
+
+def delete_podcast(id):
+    conn, cursor = connect()
+    success = False
+
+    try:
+        sql = 'DELETE FROM podcasts WHERE id = ?'
+        cursor.execute(sql, (id,))
         conn.commit()
         success = True
     except Exception as e:

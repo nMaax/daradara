@@ -1,9 +1,9 @@
 import dao
 
 def main():
-    saves = dao.get_saves(4)
-    for save in saves:
-        print(save['id_ep'])
+    comments = dao.get_comments(id_user=1)
+    for comment in comments:
+        print(comment['text'])
 
 if __name__ == '__main__':
     main()

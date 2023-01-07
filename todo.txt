@@ -3,11 +3,11 @@
 [ ] Rendi le pagine html più definite, con margini, bordi e i giusti tag
 
 [X] Definisci db
-[ ] Definisci dao
+[X] Definisci dao
     [X] INSERT
     [X] SELECT
-    [ ] MODIFY
-    [ ] DELETE
+    [X] MODIFY
+    [X] DELETE
 
 [ ] Aggiungi sistemi di signup e login
 [ ] Aggiungi sistema di aggiunta podcast
