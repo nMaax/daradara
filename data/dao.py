@@ -5,7 +5,7 @@ FILENAME = 'data.db'
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 PATH = os.path.join(SCRIPT_DIR, FILENAME)
 
-# SELECT
+# SELECT QUERIES
 
 def get_saves(id_user):
     conn, cursor = connect()
@@ -17,10 +17,8 @@ def get_saves(id_user):
         saves = cursor.fetchall()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return saves
 
 def get_follows(id_user):
@@ -33,10 +31,8 @@ def get_follows(id_user):
         follows = cursor.fetchall()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return follows
 
 def get_tags(id_podcast):
@@ -49,10 +45,8 @@ def get_tags(id_podcast):
         tags = cursor.fetchall()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return tags
 
 def get_comments(id_ep=None, id_user=None):
@@ -79,10 +73,8 @@ def get_comments(id_ep=None, id_user=None):
         comments = cursor.fetchall()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return comments
 
 def get_comment(id):
@@ -95,10 +87,8 @@ def get_comment(id):
         comment = cursor.fetchone()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return comment
 
 def get_episodes(id_podcast):
@@ -111,10 +101,8 @@ def get_episodes(id_podcast):
         episodes = cursor.fetchall()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return episodes
 
 def get_episode(id):
@@ -127,10 +115,8 @@ def get_episode(id):
         episode = cursor.fetchone()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return episode
 
 def get_users():
@@ -138,6 +124,34 @@ def get_users():
     for i in range(1, get_last_id_user() + 1):
         output.append(get_user(id = i))
     return output
+
+def get_user_by_email(email):
+    conn, cursor = connect()
+    user = False
+
+    try:
+        sql = 'SELECT * FROM users WHERE email = ?'
+        cursor.execute(sql, (email,))
+        user = cursor.fetchone()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)    
+    return user
+
+def get_user_by_username(username):
+    conn, cursor = connect()
+    user = False
+
+    try:
+        sql = 'SELECT * FROM users WHERE username = ?'
+        cursor.execute(sql, (username,))
+        user = cursor.fetchone()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)    
+    return user
 
 def get_user(id):
     conn, cursor = connect()
@@ -149,10 +163,8 @@ def get_user(id):
         user = cursor.fetchone()
     except Exception as e:
         print(e)
-        conn.rollback()
 
-    close(conn, cursor)
-
+    close(conn, cursor)    
     return user
 
 def get_last_id_user():
@@ -165,10 +177,8 @@ def get_last_id_user():
         id = cursor.fetchone()['MAX(id)']
     except Exception as e:
         print(e)
-        conn.rollback()
 
-    close(conn, cursor)
-
+    close(conn, cursor)    
     return id
 
 def get_podcasts():
@@ -187,10 +197,8 @@ def get_podcast(id):
         podcast = cursor.fetchone()
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return podcast
 
 def get_last_podcast_id():
@@ -203,13 +211,11 @@ def get_last_podcast_id():
         id = cursor.fetchone()['MAX(id)']
     except Exception as e:
         print(e)
-        conn.rollback()
 
     close(conn, cursor)
-
     return id
 
-# INSERT
+# INSERT QUERIES
 
 def new_follow(id_user, id_podcast):
     conn, cursor = connect()
@@ -225,7 +231,6 @@ def new_follow(id_user, id_podcast):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def new_save(id_user, id_ep):
@@ -242,7 +247,6 @@ def new_save(id_user, id_ep):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def new_comment(id_user, id_ep, text, timestamp):
@@ -259,7 +263,6 @@ def new_comment(id_user, id_ep, text, timestamp):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def new_episode(title, description, audio, timestamp, id_podcast):
@@ -276,7 +279,6 @@ def new_episode(title, description, audio, timestamp, id_podcast):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def new_podcast(title, description, img, id_user, tags):
@@ -305,7 +307,6 @@ def new_podcast(title, description, img, id_user, tags):
             conn.rollback()
 
     close(conn, cursor)
-
     return success_pod, success_tag
 
 def new_user(username, email, password, name, surname, bio, propic):
@@ -322,10 +323,9 @@ def new_user(username, email, password, name, surname, bio, propic):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
-# MODIFY
+# MODIFY QUERIES
 
 def update_episode(id, title=None, desc=None, audio=None, timestamp=None):
     if title is not None:
@@ -361,7 +361,6 @@ def update_episode_field(id, field, value):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def update_podcast(id, title=None, desc=None, img=None):
@@ -394,10 +393,10 @@ def update_podcast_field(id, field, value):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
-# DELETE
+# DELETE QUERIES
+#TODO ON DELETE CASCADE
 
 def delete_episode(id):
     conn, cursor = connect()
@@ -413,7 +412,6 @@ def delete_episode(id):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 def delete_podcast(id):
@@ -430,7 +428,6 @@ def delete_podcast(id):
         conn.rollback()
 
     close(conn, cursor)
-
     return success
 
 # CONNECT AND CLOSE

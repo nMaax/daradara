@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
+    <!--TODO Rimuovi inner css -->
+    <!--TODO Rimuovi inner javascript: onlick etc -->
+    <!--TODO Rimuovi sposta scripts in head con defer -->
+
     <!-- Required meta tags -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -62,13 +67,20 @@
                 <input class="form-control me-2" type="search" placeholder="Trova un nuovo podcast" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Cerca</button>
             </form>
-            <button type="button" class="btn btn-outline-success btn-light my-3 my-lg-0 mx-lg-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <!--button type="button" class="btn btn-outline-success btn-light my-3 my-lg-0 mx-lg-3" data-bs-toggle="modal" data-bs-target="#loginModal">
                 Accedi
+            </button-->
+            <button type="button" class="btn btn-outline-success btn-light my-3 my-lg-0 mx-lg-3" onclick="location.href='{{ url_for('login') }}'">
+                {% if not current_user.username %}
+                    Accedi
+                {% else %}
+                    {{current_user.username}}
+                {% endif %}
             </button>
             </div>
         </div>
     </nav>
-
+    
     <!-- Modal for login -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -82,7 +94,7 @@
                 <div class="modal-body">
                     
                     <!-- New form -->
-                    <form action="#" method="POST">
+                    <form action="{{ url_for('post_login') }}" method="POST">
                         
                         <!-- Username input -->
                         <div class="form-outline mb-4">
@@ -108,6 +120,21 @@
             </div>
         </div> 
     </div>
+
+    <!-- Flask flashes as bootstrap alerts -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
     
     <!-- Page content -->
     <div class="container mt-5">
