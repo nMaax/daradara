@@ -71,8 +71,7 @@
                     </div>
                 </div>
                 <!-- Card footer -->
-                <button class="col-1 btn btn-lg btn-primary d-flex justify-content-center align-items-center" style="font-size: xxx-large;">+
-                </button>
+                <button class="col-1 btn btn-lg btn-primary d-flex justify-content-center align-items-center" style="font-size: xxx-large;" id="newPodBtn">+</button>
             </div>
         </div>
     </div>
@@ -115,4 +114,17 @@
 
 </div>
 
+{% endblock %}
+
+{% block scripts %} 
+<!--TODO converti in file javascript -->
+<script>
+    
+    const newPodBtn = document.querySelector('#newPodBtn') 
+
+    newPodBtn.addEventListener('click', event => {
+        window.location.href = "{{ url_for('new_podcast') }}"
+    })
+
+</script>
 {% endblock %}

@@ -9,12 +9,14 @@
     [X] MODIFY
     [X] DELETE
 
-[ ] Aggiungi sistemi di signup e login
+[X] Aggiungi sistemi di signup e login
 [ ] Aggiungi sistema di aggiunta podcast
 [ ] Aggiugni sistema di aggiunta episodio
 
 [ ] Aggiungi sistema di modifica e rimozione podcast --> Elimina anche gli episodi
 [ ] Aggiugni sistema di modifica e rimozione episodio
+
+[ ] Sposta CSS e JS in file a parte
 
 [ ] Definsci colori, icone e font
 

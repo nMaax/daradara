@@ -139,13 +139,13 @@ def get_user_by_email(email):
     close(conn, cursor)    
     return user
 
-def get_user_by_username(username):
+def get_user_by_email(email):
     conn, cursor = connect()
     user = False
 
     try:
-        sql = 'SELECT * FROM users WHERE username = ?'
-        cursor.execute(sql, (username,))
+        sql = 'SELECT * FROM users WHERE email = ?'
+        cursor.execute(sql, (email,))
         user = cursor.fetchone()
     except Exception as e:
         print(e)
@@ -309,13 +309,13 @@ def new_podcast(title, description, img, id_user, tags):
     close(conn, cursor)
     return success_pod, success_tag
 
-def new_user(username, email, password, name, surname, bio, propic):
+def new_user(email, password, name, surname, propic):
     conn, cursor = connect()
     success = False
 
     try:
-        sql = 'INSERT INTO users(username, email, password, name, surname, bio, propic) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        cursor.execute(sql, (username, email, password, name, surname, bio, propic))
+        sql = 'INSERT INTO users(email, password, name, surname, propic) VALUES (?, ?, ?, ?, ?)'
+        cursor.execute(sql, (email, password, name, surname, propic))
         conn.commit()
         success = True
     except Exception as e:
