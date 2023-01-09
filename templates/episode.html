@@ -11,14 +11,14 @@
         <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="podcast image" class="img-fluid">
     </div>
     <div class="col d-flex justify-content-center align-items-center">
-        <h1>Titolo episodio</h1>
+        <h1>{{episode.title}}</h1>
     </div>
 </div>
 
 <!-- Body episodio -->
 <div class="row mt-3 mx-lg-0 mx-2">
     <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
-        Descrizione episodio e data
+        {{episode.description}} e {{episode.timestamp}}
     </div>
     <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
         Traccia audio

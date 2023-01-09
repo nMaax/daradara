@@ -13,11 +13,22 @@
 [X] Aggiungi sistema di aggiunta podcast
 [X] Aggiugni sistema di aggiunta episodio
 
-[ ] Aggiungi sistema di modifica e rimozione podcast --> Elimina anche gli episodi --> Elimina anche i commenti
-[ ] Aggiugni sistema di modifica e rimozione episodio
+[X] Aggiungi sistema di rimozione podcast --> Elimina anche gli episodi --> Elimina anche i commenti
+[ ] Aggiugni sistema di rimozione episodio
+
+[ ] Aggiungi sezione commenti (modificabili e cancellabili, solo da chi li ha scritti)
+
+[ ] Aggiungi sistema di modifica podcast
+[ ] Aggiungi sistema di modifica episodio
 
 [ ] Sposta CSS e JS in file a parte
 
 [ ] Definsci colori, icone e font
 
 [ ] Definisci pagine di footer e link social
+
+*** Extra ***
+
+[ ] Aggiungi sistema di modifica profilo
+[ ] Aggiungi bio del profilo
+[ ] Cambia attirbuto tabella episode in desc e non description

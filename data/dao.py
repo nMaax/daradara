@@ -1,27 +1,26 @@
 import sqlite3
 import os
-from errors.daoExceptions import dataManipulationError
+from data.errors.daoExceptions import dataManipulationError
 
 FILENAME = 'data.db'
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 PATH = os.path.join(SCRIPT_DIR, FILENAME)
 
-# SELECT QUERIES
+# SELECT queries
 
-def get_podcast_extended(id_podcast):
+def get_saves_join_episodes(id_user):
     conn, cursor = connect()
-    podcast = False
+    saves = False
 
     try:
-        #['id', 'title', 'desc', 'img', 'id_user', 'id', 'email', 'password', 'name', 'surname', 'propic', 'id', 'title', 'description', 'audio', 'timestamp', 'id_podcast']
-        sql = 'SELECT * FROM podcasts, users, episodes WHERE podcasts.id_user = users.id AND episodes.id_podcast = podcasts.id AND id_podcast = ? ORDER BY podcasts.id, episodes.id ASC'
-        cursor.execute(sql, (id_podcast,))
-        podcast = cursor.fetchall()
+        sql = 'SELECT * FROM saves, episodes WHERE saves.id_ep = episodes.id AND id_user = ?'
+        cursor.execute(sql, (id_user,))
+        saves = cursor.fetchall()
     except Exception as e:
         print(e)
 
     close(conn, cursor)
-    return podcast
+    return saves
 
 def get_saves(id_user):
     conn, cursor = connect()
@@ -36,6 +35,21 @@ def get_saves(id_user):
 
     close(conn, cursor)
     return saves
+
+def get_follows_join_podcasts(id_user):
+    conn, cursor = connect()
+    follows = False
+
+    try:
+        # Nonostante non vi siano altre collonne che si chiamino 'id_user' COMUNQUE sqlite vuole che si tolga ambiguità con follows.id_user invece di id_user e basta, uffi :(
+        sql = 'SELECT * FROM follows, podcasts WHERE follows.id_podcast = podcasts.id AND follows.id_user = ?'
+        cursor.execute(sql, (id_user,))
+        follows = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return follows
 
 def get_follows(id_user):
     conn, cursor = connect()
@@ -126,7 +140,7 @@ def get_episode(id):
     episode = False
 
     try:
-        sql = 'SELECT * FROM episode WHERE id = ?'
+        sql = 'SELECT * FROM episodes WHERE id = ?'
         cursor.execute(sql, (id,))
         episode = cursor.fetchone()
     except Exception as e:
@@ -183,11 +197,55 @@ def get_last_id_user():
     close(conn, cursor)    
     return id
 
+def get_podcast_extended(id_podcast):
+    conn, cursor = connect()
+    podcast = False
+
+    try:
+        #['id', 'title', 'desc', 'img', 'id_user', 'id', 'email', 'password', 'name', 'surname', 'propic', 'id', 'title', 'description', 'audio', 'timestamp', 'id_podcast']
+        sql = 'SELECT * FROM podcasts, users, episodes WHERE podcasts.id_user = users.id AND episodes.id_podcast = podcasts.id AND id_podcast = ? ORDER BY podcasts.id, episodes.id ASC'
+        cursor.execute(sql, (id_podcast,))
+        podcast = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcast
+
+def get_podcasts_onfire(number_of_podcasts=5):
+    conn, cursor = connect()
+    podcast = []
+
+    try:
+        sql = "SELECT podcasts.id, COUNT(follows.id_user) AS 'n_follows', podcasts.title, podcasts.desc FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC"
+        cursor.execute(sql)
+        podcast = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcast[:number_of_podcasts]
+
 def get_podcasts():
     output = []
     for i in range(1, get_last_podcast_id() + 1 ):
         output.append(get_podcast(id = i))
     return output
+
+def get_podcasts_by_user(id_user):
+    conn, cursor = connect()
+    #? Posso anche togliere il try e podcast = False?
+    podcast = False
+
+    try:
+        sql = 'SELECT * FROM podcasts WHERE id_user = ?'
+        cursor.execute(sql, (id_user,))
+        podcast = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcast
 
 def get_podcast(id):
     conn, cursor = connect()
@@ -217,7 +275,7 @@ def get_last_podcast_id():
     close(conn, cursor)
     return id
 
-# INSERT QUERIES
+# INSERT queries
 
 def new_follow(id_user, id_podcast):
     conn, cursor = connect()
@@ -291,7 +349,12 @@ def new_podcast(title, description, img, id_user, tags):
         sql = 'INSERT INTO podcasts(title, desc, img, id_user) VALUES (?, ?, ?, ?)'
         cursor.execute(sql, (title, description, img, id_user))
 
+        #! Rendi questo pezzo di codice più elegante
         id_podcast = get_last_podcast_id()
+        if id_podcast:
+            id_podcast += 1
+        else:
+            id_podcast = 1
         for tag in tags:
             sql = 'INSERT INTO categories(id_podcast, tag) VALUES (?, ?)'
             cursor.execute(sql, (id_podcast, tag))
@@ -321,7 +384,7 @@ def new_user(email, password, name, surname, propic):
     close(conn, cursor)
     return success
 
-# MODIFY QUERIES
+# UPDATE queries
 
 def update_episode(id, title=None, desc=None, audio=None, timestamp=None):
     if title is not None:
@@ -391,7 +454,7 @@ def update_podcast_field(id, field, value):
     close(conn, cursor)
     return success
 
-# DELETE QUERIES
+# DELETE queries
 #TODO ON DELETE CASCADE
 
 def delete_comment(id_ep=None, id_user=None):
@@ -455,7 +518,6 @@ def delete_podcast(id):
 
         # CASCADE
         episodes = get_episodes(id_podcast=id)
-        print(episodes)
         for episode in episodes:
             id_ep = episode[0]
             success &= delete_episode(id_ep)

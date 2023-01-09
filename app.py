@@ -2,7 +2,7 @@
 import os, re, secrets, sqlite3
 from datetime import datetime, date, timedelta
 
-# External files
+# Personal libraries
 import data.dao as dao
 from login.models import User
 
@@ -12,6 +12,8 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+
+# Constants
 
 SECRET_KEY = secrets.token_hex(32)
 SESSION_TYPE = 'filesystem'
@@ -23,6 +25,8 @@ LOGIN_MSG_CATEGORY = 'warning'
 
 LOGIN_MAX_DURATION = timedelta(seconds=10)
 
+# App init
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -31,14 +35,22 @@ app.config['SESSION_PERMANENT'] = SESSION_PERMANENT
 Session(app)
 
 login_manager = LoginManager()
+#? Cosa significano questi attributi?
 #login_manager.login_view = LOGIN_VIEW # type: ignore
 #login_manager.login_message = LOGIN_MSG
 #login_manager.login_message_category = LOGIN_MSG_CATEGORY
 login_manager.init_app(app)
 
+# Routes
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated: # type: ignore
+        saves = dao.get_saves_join_episodes(current_user.id) # type: ignore
+    else:
+        saves = []
+    onfire = dao.get_podcasts_onfire(number_of_podcasts=3)
+    return render_template('index.html', saves=saves, onfire = onfire)
 
 @app.route('/login')
 def login():
@@ -49,15 +61,19 @@ def post_login():
     # Get the username and password from the POST request
     email = request.form['email']
     password = request.form['password']
+    remember = request.form.get('remember')
 
     # Retrieve the user from the database using the 'dao'
     user = dao.get_user_by_email(email)
 
     # Check if the user exists and the password is correct
-    if user and True: #TODO check_password_hash(user.get('password'), password):
+    if user and check_password_hash(user['password'], password): #TODO check_password_hash(user.get('password'), password):
         # Login the user using Flask-Login's login_user function
         #TODO Imposta remeber in base alla checkbox remember me, metti duration a un valore più normale, non per il debug
-        login_user(User(user), remember=True, duration=LOGIN_MAX_DURATION) 
+        if remember:
+            login_user(User(user), remember=True, duration=LOGIN_MAX_DURATION)
+        else:
+            login_user(User(user), remember=False)
         # Return a success message if the login works
         flash(message='Login effettuato', category='success')
         return redirect(url_for('index'))
@@ -66,7 +82,7 @@ def post_login():
         flash('Invalid username or password', 'warning')
         return redirect(url_for('login'))
 
-@app.route("/logout")
+@app.route('/logout')
 @login_required
 def logout():
     logout_user()
@@ -75,19 +91,22 @@ def logout():
 
 @app.route('/profile/<int:id>')
 def profile(id):
-    return render_template('profile.html')
+    user = dao.get_user(id)
+    podcasts = dao.get_podcasts_by_user(id_user=id)
+    follows = dao.get_follows_join_podcasts(id_user=id)
+    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows)
 
 #TODO Trim and capitalize in order to don't have duplicates
-@app.route('/profile/new')
+@app.route('/signup')
 def signup():
     return render_template('signup.html')
 
-@app.route('/profile/new/elab', methods=['POST'])
+@app.route('/signup/elab', methods=['POST'])
 def post_signup():
     name = request.form['name']
     surname = request.form['surname']
     email = request.form['email']
-    password = request.form['password']
+    password = generate_password_hash(request.form['password'], method='sha256')
     terms_agreement = request.form.get('terms')
 
     propic = 'propic.jpeg' #TODO gestire upload file
@@ -102,6 +121,7 @@ def post_signup():
         # Register user in database
         dao.new_user(email, password, name, surname, propic)
         flash("Successfully registered!", 'success')
+        login_user(User(dao.get_user_by_email(email)), remember=False)
         return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id>')
@@ -148,9 +168,15 @@ def post_delete_podcast(id):
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riporvare', category='success')
     return redirect(url_for('index'))
 
+#? Facciamo gli episodi con il loro numero dentro il podcast? O non ci conviene?
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod, id_ep):
-    return render_template('episode.html')
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, episode=episode)
+    else:
+        flash(message='Si è verificato un errore', category='danger')
+        return redirect(url_for('index'))
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/<int:id_pod>/episode/new')
@@ -188,7 +214,7 @@ def post_new_comment():
 def post_delete_comment():
     pass
 
-# Login manager - User Loader
+# Login manager
 
 @login_manager.user_loader
 def load_user(user_id):

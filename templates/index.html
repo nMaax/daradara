@@ -13,8 +13,10 @@
         <!-- Title -->
         <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati</div>
 
+        {% if current_user.is_authenticated %}
+
         <!-- Body -->
-        {% for i in range(1, 6) %}
+        {% for save in saves[:5] %}
         <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
                 <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
@@ -22,16 +24,31 @@
                 </div>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">
-                        <h5 class="card-title">Podcast {{i}}</h5>
+                        <h5 class="card-title">{{ save.title }}</h5>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!--? Bottone "Visualizza tutti gli episodi" -->
-
         {% endfor %}
+
+        <!--? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+
+        {% else%}
+
+            <div class="text-center" >Registrati per salvare i tuoi episodi</div>
+
+        {% endif %}
     </aside>
 
     <!-- I podcast più in voga / I podcast che segui -->
@@ -41,7 +58,7 @@
         <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga</div>
 
         <!-- Body -->
-        {% for i in range(1, 6) %}
+        {% for podcast in onfire %}
         <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
                 <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
@@ -49,7 +66,7 @@
                 </div>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">
-                        <h5 class="card-title">Podcast {{i}}</h5>
+                        <h5 class="card-title">{{ podcast.title }}</h5>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
                 </div>
