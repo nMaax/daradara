@@ -15,8 +15,8 @@
 [X] Aggiungi sistema di rimozione podcast (CASCADE su ep)
 [X] Aggiugni sistema di rimozione episodio (CASCADE su commenti)
 
-[ ] Aggiungi sezione commenti
-[ ] Aggiungi sistema di rimozione commenti 
+[X] Aggiungi sezione commenti
+[X] Aggiungi sistema di rimozione commenti 
 
 [ ] Aggiungi sistema di modifica podcast
 [ ] Aggiungi sistema di modifica episodio

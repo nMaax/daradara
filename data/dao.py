@@ -469,7 +469,6 @@ def update_podcast_field(id, field, value):
     return success
 
 # DELETE queries
-#TODO ON DELETE CASCADE
 
 def delete_comment_by_PK(id_ep, id_user, timestamp):
     conn, cursor = connect()

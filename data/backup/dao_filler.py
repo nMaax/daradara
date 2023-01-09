@@ -1,4 +1,7 @@
-import dao
+import sys
+sys.path.append('../')
+
+import data.dao as dao
 from werkzeug.security import generate_password_hash
 
 def main():
