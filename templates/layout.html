@@ -3,7 +3,8 @@
 <head>
 
     <!--TODO Rimuovi inner css -->
-    <!--TODO Rimuovi inner javascript: onlick etc -->
+    <!--TODO Rimuovi inline js: onlick, ... -->
+    <!--TODO Rimuovi js a fondo pagina -->
     <!--TODO Rimuovi sposta scripts in head con defer -->
 
     <!-- Required meta tags -->
@@ -25,12 +26,10 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='/misc/red300x300.ico') }}">
 </head>
 <body>
-    <!--TODO togli i tag style in tutto il progetto-->
     <!-- TODO Navbar -->
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid mx-2">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <!--TODO rimuovi style specifico-->
                 <img class="img-fluid" src="https://getbootstrap.com/docs/5.2/assets/brand/bootstrap-logo.svg" alt="Logo" style="max-width: 50px; max-height: 50px;">
                 <h5 class="d-inline-block mb-0 mx-2">DaraDara</h5>
             </a>
@@ -74,7 +73,7 @@
                 {% if not current_user.is_authenticated %}
                 <button type="button" id="loginBtn" class="btn btn-outline-success btn-light my-3 my-lg-0 mx-lg-3">Accedi</button>
                 {% else %}
-                <button type="button" id="profileBtn" class="btn btn-outline-info btn-light my-3 my-lg-0 mx-lg-3">Profilo</button>
+                <a href="{{ url_for('profile', id = current_user.id) }}" ><button type="button" id="profileBtn" class="btn btn-outline-info btn-light my-3 my-lg-0 mx-lg-3">Profilo</button></a>
                 <button type="button" id="logoutBtn" class="btn btn-outline-danger btn-light my-3 my-lg-0 mx-lg-3">Esci</button>
                 {% endif %}
             
@@ -124,21 +123,19 @@
 
     <!-- Flask flashes as bootstrap alerts -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endfor %}
-    {% endif %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{category}} alert-dismissible fade show mt-2" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
     {% endwith %}
 
-    
     <!-- Page content -->
     <div class="container mt-5">
+
         {% block content %}
         <!-- Page content goes here -->
         {% endblock %}
@@ -152,7 +149,7 @@
                 <div class="col-4">
                     <p>
                         <a href="/privacy">Privacy</a> | <a href="/terms">Terms of Use</a> | <a href="/license">License of Use</a>
-                    </p>    
+                    </p>
                 </div>
                 <div class="col">
                     <p class="text-center">Copyright &copy; 2023 daradara s.r.l.</p>
@@ -183,11 +180,11 @@
             });
         }
 
-        if (profileBtn) {
+        /*if (profileBtn) {
             profileBtn.addEventListener('click', event => {
-            window.location.href = "{{ url_for('profile', id = current_user.id) }}";
+            window.location.href = "";
             });
-        }
+        }*/
 
         if (logoutBtn) {
             logoutBtn.addEventListener('click', event => {

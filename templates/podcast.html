@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 <!--TODO aggiorna il titolo con il nome specifico del podcast-->
-{% block title %} - Podcast . . . {% endblock %}
+{% block title %} - {{podcast.title}} {% endblock %}
 
 {% block content %} 
 
@@ -14,17 +14,40 @@
         <!-- Info podcast -->
         <div class="col">
             <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-3">
-                Nome podcast
+                {{podcast.title}}
             </div>
             <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
-                Categorie
+                {% for tag in tags%} {{tag.tag}}, {% endfor %}
             </div>
             <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
-                Descrizione
+                {{podcast.desc}}
             </div>
             <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
-                Elimina podcast
+                <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Delete podcast
+            </button>
+
             </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Sei sicuro di voler eliminare il podcast?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Una volta eliminato, il podcast non potrà essere in alcun modo recuperato e tutti i suoi episodi, commenti, o qualsiasi contenuto a esso relativo verranno definitivamente eliminati, sei sicuro di voler procedere?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            <button type="button" id="delPodBtn" class="btn btn-danger">Ho capito, elimina il podcast</button>
+            </div>
+        </div>
         </div>
     </div>
     
@@ -32,7 +55,19 @@
     <div class="row mt-3">
         <div class="row d-flex justify-content-center display-5">Episodi</div>
 
-        {% for i in range(1,9) %}
+        <div class="row d-flex justify-content-center">
+            <div class="row mt-3">
+                <!-- Episodio -->
+                <div class="card mb-3">
+                    <div class="row g-0 d-flex justify-content-center align-content-center">
+                        <!-- Bottone nuovo episodio -->
+                        <button id="newEpBtn" class="btn text-center"><h4>Nuovo episodio</h4></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% for episode in episodes %}
         <div class="row d-flex justify-content-center">
             <div class="row mt-3">
                 <!-- Episodio -->
@@ -40,7 +75,7 @@
                     <div class="row g-0">
                         <!-- Titolo episodio -->
                         <div class="col-md-4">
-                            <p class="text-center display-5">Episodio {{i}}</p>
+                            <p class="text-center display-5">{{ episode.title }}</p>
                         </div>
                         <!-- Traccia audio -->
                         <div class="col-md-7">
@@ -55,4 +90,22 @@
         {% endfor%}
 
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    const newEpBtn = document.querySelector('#newEpBtn');
+
+    newEpBtn.addEventListener('click', event => {
+        window.location.href = "{{ url_for('new_episode', id_pod = id) }}"
+    });
+
+    const delPodBtn = document.querySelector('#delPodBtn');
+
+    delPodBtn.addEventListener('click', event => {
+        window.location.href = "{{ url_for('post_delete_podcast', id=id) }}"
+    });
+
+</script>
 {% endblock %}

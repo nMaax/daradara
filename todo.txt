@@ -10,10 +10,10 @@
     [X] DELETE
 
 [X] Aggiungi sistemi di signup e login
-[ ] Aggiungi sistema di aggiunta podcast
-[ ] Aggiugni sistema di aggiunta episodio
+[X] Aggiungi sistema di aggiunta podcast
+[X] Aggiugni sistema di aggiunta episodio
 
-[ ] Aggiungi sistema di modifica e rimozione podcast --> Elimina anche gli episodi
+[ ] Aggiungi sistema di modifica e rimozione podcast --> Elimina anche gli episodi --> Elimina anche i commenti
 [ ] Aggiugni sistema di modifica e rimozione episodio
 
 [ ] Sposta CSS e JS in file a parte

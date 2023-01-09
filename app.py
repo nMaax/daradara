@@ -4,7 +4,7 @@ from datetime import datetime, date, timedelta
 
 # External files
 import data.dao as dao
-from models import User
+from login.models import User
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -47,11 +47,11 @@ def login():
 @app.route('/login/elab', methods = ['POST'])
 def post_login():
     # Get the username and password from the POST request
-    username = request.form['email']
+    email = request.form['email']
     password = request.form['password']
 
     # Retrieve the user from the database using the 'dao'
-    user = dao.get_user_by_email(username)
+    user = dao.get_user_by_email(email)
 
     # Check if the user exists and the password is correct
     if user and True: #TODO check_password_hash(user.get('password'), password):
@@ -63,10 +63,10 @@ def post_login():
         return redirect(url_for('index'))
     else:
         # Return an error message if the login fails
-        #flash('Invalid username or password', 'warning')
+        flash('Invalid username or password', 'warning')
         return redirect(url_for('login'))
 
-@app.route("/logout/elab")
+@app.route("/logout")
 @login_required
 def logout():
     logout_user()
@@ -106,7 +106,10 @@ def post_signup():
 
 @app.route('/podcast/<int:id>')
 def podcast(id):
-    return render_template('podcast.html')
+    podcast = dao.get_podcast(id)
+    episodes = dao.get_episodes(id_podcast = id)
+    tags = dao.get_tags(id)
+    return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, tags = tags)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new')
@@ -119,31 +122,70 @@ def post_new_podcast():
     title = request.form['title']
     desc = request.form['desc']
     img = 'podcast.jpeg'  #TODO gestire upload file
-    tags = request.form['tags']
+    tags = request.form['tags'] #TODO split the tags with ', '
 
     # Check if all required fields are filled out
     if not title or not desc or not img or not tags or not current_user:
-        flash("Unable to add the new podcast, something went wrong", 'warning')
+        flash("Impossibile aggiugere il podcast, i dati iseriti sono mancanti o erronei", 'warning')
         return redirect(url_for('new_podcast'))
     else:
         #TODO controlla che i dati inseriti siano corretti
         # Register user in database
         user_id = current_user.id # type: ignore
-        dao.new_podcast(title, desc, img, user_id, tags)
-        flash("Podcast aggiunto con successo registered!", 'success')
+        result = dao.new_podcast(title, desc, img, user_id, tags)
+        if result:
+            flash("Podcast aggiunto con successo!", 'success')
+        else:
+            flash("Impossibile aggiugere il podcast, qualcosa è andato storto, riprovare", 'warning')
         return redirect(url_for('profile', id = user_id))
 
-@app.route('/episode/<int:id>')
-def episode(id):
+@app.route('/podcast/<int:id>/delete/elab')
+def post_delete_podcast(id):
+    result = dao.delete_podcast(id)
+    if result:
+        flash(message='Podcast eliminato correttamente', category='success')
+    else:
+        flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riporvare', category='success')
+    return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
+def episode(id_pod, id_ep):
     return render_template('episode.html')
 
 #TODO Trim and capitalize in order to don't have duplicates
-@app.route('/episode/new', methods=['POST'])
-def post_new_episode():
+@app.route('/podcast/<int:id_pod>/episode/new')
+def new_episode(id_pod):
+    return render_template('new-episode.html', id_pod=id_pod)
+
+#TODO Trim and capitalize in order to don't have duplicates
+@app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
+def post_new_episode(id_pod):
+    title = request.form['title']
+    desc = request.form['desc']
+    audio = 'audio.mp4' #TODO imposta file
+    timestamp = '2022-10-10' #TODO imposta timestamp = oggi
+    id_podcast = id_pod
+    # Check if all required fields are filled out
+    if not title or not desc or not audio:
+        flash("Impossibile aggiungere l'episodio, qualcosa è andato storto, riprovare", 'warning')
+        return redirect(url_for('new_episode'))
+    else:
+        #TODO controlla che i dati inseriti siano corretti
+        # Register episode in database
+        dao.new_episode(title, desc, audio, timestamp, id_podcast)
+        flash("Episodio aggiunto con successo!", 'success')
+        return redirect(url_for('podcast', id = id_podcast))
+
+@app.route('/podcast/<int:id_pod>/episode/delete/elab')
+def post_delete_episode():
     pass
 
-@app.route('/comment/new', methods=['POST'])
+@app.route('/comment/new/elab', methods=['POST'])
 def post_new_comment():
+    pass
+
+@app.route('/comment/delete/elab', methods=['POST'])
+def post_delete_comment():
     pass
 
 # Login manager - User Loader
@@ -156,9 +198,19 @@ def load_user(user_id):
 
 @app.route('/test')
 def test():
+    flash(message='Messaggio', category='dark')
     return render_template('test.html')
+
+@app.route('/clear_session')
+def clear_session():
+    session.clear()
+    return 'Session data cleared!'
+
+@app.route('/clear_login')
+def clear_login():
+    logout_user()
+    return 'Login data cleared!'
 
 @app.errorhandler(404)
 def page_not_found(error):
-  # Create a response object
-  return render_template('404.html')
+  return render_template('404.html', error=error)
