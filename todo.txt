@@ -1,6 +1,5 @@
 [X] Definisci struttura html delle pagine
 [X] Aggiungi responsiveness delle pagine html
-[ ] Rendi le pagine html più definite, con margini, bordi e i giusti tag
 
 [X] Definisci db
 [X] Definisci dao
@@ -13,18 +12,24 @@
 [X] Aggiungi sistema di aggiunta podcast
 [X] Aggiugni sistema di aggiunta episodio
 
-[X] Aggiungi sistema di rimozione podcast --> Elimina anche gli episodi --> Elimina anche i commenti
-[ ] Aggiugni sistema di rimozione episodio
+[X] Aggiungi sistema di rimozione podcast (CASCADE su ep)
+[X] Aggiugni sistema di rimozione episodio (CASCADE su commenti)
 
-[ ] Aggiungi sezione commenti (modificabili e cancellabili, solo da chi li ha scritti)
+[ ] Aggiungi sezione commenti
+[ ] Aggiungi sistema di rimozione commenti 
 
 [ ] Aggiungi sistema di modifica podcast
 [ ] Aggiungi sistema di modifica episodio
+[ ] Aggiungi sistema di modifica commenti
+
+[ ] Aggiungi permessi di modifica, eliminazione e creazione
 
 [ ] Sposta CSS e JS in file a parte
 
-[ ] Definsci colori, icone e font
+[ ] Controlla gli errori, TODO, !, ? e # type:ignore
 
+[ ] Rendi le pagine html più definite, con margini, bordi e i giusti tag
+[ ] Definsci colori, icone e font
 [ ] Definisci pagine di footer e link social
 
 *** Extra ***

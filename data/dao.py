@@ -79,6 +79,20 @@ def get_tags(id_podcast):
     close(conn, cursor)
     return tags
 
+def get_comments_extended(id_ep):
+    conn, cursor = connect()
+    comments = False
+    
+    try:
+        sql = "SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ?"
+        cursor.execute(sql, (id_ep,))
+        comments = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return comments
+
 def get_comments(id_ep=None, id_user=None):
     conn, cursor = connect()
     comments = False
@@ -456,6 +470,24 @@ def update_podcast_field(id, field, value):
 
 # DELETE queries
 #TODO ON DELETE CASCADE
+
+def delete_comment_by_PK(id_ep, id_user, timestamp):
+    conn, cursor = connect()
+    success = True
+    data = None
+
+    sql = 'DELETE FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
+
+    try:
+        cursor.execute(sql, (id_ep, id_user, timestamp))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
 
 def delete_comment(id_ep=None, id_user=None):
     conn, cursor = connect()

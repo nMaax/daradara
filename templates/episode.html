@@ -10,22 +10,112 @@
     <div class="col-4 col-lg-2">
         <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="podcast image" class="img-fluid">
     </div>
-    <div class="col d-flex justify-content-center align-items-center">
-        <h1>{{episode.title}}</h1>
+    <div class="col">
+        <div class="row d-flex justify-content-center align-items-center">
+            <h1 class="">{{episode.title}}</h1>
+        </div>
+        <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center">
+            <p>{{episode.timestamp}}</p>
+        </div>
+        <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center">
+            <p>{{episode.description}}</p>
+        </div>
+        <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
+                Delete episode
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteEpisodeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteEpisodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteEpisodeModalLabel">Sei sicuro di voler eliminare il podcast?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Una volta eliminato, l'episodio non potrà più essere recuperato, così come i suoi commenti, sei sicuro di voler procedere?
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" id="delEpBtn" class="btn btn-danger">Ho capito, elimina l'episodio</button>
+        </div>
+    </div>
     </div>
 </div>
 
 <!-- Body episodio -->
 <div class="row mt-3 mx-lg-0 mx-2">
     <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
-        {{episode.description}} e {{episode.timestamp}}
-    </div>
-    <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
         Traccia audio
     </div>
-    <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
-        Commenti
+    <div class="row d-flex justify-content-center align-content-center my-2">
+        <div class="row d-flex justify-content-center">
+            <div class="">
+              <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                <div class="card-body p-4">
+                    <form class="form-outline mb-4" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
+                        <div class="row">
+                            <input type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." />
+                        </div>
+                        <div class="row d-flex justify-content-between">
+                            <label class="col-3 form-label" for="addANote">+ Comment</label>
+                            <button type="submit" class="col-1 btn btn-outline-info">Pubblica</button>
+                        </div>
+                    </form>
+
+                    {% for comment in comments %}
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                        <p>{{comment.text}}</p>
+            
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp" alt="avatar" width="25"
+                                    height="25" />
+                                <p class="small mb-0 ms-2">{{comment.name}} {{comment.surname}}</p>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <div class="col-2">
+                                {{comment.timestamp}}
+                            </div>
+                            <!--! Controlla come usi id_pod e id_ep nei vari codici relativi a gli episodi, non fare spaghetti code!-->
+                            <form class="col-2" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
+                                <input hidden name="timestamp" value="{{comment.timestamp}}">
+                                <button type="submit" class="btn btn-danger">Elimina</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+          
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %} 
+<!--TODO converti in file javascript -->
+<!--! fai dei mini-form per ogni bottone, oppure usa fetch() in javascript -->
+<script>
+
+    const delEpBtn = document.querySelector('#delEpBtn');
+
+    delEpBtn.addEventListener('click', event => {
+        window.location.href = "{{ url_for('post_delete_episode', id_ep=id, id_pod=id_pod) }}"
+    });
+
+</script>
 {% endblock %}

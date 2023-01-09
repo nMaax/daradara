@@ -25,6 +25,8 @@ LOGIN_MSG_CATEGORY = 'warning'
 
 LOGIN_MAX_DURATION = timedelta(seconds=10)
 
+ISO_DATE = "%Y-%m-%d %H:%M:%S"
+
 # App init
 
 app = Flask(__name__)
@@ -172,8 +174,9 @@ def post_delete_podcast(id):
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
+    comments = dao.get_comments_extended(id_ep)
     if episode and episode['id_podcast'] == id_pod:
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, episode=episode)
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, episode=episode, comments=comments)
     else:
         flash(message='Si è verificato un errore', category='danger')
         return redirect(url_for('index'))
@@ -189,7 +192,7 @@ def post_new_episode(id_pod):
     title = request.form['title']
     desc = request.form['desc']
     audio = 'audio.mp4' #TODO imposta file
-    timestamp = '2022-10-10' #TODO imposta timestamp = oggi
+    timestamp = datetime.now().strftime(ISO_DATE) #TODO imposta timestamp = oggi
     id_podcast = id_pod
     # Check if all required fields are filled out
     if not title or not desc or not audio:
@@ -202,17 +205,55 @@ def post_new_episode(id_pod):
         flash("Episodio aggiunto con successo!", 'success')
         return redirect(url_for('podcast', id = id_podcast))
 
-@app.route('/podcast/<int:id_pod>/episode/delete/elab')
-def post_delete_episode():
-    pass
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/delete/elab')
+def post_delete_episode(id_pod, id_ep):
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        result = dao.delete_episode(id_ep)
+        if result:
+            flash(message='Episodio eliminato correttamente', category='success')
+            return redirect(url_for('podcast', id=id_pod))
+        else:
+            flash(message='C\'è stato un errore durante l\'eliminazione dell\'episodio, riporvare', category='danger')
+            return redirect(url_for('index'))
+    else:
+        flash(message='Si è verificato un errore', category='danger')
+        return redirect(url_for('index'))
 
-@app.route('/comment/new/elab', methods=['POST'])
-def post_new_comment():
-    pass
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/new/elab', methods=['POST'])
+@login_required
+def post_new_comment(id_pod, id_ep):
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        text = request.form['text']
+        timestamp = datetime.now().strftime(ISO_DATE)
+        result = dao.new_comment(id_user=current_user.id, id_ep=id_ep, text=text, timestamp=timestamp)  # type: ignore
+        if not result:
+            flash(message='C\'è stato un errore durante l\'aggiunta del commento, riporvare', category='danger')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
-@app.route('/comment/delete/elab', methods=['POST'])
-def post_delete_comment():
-    pass
+    else:
+        flash(message='Si è verificato un errore', category='danger')
+        return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/delete/elab', methods=['POST'])
+@login_required
+def post_delete_comment(id_pod, id_ep):
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        timestamp = request.form['timestamp']
+        #TODO rename delete_comment_by_PK in something else
+        #! Se provi a cancellare il commento di un altro flash dice che ci sei riuscito ma in realtà non è andato via
+        result = dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp)
+        if result:
+            flash(message='Commento eliminato correttamente', category='success')
+            return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+        else:
+            flash(message='C\'è stato un errore durante l\'eliminazione del commento, riporvare', category='danger')
+            return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    else:
+        flash(message='Si è verificato un errore', category='danger')
+        return redirect(url_for('index'))
 
 # Login manager
 
