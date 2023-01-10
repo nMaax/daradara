@@ -4,7 +4,9 @@ from datetime import datetime, date, timedelta
 
 # Personal libraries
 import data.dao as dao
-from login.models import User
+from data.errors.daoExceptions import dataManipulationError
+from utils.models import User
+from utils.detector import is_image, is_static_image, is_audio
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -26,6 +28,8 @@ LOGIN_MSG_CATEGORY = 'warning'
 LOGIN_MAX_DURATION = timedelta(seconds=10)
 
 ISO_DATE = "%Y-%m-%d %H:%M:%S"
+
+COVER_FOLDER = 'static/images/covers'
 
 # App init
 
@@ -141,25 +145,61 @@ def new_podcast():
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new/elab', methods=['POST'])
 def post_new_podcast():
+
+    # Retriving data 
     title = request.form['title']
     desc = request.form['desc']
-    img = 'podcast.jpeg'  #TODO gestire upload file
-    tags = request.form['tags'] #TODO split the tags with ', '
+    img = request.files['img']
+    category = request.form['category']
+    
+    #TODO Data validation
+    check = True
+    if not title or not desc or not img or not category:
+        check = False
+    if len(title) < 4 or len(title) > 24:
+        check = False
+    if len(desc) > 516:
+        check = False
+    if len(category) < 4 or len(category) > 16:
+        check = False
+    app.logger.info(img.filename)
+    if not is_static_image(img.filename):
+        check = False
 
-    # Check if all required fields are filled out
-    if not title or not desc or not img or not tags or not current_user:
+    # Check if all required fields are filled out and if the user is logged in
+    if not check:
         flash("Impossibile aggiugere il podcast, i dati iseriti sono mancanti o erronei", 'warning')
         return redirect(url_for('new_podcast'))
+    elif not current_user.is_authenticated: # type: ignore
+        flash("Fare il login prima di aggiungere il podcast", 'warning')
+        return redirect(url_for('new_podcast'))
     else:
-        #TODO controlla che i dati inseriti siano corretti
         # Register user in database
         user_id = current_user.id # type: ignore
-        result = dao.new_podcast(title, desc, img, user_id, tags)
-        if result:
+
+        # Define image name
+        imgext = img.filename.split('.')[1] # type: ignore
+        imgname = str(user_id) + '.' + imgext
+
+        # If dao is unable to insert data, abort and do not save the image
+        try:
+        # Inserting entry in the database
+            result = dao.new_podcast(title, desc, imgname, user_id, category)
+
+            #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
+            if not result:
+                raise dataManipulationError('Unable to add entry into the database')
+
+            save_directory = 'static/uploads/images/covers/'
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            img.save(save_directory+img.filename) # type: ignore
+
             flash("Podcast aggiunto con successo!", 'success')
-        else:
-            flash("Impossibile aggiugere il podcast, qualcosa è andato storto, riprovare", 'warning')
-        return redirect(url_for('profile', id = user_id))
+            return redirect(url_for('profile', id = user_id))
+        except Exception as e:
+            flash("Impossibile aggiugere il podcast, qualcosa è andato storto - ERR: " + str(e) + ", riprovare", 'danger')
+            return redirect(url_for('new_podcast'))
 
 @app.route('/podcast/<int:id>/delete/elab')
 def post_delete_podcast(id):
@@ -281,3 +321,5 @@ def clear_login():
 @app.errorhandler(404)
 def page_not_found(error):
   return render_template('404.html', error=error)
+
+# Functions

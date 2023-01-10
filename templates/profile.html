@@ -54,8 +54,8 @@
                             {% for podcast in podcasts %}
                             
                             <!--TODO converti questi tag a in attributi data-url e fanne il js-->
-                            <a href="{{ url_for('podcast', id=podcast.id) }}">
-                            <div class="d-inline-block mx-2 border rounded-2 px-2">
+                            <!--TODO metti ricerca tra i tuoi podcast con js-->
+                            <a href="{{ url_for('podcast', id=podcast.id) }}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="img-fluid" alt="Card image" style="max-width: 100px;">
@@ -65,7 +65,6 @@
                                     <p class="text-wrap">{{podcast.desc}}</p>
                                 </div>
                                 </div>
-                            </div>
                             </a>
 
                             {% endfor %}
@@ -94,8 +93,8 @@
 
                             {% for follow in follows %}
                             
-                            <a href="{{ url_for('podcast', id=follow.id_podcast) }}">
-                            <div class="d-inline-block mx-2 border rounded-2 px-2">
+                            <!--TODO metti ricerca tra i tuoi follow con js-->
+                            <a href="{{ url_for('podcast', id=follow.id_podcast) }}"class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="img-fluid" alt="Card image" style="max-width: 100px;">
@@ -105,7 +104,6 @@
                                     <p class="text-wrap">{{follow.desc}}</p>
                                 </div>
                                 </div>
-                            </div>
                             </a>
 
                             {% endfor %}

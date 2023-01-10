@@ -355,7 +355,7 @@ def new_episode(title, description, audio, timestamp, id_podcast):
     close(conn, cursor)
     return success
 
-def new_podcast(title, description, img, id_user, tags):
+def new_podcast(title, description, img, id_user, tag):
     conn, cursor = connect()
     success = True
 
@@ -369,9 +369,9 @@ def new_podcast(title, description, img, id_user, tags):
             id_podcast += 1
         else:
             id_podcast = 1
-        for tag in tags:
-            sql = 'INSERT INTO categories(id_podcast, tag) VALUES (?, ?)'
-            cursor.execute(sql, (id_podcast, tag))
+            
+        sql = 'INSERT INTO categories(id_podcast, tag) VALUES (?, ?)'
+        cursor.execute(sql, (id_podcast, tag))
 
         conn.commit()
     except Exception as e_pod:

@@ -22,6 +22,9 @@
 [ ] Aggiungi sistema di modifica episodio
 [ ] Aggiungi sistema di modifica commenti
 
+[ ] Aggiugni riproduzione audio
+[ ] Aggiungi upload multimediale
+
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
 
 [ ] Sposta CSS e JS in file a parte
