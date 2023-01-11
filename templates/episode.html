@@ -8,10 +8,10 @@
 
 <!-- Header episodio -->
 <div class="row">   
-    <div class="col-4 col-lg-2">
+    <div class="col-12 col-lg-2 d-flex justify-content-center">
         <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
     </div>
-    <div class="col">
+    <div class="col mt-4 mt-lg-0">
         <div class="row d-flex justify-content-center align-items-center mb-3">
             <h1 class="">{{episode.title}}</h1>
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
@@ -24,10 +24,10 @@
                 {{episode.timestamp}}
             </div>
         </div>
-        <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
+        <div class="row mx-0 my-2 d-flex justify-content-center align-content-center display-5">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
-                Delete episode
+                Elimina episodio
             </button>
         </div>
 
@@ -77,8 +77,8 @@
                             <input type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." />
                         </div>
                         <div class="row d-flex justify-content-between mt-3">
-                            <label class="col-3 form-label" for="addANote">+ Comment</label>
-                            <button type="submit" class="col-1 btn btn-outline-dark">Pubblica</button>
+                            <label class="col-6 form-label" for="addANote">+ Comment</label>
+                            <button type="submit" class="col-12 col-lg-2 btn btn-outline-dark">Pubblica</button>
                         </div>
                     </form>
 
@@ -98,13 +98,13 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between">
                             <!--TODO Converti in daysago-->
-                            <div class="col-2">
+                            <div class="col-4 col-sm-3 col-lg-2">
                                 {{comment.timestamp}}
                             </div>
                             <!--! Controlla come usi id_pod e id_ep nei vari codici relativi a gli episodi, non fare spaghetti code!-->
-                            <form class="col-2" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
+                            <form class="col-8 col-sm-7 col-md-6 col-lg-5 d-flex justify-content-end" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
                                 <input hidden name="timestamp" value="{{comment.timestamp}}">
-                                <button type="submit" class="btn btn-danger">Elimina</button>
+                                <button type="submit" class="col-8 col-lg-3 btn btn-danger">Elimina</button>
                             </form>
                         </div>
                     </div>

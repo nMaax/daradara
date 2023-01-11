@@ -29,13 +29,14 @@
 
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
 
-[ ] Sposta CSS e JS in file a parte
+[X] Sposta CSS e JS in file a parte
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 
-[ ] Rendi le pagine html più definite, con margini, bordi e i giusti tag
+[ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
 [ ] Definsci colori, icone e font
-[ ] Definisci pagine di footer e link social
+[ ] Definisci pagine di footer, link social e altre pagine
+[ ] Definisci pagine di errore
 
 *** Extra ***
 
