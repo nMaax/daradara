@@ -65,14 +65,14 @@ def get_follows(id_user):
     close(conn, cursor)
     return follows
 
-def get_tags(id_podcast):
+def get_category(id_podcast):
     conn, cursor = connect()
     tags = False
 
     try:
         sql = 'SELECT * FROM categories WHERE id_podcast = ?'
         cursor.execute(sql, (id_podcast,))
-        tags = cursor.fetchall()
+        tags = cursor.fetchone()
     except Exception as e:
         print(e)
 

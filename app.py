@@ -101,7 +101,16 @@ def profile(id):
     user = dao.get_user(id)
     podcasts = dao.get_podcasts_by_user(id_user=id)
     follows = dao.get_follows_join_podcasts(id_user=id)
-    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows)
+    creators = dao.get_creators()
+    is_creator = False
+    if user and creators:
+        for creator in creators:
+            if creator['id'] == user['id']:
+                is_creator = True
+    else:
+        flash(message='L\'utente cercato non esiste', category='warning')
+        return redirect(url_for('index'))
+    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, is_creator = is_creator)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/signup')
@@ -135,8 +144,8 @@ def post_signup():
 def podcast(id):
     podcast = dao.get_podcast(id)
     episodes = dao.get_episodes(id_podcast = id)
-    tags = dao.get_tags(id)
-    return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, tags = tags)
+    category = dao.get_category(id)
+    return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new')

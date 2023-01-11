@@ -2,30 +2,35 @@
 
 {% block title %} - {{episode.title}} | {{podcast.title}}{% endblock %}
 
+{% block stylesheets %} <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/episode.css')}}"> {% endblock %}
+
 {% block content %}
 
 <!-- Header episodio -->
 <div class="row">   
     <div class="col-4 col-lg-2">
-        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="img-fluid">
+        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
     </div>
     <div class="col">
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center mb-3">
             <h1 class="">{{episode.title}}</h1>
+            <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
         </div>
-        <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center">
-            <p>{{episode.timestamp}}</p>
-        </div>
-        <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center">
-            <p>{{episode.description}}</p>
+        <div class="card">
+            <div class="card-body">
+              <p class="card-text">{{episode.description}}</p>
+            </div>
+            <div class="card-footer">
+                {{episode.timestamp}}
+            </div>
         </div>
         <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
                 Delete episode
             </button>
-
         </div>
+
     </div>
 </div>
 
@@ -42,7 +47,7 @@
         </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-        <button type="button" id="delEpBtn" class="btn btn-danger">Ho capito, elimina l'episodio</button>
+        <a href = "{{ url_for('post_delete_episode', id_ep=id, id_pod=id_pod) }}" type="button" id="delEpBtn" class="btn btn-danger">Ho capito, elimina l'episodio</a>
         </div>
     </div>
     </div>
@@ -50,21 +55,30 @@
 
 <!-- Body episodio -->
 <div class="row mt-3 mx-lg-0 mx-2">
-    <div id="player" class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
-        Traccia audio
+    <!-- Traccia audio -->
+    <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
+    <div id="player" class="col-md-7">
+        <div class="card-body row g-2">
+            <div class="text-light p-3">
+                <audio controls>
+                    <source src="audio-file.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
     </div>
     <div class="row d-flex justify-content-center align-content-center my-2">
         <div class="row d-flex justify-content-center">
             <div class="">
-              <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+              <div class="card shadow-0 border bg-ligth">
                 <div class="card-body p-4">
-                    <form class="form-outline mb-4" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
+                    <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
                         <div class="row">
                             <input type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." />
                         </div>
-                        <div class="row d-flex justify-content-between">
+                        <div class="row d-flex justify-content-between mt-3">
                             <label class="col-3 form-label" for="addANote">+ Comment</label>
-                            <button type="submit" class="col-1 btn btn-outline-info">Pubblica</button>
+                            <button type="submit" class="col-1 btn btn-outline-dark">Pubblica</button>
                         </div>
                     </form>
 
@@ -77,12 +91,13 @@
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
                                 <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comment.id_user, comment.propic))}}" alt="avatar" width="25"
-                                    height="25" />
+                                    height="25"/>
                                 <p class="small mb-0 ms-2">{{comment.name}} {{comment.surname}}</p>
                             </div>
                         </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
+                            <!--TODO Converti in daysago-->
                             <div class="col-2">
                                 {{comment.timestamp}}
                             </div>
@@ -103,18 +118,4 @@
     </div>
 </div>
 
-{% endblock %}
-
-{% block scripts %} 
-<!--TODO converti in file javascript -->
-<!--! fai dei mini-form per ogni bottone, oppure usa fetch() in javascript -->
-<script>
-
-    const delEpBtn = document.querySelector('#delEpBtn');
-
-    delEpBtn.addEventListener('click', event => {
-        window.location.href = "{{ url_for('post_delete_episode', id_ep=id, id_pod=id_pod) }}"
-    });
-
-</script>
 {% endblock %}

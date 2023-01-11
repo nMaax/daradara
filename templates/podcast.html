@@ -2,31 +2,36 @@
 
 {% block title %} - {{podcast.title}} {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/podcast.css')}}">{% endblock %}
+
 {% block content %} 
 
     <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
     <div class="row">
         <!-- Immagine podcast -->
         <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
-            <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="imgfluid">
+            <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="card-img img-fluid p-1 p-lg-2 podcast-img">
         </div>
         <!-- Info podcast -->
         <div class="col">
-            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-3">
+            
+            <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-left align-content-center display-3">
                 {{podcast.title}}
             </div>
-            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
-                {% for tag in tags%} {{tag.tag}}, {% endfor %}
+            <div class="card">
+                <div class="card-body">
+                  <p class="card-text">{{podcast.desc}}</p>
+                </div>
+                <div class="card-footer">
+                    Categoria: {{category.tag|capitalize}}
+                </div>
             </div>
-            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-4">
-                {{podcast.desc}}
-            </div>
-            <div class="row border border-dark mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
+
+            <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePodcastModal">
                     Delete podcast
                 </button>
-
             </div>
         </div>
     </div>
@@ -44,25 +49,20 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-            <button type="button" id="delPodBtn" class="btn btn-danger">Ho capito, elimina il podcast</button>
+            <a type="button" id="delPodBtn" href = "{{ url_for('post_delete_podcast', id=id) }}" class="btn btn-danger">Ho capito, elimina il podcast</a>
             </div>
         </div>
         </div>
     </div>
     
     <!-- Pocast body (episodi) -->
-    <div class="row mt-3">
-        <div class="row d-flex justify-content-center display-5">Episodi</div>
+    <div class="row mt-5">
+        <div class="row d-flex justify-content-center display-5">Episodi 🙌</div>
 
         <div class="row d-flex justify-content-center">
             <div class="row mt-3">
-                <!-- Episodio -->
-                <div class="card mb-3">
-                    <div class="row g-0 d-flex justify-content-center align-content-center">
-                        <!-- Bottone nuovo episodio -->
-                        <button id="newEpBtn" class="btn text-center"><h4>Nuovo episodio</h4></button>
-                    </div>
-                </div>
+                <!-- Bottone nuovo episodio -->
+                <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-dark d-flex justify-content-center align-content-center ">Nuovo episodio</a>
             </div>
         </div>
 
@@ -71,16 +71,22 @@
         <div class="row d-flex justify-content-center">
             <div class="row mt-3">
                 <!-- Episodio -->
-                <div class="card mb-3">
+                <div class="card mb-3 ps-0">
                     <div class="row g-0">
                         <!-- Titolo episodio -->
-                        <div class="col-md-4">
-                            <p class="text-center display-5">{{ episode.title }}</p>
+                        <div class="col-md-4 bg-light d-flex justify-content-center align-items-center">
+                            <p class="text-center display-6 mx-2 my-4">{{ episode.title }}</p>
                         </div>
                         <!-- Traccia audio -->
+                        <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
                         <div class="col-md-7">
                             <div class="card-body row g-2">
-                                Traccia audio   
+                                <div class="text-light p-3">
+                                    <audio controls>
+                                        <source src="audio-file.mp3" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -91,22 +97,4 @@
         {% endfor%}
 
     </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-
-    const newEpBtn = document.querySelector('#newEpBtn');
-
-    newEpBtn.addEventListener('click', event => {
-        window.location.href = "{{ url_for('new_episode', id_pod = id) }}"
-    });
-
-    const delPodBtn = document.querySelector('#delPodBtn');
-
-    delPodBtn.addEventListener('click', event => {
-        window.location.href = "{{ url_for('post_delete_podcast', id=id) }}"
-    });
-
-</script>
 {% endblock %}

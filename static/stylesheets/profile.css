@@ -1,0 +1,13 @@
+.card-scroll {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.card-scroll::-webkit-scrollbar {
+    height: 0.5em; /*spessore scrollbar*/
+    background-color: #F5F5F5; /*colore background scrollbar*/
+}
+
+.card-scroll::-webkit-scrollbar-thumb {
+    background-color: #000000; /*colore scrollbar*/
+}

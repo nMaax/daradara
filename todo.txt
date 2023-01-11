@@ -18,6 +18,8 @@
 [X] Aggiungi sezione commenti
 [X] Aggiungi sistema di rimozione commenti 
 
+[ ] Rendi episodi responsive
+
 [ ] Aggiungi sistema di modifica podcast
 [ ] Aggiungi sistema di modifica episodio
 [ ] Aggiungi sistema di modifica commenti
@@ -36,6 +38,8 @@
 [ ] Definisci pagine di footer e link social
 
 *** Extra ***
+
+--> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 
 [ ] Aggiungi sistema di modifica profilo
 [ ] Aggiungi bio del profilo

@@ -13,3 +13,8 @@ a {
     max-width: 60px;
     max-height: 60px;
 }
+
+.rounded-0-start {
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+}
