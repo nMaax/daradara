@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block title %} - Home{% endblock %}
+{% block homeActive %}active{% endblock %}
 
 {% block content %} 
 <div class="row">
@@ -31,8 +32,8 @@
                             <a href="{{url_for('podcast', id=save.id)}}"><p class="card-text"><small class="text-muted">{{save.podcast_title}}</small></p></a>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark">Riproduci l'episodio</a>
+                    <div class="card-footer d-flex justify-content-center justify-content-lg-start">
+                        <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark"><i class="fa-solid fa-play me-2"></i>Riproduci l'episodio</a>
                     </div>
                 </div>
             </div>

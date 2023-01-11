@@ -251,7 +251,11 @@ def episode(id_pod, id_ep):
 @app.route('/podcast/<int:id_pod>/episode/new')
 @login_required
 def new_episode(id_pod):
-    return render_template('new-episode.html', id_pod=id_pod)
+    podcast = dao.get_podcast(id_pod)
+    if not podcast:
+        flash(message="Il podcast al quale hai cercato di aggiungere un episodio non esiste", category="warning")
+        return redirect(url_for('index'))
+    return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])

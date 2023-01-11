@@ -3,7 +3,7 @@
 }
 
 /* Rimuovo il colore blue e la sottolineatura che i tag <a> impongono ai loro figli */
-a {
+a:not(.stock-a, .nav-link) {
     color: inherit;
     text-decoration: none;
 }

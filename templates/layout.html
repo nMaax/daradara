@@ -2,11 +2,6 @@
 <html lang="it">
 <head>
 
-    <!--TODO Rimuovi inner css -->
-    <!--TODO Rimuovi inline js: onlick, ... -->
-    <!--TODO Rimuovi js a fondo pagina -->
-    <!--TODO Rimuovi sposta scripts in head con defer -->
-
     <!-- Required meta tags -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -28,6 +23,7 @@
     {% block stylesheets %}{% endblock %}
     
     <!-- Personal scripts -->
+    <script defer src="{{url_for('static', filename='scripts/layout.js')}}"></script>
     {% block scripts %}{% endblock %}
 
     <!-- Title and icon -->
@@ -47,23 +43,24 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
+                <a class="nav-link {% block homeActive %}{% endblock %}" aria-current="page" href="{{ url_for('index') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="#">Sfoglia</a>
+                <a class="nav-link {% block searchActive %}{% endblock %}" href="#">Sfoglia</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sorpendimi</a>
+                    <a class="nav-link {% block discoverActive %}{% endblock %}" href="#">Sorpendimi</a>
                 </li>
                 <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Per i podcasters
                 </a>
+                <!--TODO se in hoover espandi il menu-->
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#">Come pubblicare il tuo primo podcast</a></li>
                     <li><a class="dropdown-item" href="#">Perchè scegliere DaraDara?</a></li>
                     <li><hr class="dropdown-divider"></li>    
-                    <li><a class="dropdown-item" href="#">FAQ</a></li>
+                    <li><a class="dropdown-item" href="#">F.A.Q.</a></li>
                 </ul>
                 </li>
             </ul>
@@ -148,7 +145,6 @@
     </div>
   
     <!-- Footer -->
-    <!-- TODO togliere il colore blu sui link <a> -->
     <footer class="bg-light py-3 mt-5">
         <div class="container">
             <div class="row">
