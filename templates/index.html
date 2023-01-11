@@ -11,38 +11,56 @@
     <aside class="col-12 col-lg-3">
 
         <!-- Title -->
-        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati</div>
+        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati 🎙️</div>
 
         {% if current_user.is_authenticated %}
 
         <!-- Body -->
-        {% for save in saves[:5] %}
-        <div class="row card mb-3 mx-2 mx-lg-0">
-            <div class="row g-0">
-                <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                    <img class="img-fluid" src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
-                </div>
-                <div class="col-10 col-lg-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ save.title }}</h5>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+        {% if saves|length %}
+            {% for save in saves[:5] %}
+            <div class="row card mb-3 mx-2 mx-lg-0">
+                <div class="row g-0">
+                    <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
+                        <img class="card-img img-fluid p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt='podcast "{{save.title}}" image'>    
+                    </div>
+                    <div class="col-10 col-lg-8">
+                        <div class="card-body">
+                            <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}"><h5 class="card-title">{{ save.title }}</h5></a>
+                            <a href="{{url_for('podcast', id=save.id)}}"><p class="card-text"><small class="text-muted">{{save.podcast_title}}</small></p></a>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark">Riproduci l'episodio</a>
                     </div>
                 </div>
             </div>
-        </div>
+            {% endfor %}
 
-        {% endfor %}
+            <!--? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        
+        {% else %}
 
-        <!--? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-              <li class="page-item"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <p class="card-text">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</p>
+                    <a href="#" class="btn btn-primary">Cerca nuovi podcast</a>
+                </div>
+                
+            </div>
+        {% endif %}
 
         {% else%}
 
@@ -55,14 +73,15 @@
     <main class="col-12 col-lg offset-lg-1">
 
         <!-- Title -->
-        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga</div>
+        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga 🔥</div>
 
         <!-- Body -->
         {% for podcast in onfire %}
+        <a href="{{url_for('podcast', id=podcast.id)}}">
         <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
                 <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                    <img class="img-fluid" src="{{ url_for('static', filename='misc/red300x300.jpg') }}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
+                    <img class="card-img img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
                 </div>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">
@@ -72,6 +91,7 @@
                 </div>
             </div>
         </div>
+        </a>
         {% endfor %}
 
         <!--? Bottone "Visualizza tutti i podcast" -->

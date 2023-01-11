@@ -21,11 +21,12 @@ SECRET_KEY = secrets.token_hex(32)
 SESSION_TYPE = 'filesystem'
 SESSION_PERMANENT = False
 
+#? Mi servono queste costanti?
 LOGIN_VIEW = 'post_login'
 LOGIN_MSG = 'Accedi per visualizzare questa pagina'
 LOGIN_MSG_CATEGORY = 'warning'
 
-LOGIN_MAX_DURATION = timedelta(seconds=10)
+LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60minuti
 
 ISO_DATE = "%Y-%m-%d %H:%M:%S"
 
@@ -52,7 +53,7 @@ login_manager.init_app(app)
 @app.route('/')
 def index():
     if current_user.is_authenticated: # type: ignore
-        saves = dao.get_saves_join_episodes(current_user.id) # type: ignore
+        saves = dao.get_saves_join_episodes_podcasts(current_user.id) # type: ignore
     else:
         saves = []
     onfire = dao.get_podcasts_onfire(number_of_podcasts=3)
@@ -139,11 +140,13 @@ def podcast(id):
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new')
+@login_required
 def new_podcast():
     return render_template('new-podcast.html')
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new/elab', methods=['POST'])
+@login_required
 def post_new_podcast():
 
     # Retriving data 
@@ -154,10 +157,10 @@ def post_new_podcast():
 
     # Cleaning data
     title = title.strip()
-    title = title.capitalize()
+    #title = title.capitalize()
 
     desc = desc.strip()
-    desc = desc.capitalize()
+    #desc = desc.capitalize()
 
     category = category.strip()
     category = category.lower()
@@ -166,13 +169,15 @@ def post_new_podcast():
     check = True
     if not title or not desc or not img or not category:
         check = False
-    if len(title) < 4 or len(title) > 24:
+    elif len(title) < 4 or len(title) > 24:
         check = False
-    if len(desc)<16 or len(desc) > 516:
+    elif dao.get_podcast_by_title(title) != []:
         check = False
-    if len(category) < 4 or len(category) > 32:
+    elif len(desc)<16 or len(desc) > 516:
         check = False
-    if not is_static_image(img.filename):
+    elif len(category) < 4 or len(category) > 32:
+        check = False
+    elif not is_static_image(img.filename):
         check = False
 
     # Check if all required fields are filled out and if the user is logged in
@@ -184,17 +189,18 @@ def post_new_podcast():
         return redirect(url_for('new_podcast'))
     else:
         
-        # Register user in database
+        # Retrive id of the creator and the id the podcast will have
         user_id = current_user.id # type: ignore
+        podcast_id = dao.get_last_podcast_id() + 1
 
         # Define image name
-        imgext = img.filename.split('.')[1] # type: ignore
-        imgname = str(user_id) + '.' + imgext
+        imgext = '.' + img.filename.split('.')[1] # type: ignore
+        imgname = str(podcast_id) + imgext
 
         # If dao is unable to insert data, abort and do not save the image
         try:
             # Inserting entry in the database
-            result = dao.new_podcast(title, desc, imgname, user_id, category)
+            result = dao.new_podcast(title, desc, imgext, user_id, category)
 
             #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
             if not result:
@@ -212,6 +218,7 @@ def post_new_podcast():
             return redirect(url_for('new_podcast'))
 
 @app.route('/podcast/<int:id>/delete/elab')
+@login_required
 def post_delete_podcast(id):
     result = dao.delete_podcast(id)
     if result:
@@ -224,19 +231,22 @@ def post_delete_podcast(id):
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
-    comments = dao.get_comments_extended(id_ep)
     if episode and episode['id_podcast'] == id_pod:
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, episode=episode, comments=comments)
+        podcast = dao.get_podcast(id_pod)
+        comments = dao.get_comments_extended(id_ep)
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, comments=comments)
     else:
         flash(message='Si è verificato un errore', category='danger')
         return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id_pod>/episode/new')
+@login_required
 def new_episode(id_pod):
     return render_template('new-episode.html', id_pod=id_pod)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
+@login_required
 def post_new_episode(id_pod):
     title = request.form['title']
     desc = request.form['desc']
@@ -292,7 +302,7 @@ def post_delete_comment(id_pod, id_ep):
         timestamp = request.form['timestamp']
         #TODO rename delete_comment_by_PK in something else
         #! Se provi a cancellare il commento di un altro flash dice che ci sei riuscito ma in realtà non è andato via
-        result = dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp)
+        result = dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
         if result:
             flash(message='Commento eliminato correttamente', category='success')
             return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))

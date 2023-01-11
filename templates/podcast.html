@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
 
-<!--TODO aggiorna il titolo con il nome specifico del podcast-->
 {% block title %} - {{podcast.title}} {% endblock %}
 
 {% block content %} 
@@ -9,7 +8,7 @@
     <div class="row">
         <!-- Immagine podcast -->
         <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
-            <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="" class="imgfluid">
+            <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="imgfluid">
         </div>
         <!-- Info podcast -->
         <div class="col">

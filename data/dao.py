@@ -8,12 +8,12 @@ PATH = os.path.join(SCRIPT_DIR, FILENAME)
 
 # SELECT queries
 
-def get_saves_join_episodes(id_user):
+def get_saves_join_episodes_podcasts(id_user):
     conn, cursor = connect()
     saves = False
 
     try:
-        sql = 'SELECT * FROM saves, episodes WHERE saves.id_ep = episodes.id AND id_user = ?'
+        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ?'
         cursor.execute(sql, (id_user,))
         saves = cursor.fetchall()
     except Exception as e:
@@ -163,6 +163,20 @@ def get_episode(id):
     close(conn, cursor)
     return episode
 
+def get_creators():
+    conn, cursor = connect()
+    user = False
+
+    try:
+        sql = 'SELECT users.* FROM users, podcasts WHERE users.id = podcasts.id_user'
+        cursor.execute(sql)
+        user = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)    
+    return user
+
 def get_users():
     output = []
     for i in range(1, get_last_id_user() + 1):
@@ -231,7 +245,7 @@ def get_podcasts_onfire(number_of_podcasts=5):
     podcast = []
 
     try:
-        sql = "SELECT podcasts.id, COUNT(follows.id_user) AS 'n_follows', podcasts.title, podcasts.desc FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC"
+        sql = "SELECT podcasts.id, COUNT(follows.id_user) AS 'n_follows', podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC"
         cursor.execute(sql)
         podcast = cursor.fetchall()
     except Exception as e:
@@ -255,6 +269,21 @@ def get_podcasts_by_user(id_user):
         sql = 'SELECT * FROM podcasts WHERE id_user = ?'
         cursor.execute(sql, (id_user,))
         podcast = cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcast
+
+def get_podcast_by_title(title):
+    conn, cursor = connect()
+    #? Posso anche togliere il try e podcast = False?
+    podcast = False
+
+    try:
+        sql = 'SELECT * FROM podcasts WHERE title = ?'
+        cursor.execute(sql, (title,))
+        podcast = cursor.fetchone()
     except Exception as e:
         print(e)
 

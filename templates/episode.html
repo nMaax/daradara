@@ -1,14 +1,13 @@
 {% extends 'layout.html' %}
 
-<!--TODO cambia 'episodio' nel titolo dell'episodio-->
-{% block title %} - Episode . . . {% endblock %}
+{% block title %} - {{episode.title}} | {{podcast.title}}{% endblock %}
 
 {% block content %}
 
 <!-- Header episodio -->
 <div class="row">   
     <div class="col-4 col-lg-2">
-        <img src="{{ url_for('static', filename='misc/red300x300.jpg') }}" alt="podcast image" class="img-fluid">
+        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="img-fluid">
     </div>
     <div class="col">
         <div class="row d-flex justify-content-center align-items-center">
@@ -51,7 +50,7 @@
 
 <!-- Body episodio -->
 <div class="row mt-3 mx-lg-0 mx-2">
-    <div class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
+    <div id="player" class="row d-flex justify-content-center align-content-center border border-dark my-2 display-6">
         Traccia audio
     </div>
     <div class="row d-flex justify-content-center align-content-center my-2">
@@ -77,7 +76,7 @@
             
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp" alt="avatar" width="25"
+                                <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comment.id_user, comment.propic))}}" alt="avatar" width="25"
                                     height="25" />
                                 <p class="small mb-0 ms-2">{{comment.name}} {{comment.surname}}</p>
                             </div>

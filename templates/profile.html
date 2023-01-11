@@ -1,7 +1,10 @@
 {% extends 'layout.html' %}
 
-<!--TODO cambia 'profilo' nel nome utente-->
-{% block title %} - Profile . . . {% endblock %}
+{% block title %} - {{user.name}}{% endblock %}
+
+{% block scripts %}
+<script defer src="{{url_for('static', filename='scripts/profile.js')}}"></script>
+{% endblock %}
 
 {% block content %}
 
@@ -117,17 +120,4 @@
 
 </div>
 
-{% endblock %}
-
-{% block scripts %} 
-<!--TODO converti in file javascript -->
-<script>
-    
-    const newPodBtn = document.querySelector('#newPodBtn') 
-
-    newPodBtn.addEventListener('click', event => {
-        window.location.href = "{{ url_for('new_podcast') }}"
-    }) 
-
-</script>
 {% endblock %}
