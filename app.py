@@ -151,18 +151,27 @@ def post_new_podcast():
     desc = request.form['desc']
     img = request.files['img']
     category = request.form['category']
+
+    # Cleaning data
+    title = title.strip()
+    title = title.capitalize()
+
+    desc = desc.strip()
+    desc = desc.capitalize()
+
+    category = category.strip()
+    category = category.lower()
     
-    #TODO Data validation
+    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
     check = True
     if not title or not desc or not img or not category:
         check = False
     if len(title) < 4 or len(title) > 24:
         check = False
-    if len(desc) > 516:
+    if len(desc)<16 or len(desc) > 516:
         check = False
-    if len(category) < 4 or len(category) > 16:
+    if len(category) < 4 or len(category) > 32:
         check = False
-    app.logger.info(img.filename)
     if not is_static_image(img.filename):
         check = False
 
@@ -174,6 +183,7 @@ def post_new_podcast():
         flash("Fare il login prima di aggiungere il podcast", 'warning')
         return redirect(url_for('new_podcast'))
     else:
+        
         # Register user in database
         user_id = current_user.id # type: ignore
 
@@ -183,7 +193,7 @@ def post_new_podcast():
 
         # If dao is unable to insert data, abort and do not save the image
         try:
-        # Inserting entry in the database
+            # Inserting entry in the database
             result = dao.new_podcast(title, desc, imgname, user_id, category)
 
             #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
@@ -193,7 +203,7 @@ def post_new_podcast():
             save_directory = 'static/uploads/images/covers/'
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
-            img.save(save_directory+img.filename) # type: ignore
+            img.save(save_directory+imgname) # type: ignore
 
             flash("Podcast aggiunto con successo!", 'success')
             return redirect(url_for('profile', id = user_id))
@@ -221,7 +231,6 @@ def episode(id_pod, id_ep):
         flash(message='Si è verificato un errore', category='danger')
         return redirect(url_for('index'))
 
-#TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/<int:id_pod>/episode/new')
 def new_episode(id_pod):
     return render_template('new-episode.html', id_pod=id_pod)
@@ -271,7 +280,6 @@ def post_new_comment(id_pod, id_ep):
         if not result:
             flash(message='C\'è stato un errore durante l\'aggiunta del commento, riporvare', category='danger')
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-
     else:
         flash(message='Si è verificato un errore', category='danger')
         return redirect(url_for('index'))

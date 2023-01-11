@@ -1,5 +1,5 @@
 IMG_EXTENSIONS = ('.jpeg', '.jpg', '.png', '.gif')
-AUDIO_EXTENSIONS = ('.mp4', '.wav')
+AUDIO_EXTENSIONS = ('.mp3', '.wav')
 
 def is_static_image(filename):
     return is_image(filename) and not filename.endswith('.gif')
