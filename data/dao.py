@@ -121,13 +121,13 @@ def get_comments(id_ep=None, id_user=None):
     close(conn, cursor)
     return comments
 
-def get_comment(id):
+def get_comment(id_ep, id_user, timestamp):
     conn, cursor = connect()
     comment = False
 
     try:
-        sql = 'SELECT * FROM comments WHERE id = ?'
-        cursor.execute(sql, (id,))
+        sql = 'SELECT * FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
+        cursor.execute(sql, (id_ep, id_user, timestamp))
         comment = cursor.fetchone()
     except Exception as e:
         print(e)
@@ -148,6 +148,35 @@ def get_episodes(id_podcast):
 
     close(conn, cursor)
     return episodes
+
+def get_episode_by_title(title, id_pod):
+    conn, cursor = connect()
+    episode = False
+
+    try:
+        sql = 'SELECT * FROM episodes WHERE title = ? AND id_pod = ?'
+        cursor.execute(sql, (title, id_pod))
+        episode = cursor.fetchone()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return episode
+
+def get_last_episode_id():
+    conn, cursor = connect()
+    id = False
+
+    try:
+        sql = 'SELECT MAX(id) FROM episodes'
+        cursor.execute(sql)
+        id = cursor.fetchone()['MAX(id)']
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return id
+
 
 def get_episode(id):
     conn, cursor = connect()
@@ -492,11 +521,11 @@ def update_podcast_field(id, field, value):
 def delete_comment_by_PK(id_ep, id_user, timestamp):
     conn, cursor = connect()
     success = True
-    data = None
-
-    sql = 'DELETE FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
 
     try:
+
+        sql = 'DELETE FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
+
         cursor.execute(sql, (id_ep, id_user, timestamp))
         conn.commit()
     except Exception as e:

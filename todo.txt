@@ -20,11 +20,11 @@
 
 [X] Rendi episodi responsive
 
-[ ] Controlla dati form in ricezione per nuovo utente
-[ ] Controlla dati form in ricezione per login
-[ ] Controlla dati form in ricezione per nuovo podcast
-[ ] Controlla dati form in ricezione per nuovo episodio
-[ ] Controlla dati form in ricezione per nuovo commento
+[X] Controlla dati form in ricezione per nuovo utente
+[X] Controlla dati form in ricezione per login
+[X] Controlla dati form in ricezione per nuovo podcast
+[X] Controlla dati form in ricezione per nuovo episodio
+[X] Controlla dati form in ricezione per nuovo commento
 
 [ ] Aggiungi sistema di modifica podcast
 [ ] Aggiungi sistema di modifica episodio
@@ -33,7 +33,7 @@
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
 
 [ ] Aggiugni riproduzione audio
-[ ] Aggiungi upload multimediale
+[X] Aggiungi upload multimediale
 
 [X] Sposta CSS e JS in file a parte
 

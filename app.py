@@ -4,7 +4,7 @@ from datetime import datetime, date, timedelta
 
 # Personal libraries
 import data.dao as dao
-from data.errors.daoExceptions import dataManipulationError
+from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerError
 from utils.models import User
 from utils.detector import is_image, is_static_image, is_audio
 
@@ -70,7 +70,7 @@ def post_login():
     password = request.form['password']
     remember = request.form.get('remember')
 
-    # Retrieve the user from the database using the 'dao'
+    # Retrieve the user from the database using dao
     user = dao.get_user_by_email(email)
 
     # Check if the user exists and the password is correct
@@ -120,27 +120,74 @@ def signup():
 
 @app.route('/signup/elab', methods=['POST'])
 def post_signup():
+
+    #TODO! con js controlla che le lunghezze dei campi siano giuste senza gli whitespace
     name = request.form['name']
     surname = request.form['surname']
     email = request.form['email']
-    password = generate_password_hash(request.form['password'], method='sha256')
+    password = request.form['password']
     terms_agreement = request.form.get('terms')
 
-    propic = 'propic.jpeg' #TODO gestire upload file
-    #TODO rimuovi: creator = request.form['creator']
+    propic = request.files['propic']
+
+    name = name.strip()
+    name = name.capitalize()
+    surname = surname.strip()
+    surname = surname.capitalize()
+    email = email.strip()
 
     # Check if all required fields are filled out
-    if not name or not surname or not email or not password or not terms_agreement:
-        flash("Unable to register, something went wrong", 'warning')
+    check = True
+    if not name or not surname or not email or not password or not terms_agreement or not propic:
+        check = False
+    elif len(name) < 2 or len(name) > 32:
+        check = False
+    elif len(surname) < 2 or len(surname) > 32:
+        check = False
+    elif len(email) < 6 or not email.__contains__('@') or not email.__contains__('.'):
+        check = False
+    elif len(password) < 8: #TODO! Controlla che vengano inseriti tutti i caratteri speciali
+        check = False
+    elif not is_image(propic.filename):
+        check = False
+
+    if not check:
+        flash("Dati inseriti mancanti o erronei, riprovare", 'warning')
         return redirect(url_for('signup'))
     else:
-        #TODO controlla che i dati inseriti siano corretti
-        # Register user in database
-        dao.new_user(email, password, name, surname, propic)
-        flash("Successfully registered!", 'success')
-        login_user(User(dao.get_user_by_email(email)), remember=False)
-        return redirect(url_for('index'))
 
+        user_id = dao.get_last_id_user() + 1
+
+        # Define image name
+        filename = secure_filename(propic.filename) # type: ignore
+        propicext = '.' + filename.split('.')[-1] # type: ignore
+        propicname = str(user_id) + propicext
+
+        try:
+            # Register user in database
+            
+            
+            password = generate_password_hash(request.form['password'], method='sha256')
+            
+            result = dao.new_user(email, password, name, surname, propicext)
+
+            if not result:
+                raise dataManipulationError('Unable to register new user')
+
+            save_directory = 'static/uploads/images/propics/'
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            propic.save(save_directory+propicname) # type: ignore
+            
+            login_user(User(dao.get_user_by_email(email)), remember=False)
+            
+            flash("Successfully registered!", 'success')
+            return redirect(url_for('profile', id=user_id)) # type: ignore
+        except Exception as e:
+            flash("Impossibile registrare il nuovo utente, qualcosa è andato storto - ERR: " + str(e), 'danger')
+            return redirect(url_for('signup'))
+
+        
 @app.route('/podcast/<int:id>')
 def podcast(id):
     podcast = dao.get_podcast(id)
@@ -167,21 +214,18 @@ def post_new_podcast():
 
     # Cleaning data
     title = title.strip()
-    #title = title.capitalize()
-
     desc = desc.strip()
-    #desc = desc.capitalize()
-
     category = category.strip()
     category = category.lower()
     
     #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    # Checking that the data is valid
     check = True
     if not title or not desc or not img or not category:
         check = False
     elif len(title) < 4 or len(title) > 24:
         check = False
-    elif dao.get_podcast_by_title(title) != []:
+    elif dao.get_podcast_by_title(title):
         check = False
     elif len(desc)<16 or len(desc) > 516:
         check = False
@@ -194,9 +238,6 @@ def post_new_podcast():
     if not check:
         flash("Impossibile aggiugere il podcast, i dati iseriti sono mancanti o erronei", 'warning')
         return redirect(url_for('new_podcast'))
-    elif not current_user.is_authenticated: # type: ignore
-        flash("Fare il login prima di aggiungere il podcast", 'warning')
-        return redirect(url_for('new_podcast'))
     else:
         
         # Retrive id of the creator and the id the podcast will have
@@ -204,7 +245,8 @@ def post_new_podcast():
         podcast_id = dao.get_last_podcast_id() + 1
 
         # Define image name
-        imgext = '.' + img.filename.split('.')[1] # type: ignore
+        filename = secure_filename(img.filename) # type: ignore
+        imgext = '.' + filename.split('.')[-1] # type: ignore
         imgname = str(podcast_id) + imgext
 
         # If dao is unable to insert data, abort and do not save the image
@@ -224,17 +266,27 @@ def post_new_podcast():
             flash("Podcast aggiunto con successo!", 'success')
             return redirect(url_for('profile', id = user_id))
         except Exception as e:
-            flash("Impossibile aggiugere il podcast, qualcosa è andato storto - ERR: " + str(e) + ", riprovare", 'danger')
+            flash("Impossibile aggiugere il podcast, qualcosa è andato storto - ERR: " + str(e), 'danger')
             return redirect(url_for('new_podcast'))
 
+#TODO! Rimuovi il controllo interno sul fatto che sia stato fatto il login, già ci pensa @login_required
 @app.route('/podcast/<int:id>/delete/elab')
 @login_required
 def post_delete_podcast(id):
+
+    podcast = dao.get_podcast(id)
+    if not podcast:
+        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
+        return render_template('index')
+    elif podcast['id_user'] != current_user.is_authenticated: # type: ignore
+        flash(message='Non sei il proprietario del podcast', category='danger')
+        return render_template('podcast', id=id)
+
     result = dao.delete_podcast(id)
     if result:
         flash(message='Podcast eliminato correttamente', category='success')
     else:
-        flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riporvare', category='success')
+        flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='success')
     return redirect(url_for('index'))
 
 #? Facciamo gli episodi con il loro numero dentro il podcast? O non ci conviene?
@@ -258,74 +310,170 @@ def new_episode(id_pod):
         return redirect(url_for('index'))
     return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
 
-#TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
 @login_required
 def post_new_episode(id_pod):
+    
+    # Retriving data
     title = request.form['title']
     desc = request.form['desc']
-    audio = 'audio.mp4' #TODO imposta file
-    timestamp = datetime.now().strftime(ISO_DATE) #TODO imposta timestamp = oggi
-    id_podcast = id_pod
-    # Check if all required fields are filled out
+    audio = request.files['audio']
+
+    # Cleaning data
+    title = title.strip()
+    desc = desc.strip()
+    
+    # Generating timestamp
+    timestamp = datetime.now().strftime(ISO_DATE)
+
+    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    # Checking that the data is valid
+    check = True
     if not title or not desc or not audio:
-        flash("Impossibile aggiungere l'episodio, qualcosa è andato storto, riprovare", 'warning')
-        return redirect(url_for('new_episode'))
+        check = False
+    elif len(title) < 4 or len(title) > 24:
+        check = False
+    elif dao.get_episode_by_title(title=title, id_pod=id_pod):
+        check = False
+    elif len(desc) < 16 or len(desc) > 516:
+        check = False
+    elif not is_audio(audio.filename): # type: ignore
+        check = False
+
+    # Check if all required fields are filled out and if the user is logged in
+    if not check:
+        flash("Impossibile aggiugere l'episodio, i dati iseriti sono mancanti o erronei", 'warning')
+        return redirect(url_for('new_episode', id_pod=id_pod))
+    elif not current_user.is_authenticated: # type: ignore
+        flash("Fare il login prima di aggiungere l'episodio", 'warning')
+        return redirect(url_for('new_episode', id_pod=id_pod))
     else:
-        #TODO controlla che i dati inseriti siano corretti
-        # Register episode in database
-        dao.new_episode(title, desc, audio, timestamp, id_podcast)
-        flash("Episodio aggiunto con successo!", 'success')
-        return redirect(url_for('podcast', id = id_podcast))
+
+         # Retrive id of the creator and the id the episode will have
+        user_id = current_user.id # type: ignore
+        episode_id = dao.get_last_episode_id() + 1
+
+        # Define audio name
+        filename = secure_filename(audio.filename) # type: ignore
+        audioext = '.' + filename.split('.')[-1]
+        audioname = str(episode_id) + audioext
+
+        # If dao is unable to insert data, abort and do not save the image
+        try:
+
+            if not dao.get_podcast(id_pod)['id_user'] == user_id: # type: ignore
+                raise notPodcastOwnerError('You are not the owner of the podcast')
+
+            # Inserting entry in the database
+            result = dao.new_episode(title, desc, audioext, timestamp, id_podcast=id_pod)
+
+            #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
+            if not result:
+                raise dataManipulationError('Unable to add entry into the database')
+
+            save_directory = 'static/uploads/audios/'
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            audio.save(save_directory+audioname) # type: ignore
+
+            flash("Episodio aggiunto con successo!", 'success')
+            return redirect(url_for('podcast', id = id_pod))
+        except Exception as e:
+            flash("Impossibile aggiugere l'episodio, qualcosa è andato storto - ERR: " + str(e), 'danger')
+            return redirect(url_for('new_episode', id_pod=id_pod))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/delete/elab')
+@login_required
 def post_delete_episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
-    if episode and episode['id_podcast'] == id_pod:
+
+    if not episode:
+        flash('L\'episodio che hai richiesto di eliminare non esiste', category='warning')
+        return redirect(url_for('index'))
+    elif episode['id_user'] != current_user.is_authenticated: # type: ignore
+        flash('Non sei il proprietario del podcast', category='danger')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    elif episode['id_podcast'] == id_pod:
+        flash('L\'episodio e il podcast nell\'url non corrispondono', category='danger')
+        return redirect(url_for('index'))
+    else:
         result = dao.delete_episode(id_ep)
         if result:
             flash(message='Episodio eliminato correttamente', category='success')
             return redirect(url_for('podcast', id=id_pod))
         else:
             flash(message='C\'è stato un errore durante l\'eliminazione dell\'episodio, riporvare', category='danger')
-            return redirect(url_for('index'))
-    else:
-        flash(message='Si è verificato un errore', category='danger')
-        return redirect(url_for('index'))
+            return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/new/elab', methods=['POST'])
-@login_required
 def post_new_comment(id_pod, id_ep):
-    episode = dao.get_episode(id_ep)
-    if episode and episode['id_podcast'] == id_pod:
-        text = request.form['text']
-        timestamp = datetime.now().strftime(ISO_DATE)
-        result = dao.new_comment(id_user=current_user.id, id_ep=id_ep, text=text, timestamp=timestamp)  # type: ignore
-        if not result:
-            flash(message='C\'è stato un errore durante l\'aggiunta del commento, riporvare', category='danger')
-        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-    else:
-        flash(message='Si è verificato un errore', category='danger')
-        return redirect(url_for('index'))
 
+    # Retriving data
+    text = request.form['text']
+    timestamp = datetime.now().strftime(ISO_DATE)
+
+    # Cleaning data
+    text = text.strip()
+
+    # Checking that the data is valid
+    check = True
+    if not text:
+        check = False
+    elif len(text) > 300:
+        check = False
+
+    # Retriving episode and its podcast where to put the comment
+    podcast = dao.get_podcast(id_pod)
+    episode = dao.get_episode(id_ep)
+
+    # Checking that the data is valid
+    checkExist = True
+    if not podcast or not episode:
+        checkExist = False
+    elif episode['id_podcast'] != id_pod:
+        checkExist = False
+
+    
+    if not check:
+        flash("Impossibile aggiugere il commento, i dati iseriti sono mancanti o erronei", 'warning')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    elif not checkExist:
+        flash("Impossibile aggiugere il commento, il podcast e/o l'episidio non esistono o non sono compatibili", 'warning')
+        return redirect(url_for('index'))
+    elif not current_user.is_authenticated: # type: ignore
+        flash("Fare il login prima di aggiungere il commento", 'warning')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    else:
+
+        result = dao.new_comment(id_user=current_user.id, id_ep=id_ep, text=text, timestamp=timestamp)  # type: ignore
+
+        if not result:
+            flash(message='C\'è stato un errore durante l\'aggiunta del commento, riprovare', category='danger')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+
+#TODO! rivedere la gestione dei commenti, con il fatto che non compare il form di submit se non sei l'owner ci sta che non sia necessario controllare nulla
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/delete/elab', methods=['POST'])
 @login_required
 def post_delete_comment(id_pod, id_ep):
+    
     episode = dao.get_episode(id_ep)
-    if episode and episode['id_podcast'] == id_pod:
-        timestamp = request.form['timestamp']
-        #TODO rename delete_comment_by_PK in something else
-        #! Se provi a cancellare il commento di un altro flash dice che ci sei riuscito ma in realtà non è andato via
-        result = dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
-        if result:
-            flash(message='Commento eliminato correttamente', category='success')
-            return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-        else:
-            flash(message='C\'è stato un errore durante l\'eliminazione del commento, riporvare', category='danger')
-            return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-    else:
-        flash(message='Si è verificato un errore', category='danger')
+    podcast = dao.get_podcast(id_pod)
+
+    timestamp = request.form['timestamp']
+    comment = False
+    if timestamp:
+        comment = dao.get_comment(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
+
+    if not episode or not podcast or episode['id_podcast'] != id_pod:
+        flash("Non puoi eliminare commenti da episodi che non esistono", category='danger')
         return redirect(url_for('index'))
+    elif not comment:
+        flash("Non puoi eliminare commenti che non esitono oppure non ne sei il proprietario", category='danger')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    else:
+        dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
+        flash(message='Commento eliminato correttamente', category='success')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
 # Login manager
 
