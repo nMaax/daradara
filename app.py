@@ -80,13 +80,13 @@ def post_login():
         if remember:
             login_user(User(user), remember=True, duration=LOGIN_MAX_DURATION)
         else:
-            login_user(User(user), remember=False)
+            login_user(User(user), remember=False, duration=LOGIN_MAX_DURATION)
         # Return a success message if the login works
         flash(message='Login effettuato', category='success')
         return redirect(url_for('index'))
     else:
         # Return an error message if the login fails
-        flash('Invalid username or password', 'warning')
+        flash('Email e password non corretti, riprovare', 'warning')
         return redirect(url_for('login'))
 
 @app.route('/logout')
@@ -108,10 +108,11 @@ def profile(id):
         for creator in creators:
             if creator['id'] == user['id']:
                 is_creator = True
+        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator = is_creator)
     else:
         flash(message='L\'utente cercato non esiste', category='warning')
         return redirect(url_for('index'))
-    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator = is_creator)
+    
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/signup')
@@ -122,21 +123,22 @@ def signup():
 def post_signup():
 
     #TODO! con js controlla che le lunghezze dei campi siano giuste senza gli whitespace
+    # Retrive data from the form
     name = request.form['name']
     surname = request.form['surname']
     email = request.form['email']
     password = request.form['password']
-    terms_agreement = request.form.get('terms')
-
     propic = request.files['propic']
-
+    terms_agreement = request.form.get('terms')
+    
+    # Clean the data 
     name = name.strip()
     name = name.capitalize()
     surname = surname.strip()
     surname = surname.capitalize()
     email = email.strip()
 
-    # Check if all required fields are filled out
+    # Check if all form fields are filled out and that each value is not violating the rules
     check = True
     if not name or not surname or not email or not password or not terms_agreement or not propic:
         check = False
@@ -151,11 +153,13 @@ def post_signup():
     elif not is_image(propic.filename):
         check = False
 
+    # If the data isn't correct say it, otherwhise continue 
     if not check:
         flash("Dati inseriti mancanti o erronei, riprovare", 'warning')
         return redirect(url_for('signup'))
     else:
 
+        # Get what will the new user id be
         user_id = dao.get_last_id_user() + 1
 
         # Define image name
@@ -165,20 +169,19 @@ def post_signup():
 
         try:
             # Register user in database
-            
-            
             password = generate_password_hash(request.form['password'], method='sha256')
-            
             result = dao.new_user(email, password, name, surname, propicext)
 
             if not result:
                 raise dataManipulationError('Unable to register new user')
 
+            # Save the propic (only if the user has been saved)
             save_directory = 'static/uploads/images/propics/'
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             propic.save(save_directory+propicname) # type: ignore
             
+            # Automatic login after registration
             login_user(User(dao.get_user_by_email(email)), remember=False)
             
             flash("Successfully registered!", 'success')
@@ -193,13 +196,20 @@ def podcast(id):
     podcast = dao.get_podcast(id)
     episodes = dao.get_episodes(id_podcast = id)
     category = dao.get_category(id)
-    return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category)
 
-#TODO Trim and capitalize in order to don't have duplicates
+    if podcast:
+        return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category)
+    else:
+        flash(message='Il podcast cercato non esiste', category='warning')
+        return redirect(url_for('index'))
+
 @app.route('/podcast/new')
-@login_required
 def new_podcast():
-    return render_template('new-podcast.html')
+    if not current_user.is_authenticated: # type: ignore
+        flash('Devi aver fatto l\'accesso prima di poter creare un podcast', category='warning')
+        return redirect(url_for('index'))
+    else:
+        return render_template('new-podcast.html')
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new/elab', methods=['POST'])
@@ -219,7 +229,6 @@ def post_new_podcast():
     category = category.lower()
     
     #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
-    # Checking that the data is valid
     check = True
     if not title or not desc or not img or not category:
         check = False
@@ -234,13 +243,12 @@ def post_new_podcast():
     elif not is_static_image(img.filename):
         check = False
 
-    # Check if all required fields are filled out and if the user is logged in
+    # Check if all form fields are filled out and that each value is not violating the rules
     if not check:
         flash("Impossibile aggiugere il podcast, i dati iseriti sono mancanti o erronei", 'warning')
         return redirect(url_for('new_podcast'))
     else:
-        
-        # Retrive id of the creator and the id the podcast will have
+        # Retrive the id of the creator and the id the podcast will have
         user_id = current_user.id # type: ignore
         podcast_id = dao.get_last_podcast_id() + 1
 
@@ -258,6 +266,7 @@ def post_new_podcast():
             if not result:
                 raise dataManipulationError('Unable to add entry into the database')
 
+            # Save the image (only if the podcast has been saved)
             save_directory = 'static/uploads/images/covers/'
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
@@ -269,27 +278,27 @@ def post_new_podcast():
             flash("Impossibile aggiugere il podcast, qualcosa è andato storto - ERR: " + str(e), 'danger')
             return redirect(url_for('new_podcast'))
 
-#TODO! Rimuovi il controllo interno sul fatto che sia stato fatto il login, già ci pensa @login_required
 @app.route('/podcast/<int:id>/delete/elab')
 @login_required
 def post_delete_podcast(id):
 
+    # If the podcast doesnt exist or the user that is trying to delete it is not the owner abort
     podcast = dao.get_podcast(id)
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
         return render_template('index')
     elif podcast['id_user'] != current_user.is_authenticated: # type: ignore
-        flash(message='Non sei il proprietario del podcast', category='danger')
+        flash(message='Non sei il proprietario del podcast', category='warning')
         return render_template('podcast', id=id)
 
+    # Otherwise delete the podcast
     result = dao.delete_podcast(id)
     if result:
         flash(message='Podcast eliminato correttamente', category='success')
     else:
-        flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='success')
+        flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
     return redirect(url_for('index'))
 
-#? Facciamo gli episodi con il loro numero dentro il podcast? O non ci conviene?
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
@@ -298,7 +307,7 @@ def episode(id_pod, id_ep):
         comments = dao.get_comments_extended(id_ep)
         return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, comments=comments)
     else:
-        flash(message='Si è verificato un errore', category='danger')
+        flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id_pod>/episode/new')
@@ -306,9 +315,13 @@ def episode(id_pod, id_ep):
 def new_episode(id_pod):
     podcast = dao.get_podcast(id_pod)
     if not podcast:
-        flash(message="Il podcast al quale hai cercato di aggiungere un episodio non esiste", category="warning")
+        flash('Il podcast che hai provato ad eliminare non esiste', 'warnig')
         return redirect(url_for('index'))
-    return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash('Non sei il proprietario del podcast che hai provato ad eliminare', 'warnig')
+        return redirect(url_for('index'))
+    else:
+        return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
 
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
 @login_required
@@ -327,6 +340,7 @@ def post_new_episode(id_pod):
     timestamp = datetime.now().strftime(ISO_DATE)
 
     #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
     # Checking that the data is valid
     check = True
     if not title or not desc or not audio:
@@ -358,7 +372,7 @@ def post_new_episode(id_pod):
         audioext = '.' + filename.split('.')[-1]
         audioname = str(episode_id) + audioext
 
-        # If dao is unable to insert data, abort and do not save the image
+        # If dao is unable to insert data, abort and do not save the audio
         try:
 
             if not dao.get_podcast(id_pod)['id_user'] == user_id: # type: ignore
@@ -366,11 +380,10 @@ def post_new_episode(id_pod):
 
             # Inserting entry in the database
             result = dao.new_episode(title, desc, audioext, timestamp, id_podcast=id_pod)
-
-            #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
             if not result:
                 raise dataManipulationError('Unable to add entry into the database')
 
+            # Save the audio
             save_directory = 'static/uploads/audios/'
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
@@ -391,10 +404,10 @@ def post_delete_episode(id_pod, id_ep):
         flash('L\'episodio che hai richiesto di eliminare non esiste', category='warning')
         return redirect(url_for('index'))
     elif episode['id_user'] != current_user.is_authenticated: # type: ignore
-        flash('Non sei il proprietario del podcast', category='danger')
+        flash('Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     elif episode['id_podcast'] == id_pod:
-        flash('L\'episodio e il podcast nell\'url non corrispondono', category='danger')
+        flash('L\'episodio e il podcast nell\'url non corrispondono', category='warning')
         return redirect(url_for('index'))
     else:
         result = dao.delete_episode(id_ep)
@@ -465,10 +478,10 @@ def post_delete_comment(id_pod, id_ep):
         comment = dao.get_comment(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
 
     if not episode or not podcast or episode['id_podcast'] != id_pod:
-        flash("Non puoi eliminare commenti da episodi che non esistono", category='danger')
+        flash("Non puoi eliminare commenti da episodi che non esistono", category='warning')
         return redirect(url_for('index'))
     elif not comment:
-        flash("Non puoi eliminare commenti che non esitono oppure non ne sei il proprietario", category='danger')
+        flash("Non puoi eliminare commenti che non esitono oppure non ne sei il proprietario", category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     else:
         dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
