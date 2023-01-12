@@ -93,7 +93,7 @@ def post_login():
 @login_required
 def logout():
     logout_user()
-    #flash('Logout effettuato', 'info')
+    flash('Logout effettuato', 'success')
     return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>')
