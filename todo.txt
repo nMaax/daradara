@@ -32,14 +32,16 @@
 
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
 
-[ ] Aggiugni riproduzione audio
+[ ] Aggiugni riproduzione audio (howler)
 [X] Aggiungi upload multimediale
 
 [X] Sposta CSS e JS in file a parte
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
+[ ] Commenta ogni statemnt jinja (almeno i {%%})
 
 [ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
+[ ] Aggiungi dei simboli di info accanto a vari campi di form o se necessario (che dicano, per esepmpio quanto debba essere lunga la password ...)
 [ ] Definsci colori, icone e font
     Cambia colori dei bottoni: usa nero bianco e rosso
 [ ] Definisci pagine di footer, link social e altre pagine

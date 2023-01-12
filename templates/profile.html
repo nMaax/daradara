@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<!-- Profile header (propic, info, bio) -->
+<!-- Profile header (propic, info) -->
 <div class="row">
     <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
         <!--Propic-->
@@ -26,7 +26,7 @@
 <div class="row">
 
     {% if current_user.id == user.id %}
-    <!-- Lista podcast pubblicati -->
+    <!-- Lista podcast pubblicati (bootstrap card) -->
     <div class="row mt-3">
         <div class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
@@ -79,7 +79,7 @@
 
     {% endif %}
 
-    <!-- Lista podcast seguiti -->
+    <!-- Lista podcast seguiti (bootstrap card) -->
     <div class="row mt-3">
         <div class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">

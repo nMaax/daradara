@@ -3,85 +3,84 @@
 {% block content %}
 
 <!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
-<!--TODO refine this page -->
-<section class="container">
-  <div class="row d-flex justify-content-center align-items-center">
-    <div class="col-lg-12 col-xl-11">
-      <div class="card text-black rounded-4">
+<section class="row d-flex justify-content-center align-items-center">
+    <!-- New podcast -->
+    <div class="card text-black rounded-4">
         <div class="card-body p-md-5">
-          <div class="row justify-content-center">
+        <div class="row justify-content-center">
             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-              <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Crea nuovo podcast</p>
-
-              <form action="{{ url_for('post_new_podcast') }}" method="POST"  enctype="multipart/form-data" class="mx-1 mx-md-4">
+            <!-- Title -->
+            <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Crea nuovo podcast</p>
+            
+            <!-- Form -->
+            <form action="{{ url_for('post_new_podcast') }}" method="POST"  enctype="multipart/form-data" class="mx-1 mx-md-4">
 
                 <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-heading fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
+                <i class="fas fa-heading fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
                     <input type="text" name="title" id="form3Example1c" class="form-control" minlength="4" maxlength="24" placeholder="IAW: il podcast" required/>
                     <label class="form-label" for="form3Example1c">Titolo</label>
-                  </div>
+                </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-quote-right fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
+                <i class="fas fa-quote-right fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
                     <textarea type="text" name="desc" id="form3Example1c" class="form-control" minlength="16" maxlength="516" placeholder="Un semplice podcast sulle applicazioni web..." rows="4" required></textarea>
                     <label class="form-label" for="form3Example1c">Descrizione</label>
-                  </div>
+                </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
-                  <!--i class="fas fa-envelope fa-lg me-3 fa-fw"></i-->
-                  <i class="fas fa-solid fa-image fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
+                <i class="fas fa-solid fa-image fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
                     <input type="file" name="img" id="form3Example3c" class="form-control" required/>
                     <label class="form-label" for="form3Example3c">Immagine di copertina</label>
-                  </div>
+                </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-tag fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
+                <i class="fas fa-tag fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
                     <input type="text" name="category" id="form3Example4c" class="form-control" list="categories" minlength="4" maxlength="32" placeholder="Hi-Tech" required/>
                     <label class="form-label" for="form3Example4c">Categoria</label>
-                  </div>
+                </div>
                 </div>
 
+                <!-- Datalist come suggerimento alla categoria da assegnare -->
                 <datalist id="categories">
-                  <option value="News e Attualità"></option>
-                  <option value="Sport"></option>
-                  <option value="Business e Economia"></option>
-                  <option value="Hi-Tech"></option>
-                  <option value="Svago"></option>
-                  <option value="Videgiochi, anime e manga"></option>
-                  <option value="Crescita personale e finanza personale"></option>
-                  <option value="Audiolibri e Storie"></option>
-                  <option value="Politica"></option>
-                  <option value="Macchine"></option>
+                <option value="News e Attualità"></option>
+                <option value="Sport"></option>
+                <option value="Business e Economia"></option>
+                <option value="Hi-Tech"></option>
+                <option value="Svago"></option>
+                <option value="Videgiochi, anime e manga"></option>
+                <option value="Crescita personale e finanza personale"></option>
+                <option value="Audiolibri e Storie"></option>
+                <option value="Politica"></option>
+                <option value="Macchine"></option>
+                <option value="Cucina"></option>
                 </datalist>
 
                 <div class="d-flex justify-content-left mx-4 mb-3 mb-lg-4">
-                  <button type="submit" class="btn btn-primary btn-lg">Pubblica podcast</button>
+                <button type="submit" class="btn btn-primary btn-lg">Pubblica podcast</button>
                 </div>
 
-              </form>
-
-            
+            </form>
 
             </div>
             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                
+            <!-- Design image -->
+            <!--TODO metti la tua immagine-->
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
                 class="img-fluid" alt="Sample image">
 
             </div>
-          </div>
         </div>
-      </div>
+        </div>
     </div>
-  </div>
 </section>
 
 {% endblock %}

@@ -16,7 +16,6 @@ from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 # Constants
-
 SECRET_KEY = secrets.token_hex(32)
 SESSION_TYPE = 'filesystem'
 SESSION_PERMANENT = False
@@ -33,7 +32,6 @@ ISO_DATE = "%Y-%m-%d %H:%M:%S"
 COVER_FOLDER = 'static/images/covers'
 
 # App init
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -49,7 +47,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Routes
-
 @app.route('/')
 def index():
     if current_user.is_authenticated: # type: ignore
@@ -82,7 +79,7 @@ def post_login():
         else:
             login_user(User(user), remember=False, duration=LOGIN_MAX_DURATION)
         # Return a success message if the login works
-        flash(message='Login effettuato', category='success')
+        flash(message='Login effettuato con successo!', category='success')
         return redirect(url_for('index'))
     else:
         # Return an error message if the login fails
@@ -184,7 +181,7 @@ def post_signup():
             # Automatic login after registration
             login_user(User(dao.get_user_by_email(email)), remember=False)
             
-            flash("Successfully registered!", 'success')
+            flash("Utente registrato correttamente!", 'success')
             return redirect(url_for('profile', id=user_id)) # type: ignore
         except Exception as e:
             flash("Impossibile registrare il nuovo utente, qualcosa è andato storto - ERR: " + str(e), 'danger')
@@ -315,7 +312,7 @@ def episode(id_pod, id_ep):
 def new_episode(id_pod):
     podcast = dao.get_podcast(id_pod)
     if not podcast:
-        flash('Il podcast che hai provato ad eliminare non esiste', 'warnig')
+        flash('Il podcast nel quale hai cercato di creare l\'episodio non esiste', 'warning')
         return redirect(url_for('index'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash('Non sei il proprietario del podcast che hai provato ad eliminare', 'warnig')
@@ -489,13 +486,11 @@ def post_delete_comment(id_pod, id_ep):
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
 # Login manager
-
 @login_manager.user_loader
 def load_user(user_id):
     return User(dao.get_user(user_id))
 
 # Error handling routes
-
 @app.errorhandler(401)
 def unauthorized(error):
   return render_template('401.html', error=error)
@@ -508,15 +503,13 @@ def forbidden(error):
 def not_found(error):
   return render_template('404.html', error=error)
 
-# Route for testing pages
-
+# Route for testing pages (ignore this)
 @app.route('/test')
 def test():
     flash(message='Messaggio', category='dark')
     return render_template('401.html')
 
-# Route for clearing data stoared by Flask-Session and Flask-Login
-
+# Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')
 def clear_session():
     session.clear()

@@ -12,10 +12,12 @@
         <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
     </div>
     <div class="col mt-4 mt-lg-0">
+        <!-- Episode title -->
         <div class="row d-flex justify-content-center align-items-center mb-3">
             <h1 class="">{{episode.title}}</h1>
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
         </div>
+        <!-- Episode info (bootstrap card) -->
         <div class="card">
             <div class="card-body">
               <p class="card-text">{{episode.description}}</p>
@@ -34,7 +36,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal (are you sure to delete?) -->
 <div class="modal fade" id="deleteEpisodeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteEpisodeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
     <div class="modal-content">
@@ -55,7 +57,7 @@
 
 <!-- Body episodio -->
 <div class="row mt-3 mx-lg-0 mx-2">
-    <!-- Traccia audio -->
+    <!-- Traccia audio (howler) -->
     <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
     <div id="player" class="col-md-7">
         <div class="card-body row g-2">
@@ -71,7 +73,9 @@
         <div class="row d-flex justify-content-center">
             <div class="">
               <div class="card shadow-0 border bg-ligth">
+                <!-- Comment section (bootstrap card) -->
                 <div class="card-body p-4">
+                    <!-- New comment (form) -->
                     <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
                         <div class="row">
                             <textarea type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." rows="4" maxlength="300"></textarea>
@@ -84,6 +88,7 @@
 
                     {% for comment in comments %}
                     
+                    <!-- Comments (bootstrap card) -->
                     <div class="card mb-4">
                         <div class="card-body">
                         <p>{{comment.text}}</p>
