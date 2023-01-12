@@ -66,35 +66,43 @@
             </div>
         </div>
 
-        {% for episode in episodes %}
-        <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" >
-        <div class="row d-flex justify-content-center">
-            <div class="row mt-3">
-                <!-- Episodio -->
-                <div class="card mb-3 ps-0">
-                    <div class="row g-0">
-                        <!-- Titolo episodio -->
-                        <div class="col-md-4 bg-light d-flex justify-content-center align-items-center">
-                            <p class="text-center display-6 mx-2 my-4">{{ episode.title }}</p>
-                        </div>
-                        <!-- Traccia audio -->
-                        <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
-                        <div class="col-md-7">
-                            <div class="card-body row g-2">
-                                <div class="text-light p-3">
-                                    <audio controls>
-                                        <source src="audio-file.mp3" type="audio/mpeg">
-                                        Your browser does not support the audio element.
-                                    </audio>
+        {% if episodes %}
+            {% for episode in episodes %}
+            <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="row d-flex justify-content-center">
+                <div class="row mt-3">
+                    <!-- Episodio -->
+                    <div class="card mb-3 ps-0">
+                        <div class="row g-0">
+                            <!-- Titolo episodio -->
+                            <div class="col-md-4 bg-light d-flex justify-content-center align-items-center">
+                                <p class="text-center display-6 mx-2 my-4">{{ episode.title }}</p>
+                            </div>
+                            <!-- Traccia audio -->
+                            <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
+                            <div class="col-md-7">
+                                <div class="card-body row g-2">
+                                    <div class="text-light p-3">
+                                        <audio controls>
+                                            <source src="audio-file.mp3" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </a>
+            {% endfor%}
+        {% else %}
+        <!-- Nessun episodio -->
+            <div class="row card text-center mt-3">
+                <div class="card-body">
+                <h5 class="card-title">Non c'è nulla da vedere qui 👀</h5>
+                <p class="card-text">Hai creato il podcast ma non c'è ancora alcun episodio... creane uno con il bottone soprastante!</p>
+                </div>
             </div>
-        </div>
-        </a>
-        {% endfor%}
+        {% endif %}
 
     </div>
 {% endblock %}

@@ -99,18 +99,19 @@ def logout():
 @app.route('/profile/<int:id>')
 def profile(id):
     user = dao.get_user(id)
-    podcasts = dao.get_podcasts_by_user(id_user=id)
-    follows = dao.get_follows_join_podcasts(id_user=id)
     creators = dao.get_creators()
     is_creator = False
     if user and creators:
+        podcasts = dao.get_podcasts_by_user(id_user=id)
+        follows = dao.get_follows_join_podcasts(id_user=id)
+        saves = dao.get_saves_join_episodes_podcasts(id_user=id)
         for creator in creators:
             if creator['id'] == user['id']:
                 is_creator = True
     else:
         flash(message='L\'utente cercato non esiste', category='warning')
         return redirect(url_for('index'))
-    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, is_creator = is_creator)
+    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator = is_creator)
 
 #TODO Trim and capitalize in order to don't have duplicates
 @app.route('/signup')

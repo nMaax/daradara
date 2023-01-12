@@ -13,7 +13,7 @@ def get_saves_join_episodes_podcasts(id_user):
     saves = False
 
     try:
-        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ?'
+        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ?'
         cursor.execute(sql, (id_user,))
         saves = cursor.fetchall()
     except Exception as e:
@@ -84,7 +84,7 @@ def get_comments_extended(id_ep):
     comments = False
     
     try:
-        sql = 'SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ?'
+        sql = 'SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ? ORDER BY timestamp DESC'
         cursor.execute(sql, (id_ep,))
         comments = cursor.fetchall()
     except Exception as e:
