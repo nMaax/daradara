@@ -291,7 +291,7 @@ def get_podcasts():
 
 def get_podcasts_by_user(id_user):
     conn, cursor = connect()
-    #? Posso anche togliere il try e podcast = False?
+    #TODO? Posso anche togliere il try e podcast = False?
     podcast = False
 
     try:
@@ -306,7 +306,6 @@ def get_podcasts_by_user(id_user):
 
 def get_podcast_by_title(title):
     conn, cursor = connect()
-    #? Posso anche togliere il try e podcast = False?
     podcast = False
 
     try:
@@ -421,7 +420,7 @@ def new_podcast(title, description, img, id_user, tag):
         sql = 'INSERT INTO podcasts(title, desc, img, id_user) VALUES (?, ?, ?, ?)'
         cursor.execute(sql, (title, description, img, id_user))
 
-        #! Rendi questo pezzo di codice più elegante
+        #TODO! Rendi questo pezzo di codice più elegante
         id_podcast = get_last_podcast_id()
         if id_podcast:
             id_podcast += 1

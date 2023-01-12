@@ -101,7 +101,7 @@
                             <div class="col-4 col-sm-3 col-lg-2">
                                 {{comment.timestamp}}
                             </div>
-                            <!--! Controlla come usi id_pod e id_ep nei vari codici relativi a gli episodi, non fare spaghetti code!-->
+                            <!--TODO! Controlla come usi id_pod e id_ep nei vari codici relativi a gli episodi, non fare spaghetti code!-->
                             <form class="col-8 col-sm-7 col-md-6 col-lg-5 d-flex justify-content-end" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
                                 <input hidden name="timestamp" value="{{comment.timestamp}}">
                                 <button type="submit" class="col-8 col-lg-3 btn btn-danger">Elimina</button>

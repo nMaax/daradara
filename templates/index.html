@@ -5,8 +5,6 @@
 
 {% block content %} 
 <div class="row">
-    <!--? Placeholders mentre carica? -->
-    <!--? Aggiungere lo sfocato nelle immagini delle card quando l'immagine non fitta? -->
 
     <!-- Episodi salvati -->
     <aside class="col-12 col-lg-3">
@@ -39,7 +37,7 @@
             </div>
             {% endfor %}
 
-            <!--? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
+            <!--TODO? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
@@ -59,7 +57,7 @@
                 <div class="card-body">
                     
                     <p class="card-text">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</p>
-                    <a href="#" class="btn btn-primary">Cerca nuovi podcast</a>
+                    <a href="#" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
                 </div>
                 
             </div>
@@ -113,7 +111,7 @@
         </a>
         {% endfor %}
 
-        <!--? Bottone "Visualizza tutti i podcast" -->
+        <!--TODO? Bottone "Visualizza tutti i podcast" rimanda a pagina "sfoglia"? -->
 
     </main>
 </div>

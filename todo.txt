@@ -49,6 +49,7 @@
 
 --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 
+[ ] Controlla i TODO?
 [ ] Aggiungi sistema di modifica profilo
 [ ] Aggiungi bio del profilo
 [ ] Cambia attirbuto tabella episode in desc e non description
