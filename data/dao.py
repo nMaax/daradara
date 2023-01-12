@@ -84,7 +84,7 @@ def get_comments_extended(id_ep):
     comments = False
     
     try:
-        sql = "SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ?"
+        sql = 'SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ?'
         cursor.execute(sql, (id_ep,))
         comments = cursor.fetchall()
     except Exception as e:
@@ -245,7 +245,7 @@ def get_podcasts_onfire(number_of_podcasts=5):
     podcast = []
 
     try:
-        sql = "SELECT podcasts.id, COUNT(follows.id_user) AS 'n_follows', podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC"
+        sql = 'SELECT podcasts.id, COUNT(follows.id_user) AS "n_follows", podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC'
         cursor.execute(sql)
         podcast = cursor.fetchall()
     except Exception as e:
@@ -444,16 +444,10 @@ def update_episode_field(id, field, value):
     success = True
 
     try:
-        if field == "title":
-            sql = 'UPDATE episodes SET title = ? WHERE id = ?'
-        elif field == "description":
-            sql = 'UPDATE episodes SET description = ? WHERE id = ?'
-        elif field == "audio":
-            sql = 'UPDATE episodes SET audio = ? WHERE id = ?'
-        elif field == "timestamp":
-            sql = 'UPDATE episodes SET timestamp = ? WHERE id = ?'
+        if field == 'title' or 'description' or 'audio' or 'timestamp':
+            sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
         else:
-            raise ValueError("Invalid field name")
+            raise ValueError('Invalid field name')
 
         cursor.execute(sql, (value, id))
         conn.commit()
@@ -478,14 +472,10 @@ def update_podcast_field(id, field, value):
     success = True
 
     try:
-        if field == "title":
-            sql = 'UPDATE podcasts SET title = ? WHERE id = ?'
-        elif field == "desc":
-            sql = 'UPDATE podcasts SET desc = ? WHERE id = ?'
-        elif field == "img":
-            sql = 'UPDATE podcasts SET img = ? WHERE id = ?'
+        if field == 'title' or 'desc' or 'img':
+            sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
         else:
-            raise ValueError("Invalid field name")
+            raise ValueError('Invalid field name')
 
         cursor.execute(sql, (value, id))
         conn.commit()
@@ -556,7 +546,7 @@ def delete_episode(id):
         
         success &= delete_comment(id_ep=id)
         if not success:
-            raise dataManipulationError("Failed to delete ...")
+            raise dataManipulationError('Failed to delete comment')
 
         sql = 'DELETE FROM episodes WHERE id = ?'
         cursor.execute(sql, (id,))
@@ -583,7 +573,7 @@ def delete_podcast(id):
             success &= delete_episode(id_ep)
 
         if not success:
-            raise dataManipulationError("Failed to delete ...")
+            raise dataManipulationError('Failed to delete podcast')
 
         # ON DELETE
         sql = 'DELETE FROM podcasts WHERE id = ?'

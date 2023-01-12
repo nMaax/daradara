@@ -332,12 +332,28 @@ def post_delete_comment(id_pod, id_ep):
 def load_user(user_id):
     return User(dao.get_user(user_id))
 
-# Other routes
+# Error handling routes
+
+@app.errorhandler(401)
+def unauthorized(error):
+  return render_template('401.html', error=error)
+
+@app.errorhandler(403)
+def forbidden(error):
+  return render_template('403.html', error=error)
+
+@app.errorhandler(404)
+def not_found(error):
+  return render_template('404.html', error=error)
+
+# Route for testing pages
 
 @app.route('/test')
 def test():
     flash(message='Messaggio', category='dark')
-    return render_template('test.html')
+    return render_template('401.html')
+
+# Route for clearing data stoared by Flask-Session and Flask-Login
 
 @app.route('/clear_session')
 def clear_session():
@@ -348,9 +364,3 @@ def clear_session():
 def clear_login():
     logout_user()
     return 'Login data cleared!'
-
-@app.errorhandler(404)
-def page_not_found(error):
-  return render_template('404.html', error=error)
-
-# Functions

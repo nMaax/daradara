@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <style>
+      body {
+        background-image: url('https://i.kym-cdn.com/entries/icons/facebook/000/021/154/image.jpg');
+        background-size: cover;
+        /*background-position: center;*/
+        background-repeat: no-repeat;
+      }
+      .error-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        font-family: 'Helvetica', 'Sans Serif';
+        text-align: center;
+        color: white;
+        border: solid white;
+        padding: 30px 5px 30px 5px;
+      }
+      .btn-back {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        font-family: 'Helvetica', 'Sans Serif';
+        text-align: center;
+        color: white;
+        border: solid white;
+        padding: 10px 5px 10px 5px;
+      }
+      @media (max-width: 768px) {
+        .error-text {
+          font-size: 36px;
+        }
+        .btn-back {
+          font-size: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-text">Error 404</div>
+    <div class="btn btn-back" id="back">Go back</div>
+  </body>
+  <script>
+
+    const button = document.querySelector('#back');
+
+    button.addEventListener('click', event => {
+      window.history.back();
+    });
+
+  </script>
+</html>
