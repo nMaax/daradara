@@ -356,8 +356,14 @@ def post_new_episode(id_pod):
     # Checking the date input, if for any reason the user sended something that python can't recognize as a date it will default to the now timestamp
     try:
         py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
+        min_date = datetime(2022, 1, 1)
+
+        if py_date.date() < min_date.date():
+            raise ValueError("The date is before the date lower bound")
+
         timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
     except Exception as e:
+        flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno", 'info')
         timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
     # Check if all required fields are filled out and if the user is logged in
