@@ -1,6 +1,8 @@
 # Vanilla Python libraries
 import os, re, secrets, sqlite3
 from datetime import datetime, date, timedelta
+from dateutil import parser as date_parser
+
 
 # Personal libraries
 import data.dao as dao
@@ -27,7 +29,9 @@ LOGIN_MSG_CATEGORY = 'warning'
 
 LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60minuti
 
-ISO_DATE = "%Y-%m-%d %H:%M:%S"
+DEFAULT_HOUR = "00:00:01"
+ISO_DATE = "%Y-%m-%d"
+ISO_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
 
 COVER_FOLDER = 'static/images/covers'
 
@@ -229,7 +233,7 @@ def post_new_podcast():
     check = True
     if not title or not desc or not img or not category:
         check = False
-    elif len(title) < 4 or len(title) > 24:
+    elif len(title) < 4 or len(title) > 32:
         check = False
     elif dao.get_podcast_by_title(title):
         check = False
@@ -284,7 +288,7 @@ def post_delete_podcast(id):
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
         return render_template('index')
-    elif podcast['id_user'] != current_user.is_authenticated: # type: ignore
+    elif podcast['id_user'] != current_user.id: # type: ignore
         flash(message='Non sei il proprietario del podcast', category='warning')
         return render_template('podcast', id=id)
 
@@ -315,8 +319,8 @@ def new_episode(id_pod):
         flash('Il podcast nel quale hai cercato di creare l\'episodio non esiste', 'warning')
         return redirect(url_for('index'))
     elif podcast['id_user'] != current_user.id: # type: ignore
-        flash('Non sei il proprietario del podcast che hai provato ad eliminare', 'warnig')
-        return redirect(url_for('index'))
+        flash('Non sei il proprietario del podcast dove hai provato a creare un nuovo episodio', 'warning')
+        return redirect(url_for('podcast', id=id_pod))
     else:
         return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
 
@@ -328,21 +332,19 @@ def post_new_episode(id_pod):
     title = request.form['title']
     desc = request.form['desc']
     audio = request.files['audio']
+    date = request.form['date']
 
     # Cleaning data
     title = title.strip()
     desc = desc.strip()
     
-    # Generating timestamp
-    timestamp = datetime.now().strftime(ISO_DATE)
-
     #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
     #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
     # Checking that the data is valid
     check = True
     if not title or not desc or not audio:
         check = False
-    elif len(title) < 4 or len(title) > 24:
+    elif len(title) < 4 or len(title) > 32:
         check = False
     elif dao.get_episode_by_title(title=title, id_pod=id_pod):
         check = False
@@ -351,12 +353,16 @@ def post_new_episode(id_pod):
     elif not is_audio(audio.filename): # type: ignore
         check = False
 
+    # Checking the date input, if for any reason the user sended something that python can't recognize as a date it will default to the now timestamp
+    try:
+        py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
+        timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
+    except Exception as e:
+        timestamp = datetime.now().strftime(ISO_TIMESTAMP)
+
     # Check if all required fields are filled out and if the user is logged in
     if not check:
         flash("Impossibile aggiugere l'episodio, i dati iseriti sono mancanti o erronei", 'warning')
-        return redirect(url_for('new_episode', id_pod=id_pod))
-    elif not current_user.is_authenticated: # type: ignore
-        flash("Fare il login prima di aggiungere l'episodio", 'warning')
         return redirect(url_for('new_episode', id_pod=id_pod))
     else:
 
@@ -400,7 +406,7 @@ def post_delete_episode(id_pod, id_ep):
     if not episode:
         flash('L\'episodio che hai richiesto di eliminare non esiste', category='warning')
         return redirect(url_for('index'))
-    elif episode['id_user'] != current_user.is_authenticated: # type: ignore
+    elif episode['id_user'] != current_user.id: # type: ignore
         flash('Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     elif episode['id_podcast'] == id_pod:
@@ -420,7 +426,7 @@ def post_new_comment(id_pod, id_ep):
 
     # Retriving data
     text = request.form['text']
-    timestamp = datetime.now().strftime(ISO_DATE)
+    timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
     # Cleaning data
     text = text.strip()
