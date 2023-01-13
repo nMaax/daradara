@@ -151,7 +151,7 @@ def post_signup():
         check = False
     elif len(password) < 8: #TODO! Controlla che vengano inseriti tutti i caratteri speciali
         check = False
-    elif not is_image(propic.filename):
+    elif not is_image(secure_filename(propic.filename)): # type: ignore
         check = False
 
     # If the data isn't correct say it, otherwhise continue 
@@ -241,7 +241,7 @@ def post_new_podcast():
         check = False
     elif len(category) < 4 or len(category) > 32:
         check = False
-    elif not is_static_image(img.filename):
+    elif not is_static_image(secure_filename(img.filename)): # type: ignore
         check = False
 
     # Check if all form fields are filled out and that each value is not violating the rules
@@ -300,6 +300,123 @@ def post_delete_podcast(id):
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
     return redirect(url_for('index'))
 
+@app.route('/podcast/<int:id>/edit/elab', methods=['POST'])
+@login_required
+def post_edit_podcast(id):
+
+    # Retriving data 
+    title = request.form['title']
+    desc = request.form['desc']
+    category = request.form['category']
+
+    # Cleaning data
+    title = title.strip()
+    desc = desc.strip()
+    category = category.strip()
+    category = category.lower()
+    
+    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    check = True
+    if not title or not desc or not category:
+        check = False
+    elif len(title) < 4 or len(title) > 32:
+        check = False
+    elif len(desc)<16 or len(desc) > 516:
+        check = False
+    elif len(category) < 4 or len(category) > 32:
+        check = False
+
+    # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
+    podcast = dao.get_podcast_with_tags(id)
+    if not podcast:
+        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
+        return redirect(url_for('index'))
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash(message='Non sei il proprietario del podcast', category='warning')
+        return redirect(url_for('podcast', id=id))
+    elif not check:
+        flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
+        return redirect(url_for('podcast', id=id))
+
+    try:
+
+        if podcast['title'] == title:
+            title = None
+        if podcast['desc'] == desc:
+            desc = None
+        if podcast['tag'] == category:
+            category = None
+
+        if dao.get_podcast_by_title(title):
+            raise dataManipulationError('A podcast with that title already exists')
+
+        # Otherwise edit the podcast
+        if title or desc:
+            pod_result = dao.update_podcast(id=id, title=title, desc=desc)
+        else:
+            pod_result = True
+
+        if category:
+            tag_result = dao.update_tag(id_pod=id, tag=category)
+        else:
+            tag_result = True
+
+        if not pod_result:
+            raise dataManipulationError('Unable to update title or description')
+        elif not tag_result:
+            raise dataManipulationError('Unable to update category')
+
+        flash(message='Podcast modificato correttamente', category='success')
+        return redirect(url_for('podcast', id=id))
+            
+    except Exception as e:
+        flash(message='C\'è stato un errore durante la modifica del podcast - ERR: '+str(e), category='danger')
+        return redirect(url_for('podcast', id=id))
+
+@app.route('/podcast/<int:id>/img/edit/elab', methods=['POST'])
+def post_update_podcast_img(id):
+
+    img = request.files['img']
+
+    check = True
+    if not img:
+        check = False
+    elif not is_static_image(secure_filename(img.filename)): # type: ignore
+        check = False
+
+    podcast = dao.get_podcast(id)
+
+    if not check:
+        flash("Impossibile modificare l'immagine, il file fornito non è compatibile", 'warning')
+    elif not podcast:
+        flash("Impossibile modificare l'immagine, il podcast non esiste", 'warning')
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash("Impossibile modificare l'immagine, non sei il proprietario del podcast", 'warning')
+    else:
+        try:
+
+            filename = secure_filename(img.filename) # type: ignore
+            imgext = '.' + filename.split('.')[-1] # type: ignore
+            imgname = str(id) + imgext
+
+            # Save the image (only if the podcast has been saved)
+            save_directory = 'static/uploads/images/covers/'
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            img.save(save_directory+imgname) # type: ignore
+
+            result = dao.update_podcast(id, img=imgext)
+
+            if not result:
+                raise dataManipulationError('Unable to update the image')
+
+            flash('Immagine modificata correttamente', 'success')
+
+        except Exception as e:
+            flash("Impossibile aggiornare l'immagine, qualcosa è andato storto - ERR: " + str(e), 'danger')
+
+    return redirect(url_for('podcast', id=id))
+
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
@@ -354,7 +471,7 @@ def post_new_episode(id_pod):
         check = False
     elif len(desc) < 16 or len(desc) > 516:
         check = False
-    elif not is_audio(audio.filename): # type: ignore
+    elif not is_audio(secure_filename(audio.filename)): # type: ignore
         check = False
 
     # Checking the date input, if for any reason the user sended something that python can't recognize as a date it will default to the now timestamp
@@ -433,6 +550,66 @@ def post_delete_episode(id_pod, id_ep):
         else:
             flash(message='C\'è stato un errore durante l\'eliminazione dell\'episodio, riporvare', category='danger')
             return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/edit/elab', methods=['POST'])
+@login_required
+def post_edit_episode(id_pod, id_ep):
+
+    # Retriving data 
+    title = request.form['title']
+    desc = request.form['desc']
+
+    # Cleaning data
+    title = title.strip()
+    desc = desc.strip()
+    
+    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    check = True
+    if not title or not desc:
+        check = False
+    elif len(title) < 4 or len(title) > 32:
+        check = False
+    elif len(desc)<16 or len(desc) > 516:
+        check = False
+
+    # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
+    episode = dao.get_episode(id_ep)
+    podcast = dao.get_podcast(id_pod)
+    if not episode:
+        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
+        return redirect(url_for('index'))
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash(message='Non sei il proprietario del podcast', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    elif episode['id_podcast'] != id_pod or not podcast:
+        flash(message='Podcast e episodio non corrispondono, oppure non esistono', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    elif not check:
+        flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+
+    try:
+
+        if episode['title'] == title:
+            title = None
+        if episode['description'] == desc:
+            desc = None
+
+        # Otherwise edit the podcast
+        if title or desc:
+            ep_result = dao.update_episode(id=id_ep, title=title, desc=desc)
+        else:
+            ep_result = True
+
+        if not ep_result:
+            raise dataManipulationError('Unable to update title or description')
+
+        flash(message='Episodio modificato correttamente', category='success')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+            
+    except Exception as e:
+        flash(message='C\'è stato un errore durante la modifica dell\'episodio - ERR: '+str(e), category='danger')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/new/elab', methods=['POST'])
 def post_new_comment(id_pod, id_ep):
@@ -535,14 +712,11 @@ def post_edit_comment(id_pod, id_ep):
         flash("Impossibile modificare il commento, i dati iseriti sono mancanti o erronei", 'warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     elif not episode or not podcast or episode['id_podcast'] != id_pod:
-        flash("Non puoi eliminare commenti da episodi che non esistono", category='warning')
+        flash("Non puoi modificare commenti da episodi che non esistono", category='warning')
         return redirect(url_for('index'))
     elif not comment:
-        flash("Non puoi eliminare questo commento", category='warning')
+        flash("Non puoi modificare questo commento", category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
-    #elif id_user != current_user.id: # type: ignore
-    #    flash("Non puoi eliminare i commenti di altri utenti", category='warning')
-    #    return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     else:
 
         result = dao.update_comment(id_user=id_user, id_ep=id_ep, new_text=text, timestamp=timestamp) # type: ignore
@@ -573,7 +747,7 @@ def not_found(error):
 @app.route('/test')
 def test():
     flash(message='Messaggio', category='dark')
-    return render_template('401.html')
+    return render_template('test.html')
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')

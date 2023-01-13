@@ -9,15 +9,59 @@
     <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
     <div class="row">
         <!-- Podcast image -->
-        <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
-            <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="card-img img-fluid p-1 p-lg-2 podcast-img">
+        <div class="col-12 col-lg-4 row d-flex justify-content-center align-items-center">
+            <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="col-12  img-fluid p-1 p-lg-2 podcast-img">
+            <!-- Button trigger modal -->
+            <a type="button" class="text-center" data-bs-toggle="modal" data-bs-target="#editPodcastImg">Clicca per modificare la copertina<i class="fa-solid fa-pen-to-square ms-3"></i></a>
+
         </div>
+
+        <!-- Modal (edit podcast image) -->
+        <div class="modal fade" id="editPodcastImg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modifica immagine podcast</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="d-flex flex-column" action="{{url_for('post_update_podcast_img', id=id)}}" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="img" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"    />
+                        <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        
         <!-- Info podcast (bootstrap card) -->
         <div class="col">
             
-            <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-left align-content-center display-3">
-                {{podcast.title}}
+            <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-between align-content-center display-3">
+                <p class="col-8 text-wrap">{{podcast.title}}</p>
+                <a type="button" class="col-1 fa-solid fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editPodcast"></a>
             </div>
+
+            <!-- Modal (edit podcast) -->
+            <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modifica informazioni podcast</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST">
+                            <input type="text" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"    />
+                            <textarea type="text" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
+                            <input type="text" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{category.tag|capitalize}}" />
+                            <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+            
             <div class="card">
                 <div class="card-body">
                   <p class="card-text">{{podcast.desc}}</p>

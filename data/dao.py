@@ -254,6 +254,20 @@ def get_last_id_user():
     close(conn, cursor)    
     return id
 
+def get_podcast_with_tags(id):
+    conn, cursor = connect()
+    podcast = False
+
+    try:
+        sql = 'SELECT * FROM podcasts, categories WHERE podcasts.id = categories.id_podcast AND podcasts.id = ?'
+        cursor.execute(sql, (id,))
+        podcast = cursor.fetchone()
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcast
+
 def get_podcast_extended(id_podcast):
     conn, cursor = connect()
     podcast = False
@@ -457,6 +471,22 @@ def new_user(email, password, name, surname, propic):
 
 # UPDATE queries
 
+def update_tag(id_pod, tag):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'UPDATE categories SET tag = ? WHERE id_podcast = ?'
+        cursor.execute(sql, (tag, id_pod))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
 def update_comment(id_user, id_ep, new_text, timestamp):
     conn, cursor = connect()
     success = True
@@ -474,21 +504,23 @@ def update_comment(id_user, id_ep, new_text, timestamp):
     return success
 
 def update_episode(id, title=None, desc=None, audio=None, timestamp=None):
+    success = False
     if title is not None:
-        update_episode_field(id, 'title', title)
+        success = update_episode_field(id, 'title', title)
     if desc is not None:
-        update_episode_field(id, 'description', desc)
+        success = update_episode_field(id, 'description', desc)
     if audio is not None:
-        update_episode_field(id, 'audio', audio)
+        success = update_episode_field(id, 'audio', audio)
     if timestamp is not None:
-        update_episode_field(id, 'timestamp', timestamp)
+        success = update_episode_field(id, 'timestamp', timestamp)
+    return success
 
 def update_episode_field(id, field, value):
     conn, cursor = connect()
     success = True
 
     try:
-        if field == 'title' or 'description' or 'audio' or 'timestamp':
+        if field == 'title' or field == 'description' or field == 'audio' or field == 'timestamp':
             sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
         else:
             raise ValueError('Invalid field name')
@@ -504,20 +536,22 @@ def update_episode_field(id, field, value):
     return success
 
 def update_podcast(id, title=None, desc=None, img=None):
+    success = False
     if title is not None:
-        update_podcast_field(id, 'title', title)
+        success = update_podcast_field(id, 'title', title)
     if desc is not None:
-        update_podcast_field(id, 'desc', desc)
+        success = update_podcast_field(id, 'desc', desc)
     if img is not None:
-        update_podcast_field(id, 'img', img)
+        success = update_podcast_field(id, 'img', img)
+    return success
 
 def update_podcast_field(id, field, value):
     conn, cursor = connect()
     success = True
 
     try:
-        if field == 'title' or 'desc' or 'img':
-            sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
+        if field == 'title' or field == 'desc' or field == 'img':
+            sql = 'UPDATE podcasts SET '+ field +' = ? WHERE id = ?'
         else:
             raise ValueError('Invalid field name')
 

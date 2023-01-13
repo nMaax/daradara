@@ -7,16 +7,39 @@
 {% block content %}
 
 <!-- Header episodio -->
+
 <div class="row">   
+    
     <div class="col-12 col-lg-2 d-flex justify-content-center">
         <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
     </div>
     <div class="col mt-4 mt-lg-0">
+        
         <!-- Episode title -->
         <div class="row d-flex justify-content-center align-items-center mb-3">
-            <h1 class="">{{episode.title}}</h1>
+            <h1 class="">{{episode.title}}<a type="button" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a></h1>
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
         </div>
+
+        <!-- Modal (edit episode) -->
+        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modifica informazioni episodio</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="d-flex flex-column" action="{{url_for('post_edit_episode', id_pod=id_pod, id_ep=id)}}" method="POST">
+                        <input type="text" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{episode.title}}"/>
+                        <textarea type="text" name="desc" class="form-control mt-2" rows="16" minlength="16" maxlength="516">{{episode.description}}</textarea>
+                        <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
         <!-- Episode info (bootstrap card) -->
         <div class="card">
             <div class="card-body">
@@ -64,7 +87,7 @@
             <div class="text-light p-3">
                 <audio controls>
                     <source src="audio-file.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
+                    Il tuo browser non supporta l'elemento audio.
                 </audio>
             </div>
         </div>
@@ -120,10 +143,8 @@
                             </form>
                         </div>
                     </div>
-
                     
-                    
-                    <!-- Modal -->
+                    <!-- Modal (comment edit) -->
                     <div class="modal fade" id="editComment-{{i}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
@@ -135,7 +156,6 @@
                                 <form class="d-flex flex-column" action="{{url_for('post_edit_comment', id_pod=id_pod, id_ep=id)}}" method="POST">
                                     <textarea type="text" name="new-text" class="form-control" rows="8" maxlength="300">{{comments[i].text}}</textarea>
                                     <input hidden name="timestamp" value="{{comments[i].timestamp}}">
-                                    <!--input hidden name="id_user" value="{{comments[i].id_user}}"-->
                                     <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                                 </form>
                             </div>
