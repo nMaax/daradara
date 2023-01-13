@@ -26,9 +26,9 @@
 [X] Controlla dati form in ricezione per nuovo episodio
 [X] Controlla dati form in ricezione per nuovo commento
 
-[ ] Aggiungi sistema di modifica podcast
-[ ] Aggiungi sistema di modifica episodio
-[ ] Aggiungi sistema di modifica commenti
+[X] Aggiungi sistema di modifica podcast
+[X] Aggiungi sistema di modifica episodio
+[X] Aggiungi sistema di modifica commenti
 
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
 
@@ -36,6 +36,8 @@
 [X] Aggiungi upload multimediale
 
 [X] Sposta CSS e JS in file a parte
+
+[ ] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Commenta ogni statemnt jinja (almeno i {%%})

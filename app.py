@@ -292,9 +292,13 @@ def post_delete_podcast(id):
         flash(message='Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('podcast', id=id))
 
-    # Otherwise delete the podcast
+    # Otherwise delete the podcast (and its image)
     result = dao.delete_podcast(id)
     if result:
+        #path = os.path.join(app.root_path, url_for('static', filename='uploads/images/covers/'+str(podcast['id'])+podcast['img']))
+        file_path = 'static/uploads/images/covers/'+str(podcast['id'])+podcast['img']
+        abs_path = os.path.abspath(file_path)
+        os.remove(abs_path)
         flash(message='Podcast eliminato correttamente', category='success')
     else:
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
@@ -532,19 +536,25 @@ def post_new_episode(id_pod):
 @login_required
 def post_delete_episode(id_pod, id_ep):
     episode = dao.get_episode(id_ep)
+    podcast = dao.get_podcast(id_pod)
 
-    if not episode:
+    if not episode or not podcast:
         flash('L\'episodio che hai richiesto di eliminare non esiste', category='warning')
         return redirect(url_for('index'))
-    elif episode['id_user'] != current_user.id: # type: ignore
-        flash('Non sei il proprietario del podcast', category='warning')
-        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
-    elif episode['id_podcast'] == id_pod:
+    elif episode['id_podcast'] != id_pod:
         flash('L\'episodio e il podcast nell\'url non corrispondono', category='warning')
         return redirect(url_for('index'))
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash('Non sei il proprietario del podcast', category='warning')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     else:
         result = dao.delete_episode(id_ep)
         if result:
+            #TODO! in cascata devi eliminare anche tutti gli audio
+            #path = os.path.join(app.root_path, url_for('static', filename='uploads/audios/'+str(episode['id'])+episode['img']))
+            file_path = 'static/uploads/audios/'+str(episode['id'])+episode['audio']
+            abs_path = os.path.abspath(file_path)
+            os.remove(abs_path)
             flash(message='Episodio eliminato correttamente', category='success')
             return redirect(url_for('podcast', id=id_pod))
         else:
@@ -656,7 +666,6 @@ def post_new_comment(id_pod, id_ep):
             flash(message='C\'è stato un errore durante l\'aggiunta del commento, riprovare', category='danger')
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
-#TODO! rivedere la gestione dei commenti, con il fatto che non compare il form di submit se non sei l'owner ci sta che non sia necessario controllare nulla
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/delete/elab', methods=['POST'])
 @login_required
 def post_delete_comment(id_pod, id_ep):
