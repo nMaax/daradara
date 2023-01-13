@@ -84,7 +84,7 @@ def get_comments_extended(id_ep):
     comments = False
     
     try:
-        sql = 'SELECT comments.id_user, text, timestamp, name, surname, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ? ORDER BY timestamp DESC'
+        sql = 'SELECT comments.id_user, text, timestamp, name, surname, email, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ? ORDER BY timestamp DESC'
         cursor.execute(sql, (id_ep,))
         comments = cursor.fetchall()
     except Exception as e:
@@ -456,6 +456,22 @@ def new_user(email, password, name, surname, propic):
     return success
 
 # UPDATE queries
+
+def update_comment(id_user, id_ep, new_text, timestamp):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'UPDATE comments SET text = ? WHERE id_user = ? AND id_ep = ? AND timestamp = ?'
+        cursor.execute(sql, (new_text, id_user, id_ep, timestamp))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
 
 def update_episode(id, title=None, desc=None, audio=None, timestamp=None):
     if title is not None:

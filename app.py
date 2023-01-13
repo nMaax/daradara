@@ -134,9 +134,9 @@ def post_signup():
     
     # Clean the data 
     name = name.strip()
-    name = name.capitalize()
+    name = name.title()
     surname = surname.strip()
-    surname = surname.capitalize()
+    surname = surname.title()
     email = email.strip()
 
     # Check if all form fields are filled out and that each value is not violating the rules
@@ -287,10 +287,10 @@ def post_delete_podcast(id):
     podcast = dao.get_podcast(id)
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
-        return render_template('index')
+        return redirect(url_for('index'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash(message='Non sei il proprietario del podcast', category='warning')
-        return render_template('podcast', id=id)
+        return redirect(url_for('podcast', id=id))
 
     # Otherwise delete the podcast
     result = dao.delete_podcast(id)
@@ -306,7 +306,11 @@ def episode(id_pod, id_ep):
     if episode and episode['id_podcast'] == id_pod:
         podcast = dao.get_podcast(id_pod)
         comments = dao.get_comments_extended(id_ep)
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, comments=comments)
+        if comments:
+            n_comments = len(comments)
+        else:
+            n_comments = 0
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, comments=comments, n_comments = n_comments)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(url_for('index'))
@@ -319,7 +323,7 @@ def new_episode(id_pod):
         flash('Il podcast nel quale hai cercato di creare l\'episodio non esiste', 'warning')
         return redirect(url_for('index'))
     elif podcast['id_user'] != current_user.id: # type: ignore
-        flash('Non sei il proprietario del podcast dove hai provato a creare un nuovo episodio', 'warning')
+        flash('Non sei il proprietario del podcast', 'warning')
         return redirect(url_for('podcast', id=id_pod))
     else:
         return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
@@ -357,13 +361,16 @@ def post_new_episode(id_pod):
     try:
         py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
         min_date = datetime(2022, 1, 1)
+        max_date = datetime.now()
 
         if py_date.date() < min_date.date():
+            raise ValueError("The date is before the date lower bound")
+        elif py_date.date() > max_date.date(): #TODO! Controlla con js che la data non vada oltre oggi
             raise ValueError("The date is before the date lower bound")
 
         timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
     except Exception as e:
-        flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno", 'info')
+        flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
         timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
     # Check if all required fields are filled out and if the user is logged in
@@ -454,7 +461,6 @@ def post_new_comment(id_pod, id_ep):
         checkExist = False
     elif episode['id_podcast'] != id_pod:
         checkExist = False
-
     
     if not check:
         flash("Impossibile aggiugere il commento, i dati iseriti sono mancanti o erronei", 'warning')
@@ -477,11 +483,12 @@ def post_new_comment(id_pod, id_ep):
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/delete/elab', methods=['POST'])
 @login_required
 def post_delete_comment(id_pod, id_ep):
+
+    timestamp = request.form['timestamp']
     
     episode = dao.get_episode(id_ep)
     podcast = dao.get_podcast(id_pod)
 
-    timestamp = request.form['timestamp']
     comment = False
     if timestamp:
         comment = dao.get_comment(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
@@ -490,11 +497,58 @@ def post_delete_comment(id_pod, id_ep):
         flash("Non puoi eliminare commenti da episodi che non esistono", category='warning')
         return redirect(url_for('index'))
     elif not comment:
-        flash("Non puoi eliminare commenti che non esitono oppure non ne sei il proprietario", category='warning')
+        flash("Non puoi eliminare questo commento", category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     else:
         dao.delete_comment_by_PK(id_ep=id_ep, id_user=current_user.id, timestamp=timestamp) # type: ignore
         flash(message='Commento eliminato correttamente', category='success')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/edit/elab', methods=['POST'])
+@login_required
+def post_edit_comment(id_pod, id_ep):
+
+    # Retriving data
+    text = request.form['new-text']
+    id_user = current_user.id # type: ignore
+    timestamp = request.form['timestamp']
+
+    # Cleaning data
+    text = text.strip()
+
+    # Checking that the data is valid
+    check = True
+    if not text:
+        check = False
+    elif len(text) > 300:
+        check = False
+
+    # Retriving episode and its podcast where to put the comment
+    podcast = dao.get_podcast(id_pod)
+    episode = dao.get_episode(id_ep)
+
+    comment = False
+    if timestamp:
+        comment = dao.get_comment(id_ep=id_ep, id_user=id_user, timestamp=timestamp) # type: ignore
+
+    if not check:
+        flash("Impossibile modificare il commento, i dati iseriti sono mancanti o erronei", 'warning')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    elif not episode or not podcast or episode['id_podcast'] != id_pod:
+        flash("Non puoi eliminare commenti da episodi che non esistono", category='warning')
+        return redirect(url_for('index'))
+    elif not comment:
+        flash("Non puoi eliminare questo commento", category='warning')
+        return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    #elif id_user != current_user.id: # type: ignore
+    #    flash("Non puoi eliminare i commenti di altri utenti", category='warning')
+    #    return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
+    else:
+
+        result = dao.update_comment(id_user=id_user, id_ep=id_ep, new_text=text, timestamp=timestamp) # type: ignore
+        if not result:
+            flash(message='C\'è stato un errore durante la modifica del commento, riprovare', category='danger')
+
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
 # Login manager

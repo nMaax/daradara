@@ -61,16 +61,15 @@
 
                         {% else %}
                             <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
-                            <p class="card-text"><small class="text-muted">Diventa un podcaster per pubblicare il tuo primo podcast!</small></p>
-                        {% endif %}
-
-                            
+                            <p class="card-text">Diventa un podcaster per pubblicare il tuo primo podcast!</p>
+                            <small class="text-muted">Premi il bottone a destra 👉</small>
+                        {% endif %}                            
                         
                     </div>
                 </div>
                 <!-- Card footer -->
                 <a href="{{ url_for('new_podcast') }}" class="col-12 col-lg-1 btn btn-lg btn-light border-start rounded-0-start border-dark-start bg-light d-flex flex-lg-column justify-content-center align-items-center" role="button">
-                    <div>Nuovo podcast</div>
+                    <div>{% if podcasts %}Nuovo podcast{% else %}Diventa podcaster!{% endif %}</div>
                     <i class="fa-solid fa-microphone mt-0 ms-3 mt-lg-3 ms-lg-0" style="font-size: x-large;"></i>
                 </a>
             </div>

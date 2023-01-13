@@ -86,33 +86,63 @@
                         </div>
                     </form>
 
-                    {% for comment in comments %}
+                    {% for i in range(n_comments) %}
                     
                     <!-- Comments (bootstrap card) -->
                     <div class="card mb-4">
                         <div class="card-body">
-                        <p>{{comment.text}}</p>
-            
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comment.id_user, comment.propic))}}" alt="avatar" width="25"
-                                    height="25"/>
-                                <p class="small mb-0 ms-2">{{comment.name}} {{comment.surname}}</p>
+                            <p>{{comments[i].text}}</p>
+                
+                            <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="avatar" width="25"
+                                        height="25"/>
+                                    <p class="small mb-0 ms-2">{{comments[i].name}} {{comments[i].surname}}</p>
+                                </div>
+                                <p class="mt-2 m-0"><small class="text-muted">{{comments[i].timestamp}}</small></p>
                             </div>
-                        </div>
+
+                            <!--p class="mt-2 m-0"><small class="text-muted">{{comments[i].timestamp}}</small></p-->
                         </div>
                         <div class="card-footer d-flex justify-content-between">
                             <!--TODO Converti in daysago-->
                             <div class="col-4 col-sm-3 col-lg-2">
-                                {{comment.timestamp}}
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-dark btn-outline-light" data-bs-toggle="modal" data-bs-target="#editComment-{{i}}">
+                                    Modifica
+                                </button>
                             </div>
+                            
                             <!--TODO! Controlla come usi id_pod e id_ep nei vari codici relativi a gli episodi, non fare spaghetti code!-->
                             <form class="col-8 col-sm-7 col-md-6 col-lg-5 d-flex justify-content-end" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
-                                <input hidden name="timestamp" value="{{comment.timestamp}}">
+                                <input hidden name="timestamp" value="{{comments[i].timestamp}}">
                                 <button type="submit" class="col-8 col-lg-3 btn btn-danger">Elimina</button>
                             </form>
                         </div>
                     </div>
+
+                    
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="editComment-{{i}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Nuovo commento</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="d-flex flex-column" action="{{url_for('post_edit_comment', id_pod=id_pod, id_ep=id)}}" method="POST">
+                                    <textarea type="text" name="new-text" class="form-control" rows="8" maxlength="300">{{comments[i].text}}</textarea>
+                                    <input hidden name="timestamp" value="{{comments[i].timestamp}}">
+                                    <!--input hidden name="id_user" value="{{comments[i].id_user}}"-->
+                                    <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+  
 
                     {% endfor %}
           
