@@ -75,9 +75,8 @@ def post_login():
     user = dao.get_user_by_email(email)
 
     # Check if the user exists and the password is correct
-    if user and check_password_hash(user['password'], password): #TODO check_password_hash(user.get('password'), password):
+    if user and check_password_hash(user['password'], password):
         # Login the user using Flask-Login's login_user function
-        #TODO Imposta remeber in base alla checkbox remember me, metti duration a un valore più normale, non per il debug
         if remember:
             login_user(User(user), remember=True, duration=LOGIN_MAX_DURATION)
         else:
@@ -113,9 +112,7 @@ def profile(id):
     else:
         flash(message='L\'utente cercato non esiste', category='warning')
         return redirect(url_for('index'))
-    
 
-#TODO Trim and capitalize in order to don't have duplicates
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
@@ -123,7 +120,7 @@ def signup():
 @app.route('/signup/elab', methods=['POST'])
 def post_signup():
 
-    #TODO! con js controlla che le lunghezze dei campi siano giuste senza gli whitespace
+    #TODO! con js controlla che le lunghezze dei campi siano giuste senza gli whitespace, controlla anche che la email non sia già registrata
     # Retrive data from the form
     name = request.form['name']
     surname = request.form['surname']
@@ -148,6 +145,8 @@ def post_signup():
     elif len(surname) < 2 or len(surname) > 32:
         check = False
     elif len(email) < 6 or not email.__contains__('@') or not email.__contains__('.'):
+        check = False
+    elif dao.get_user_by_email(email):
         check = False
     elif len(password) < 8: #TODO! Controlla che vengano inseriti tutti i caratteri speciali
         check = False
@@ -212,12 +211,12 @@ def new_podcast():
     else:
         return render_template('new-podcast.html')
 
-#TODO Trim and capitalize in order to don't have duplicates
 @app.route('/podcast/new/elab', methods=['POST'])
 @login_required
 def post_new_podcast():
 
     # Retriving data 
+    #TODO! Check, via javascript, che il titolo non esista già
     title = request.form['title']
     desc = request.form['desc']
     img = request.files['img']
@@ -309,6 +308,7 @@ def post_delete_podcast(id):
 def post_edit_podcast(id):
 
     # Retriving data 
+    #TODO! Check, via javascript, che il titolo non esista già
     title = request.form['title']
     desc = request.form['desc']
     category = request.form['category']
