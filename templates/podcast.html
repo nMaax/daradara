@@ -43,6 +43,7 @@
             </div>
 
             <!-- Modal (edit podcast) -->
+            <!--TODO! Add labels -->
             <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
@@ -66,8 +67,11 @@
                 <div class="card-body">
                   <p class="card-text">{{podcast.desc}}</p>
                 </div>
-                <div class="card-footer">
-                    Categoria: <i>{{category.tag|capitalize}}</i>
+                <div class="card-footer d-flex flex-column justify-content-evenly">
+                    <p>Categoria: <i>{{category.tag|capitalize}}</i></p> 
+                    {% if last_update %}
+                        <p>Ultimo aggiornamento {{last_update}}</p>
+                    {% endif %}
                 </div>
             </div>
 

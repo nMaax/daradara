@@ -105,9 +105,13 @@
                     </div>
                    
                 </div>
-                <!--TODO! daysgo con js -->
                 <div class="card-footer">
-                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                {% if podcast.last_update %}
+                    <!--TODO! daysgo con js -->
+                    <p class="card-text"><small class="text-muted">Ultimo aggiornamento {{podcast.last_update}}</small></p>
+                {% else %}
+                    <p class="card-text"><small class="text-muted">Nessun episodio pubblicato</small></p>
+                {% endif %}
                 </div>
             </div>
         </div>

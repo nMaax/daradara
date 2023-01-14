@@ -9,6 +9,7 @@ import data.dao as dao
 from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerError
 from utils.models import User
 from utils.detector import is_image, is_static_image, is_audio
+from utils.utils import to_dict, days_ago, add_days_ago
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -63,6 +64,8 @@ def index():
     else:
         saves = []
     onfire = dao.get_podcasts_onfire(number_of_podcasts=3)
+    onfire = add_days_ago(onfire)
+    app.logger.info(onfire)
     return render_template('index.html', saves=saves, onfire = onfire)
 
 @app.route('/login')
@@ -102,7 +105,7 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>')
-def profile(id):
+def profile(id: int):
     user = dao.get_user(id)
     creators = dao.get_creators()
     is_creator = False
@@ -197,13 +200,18 @@ def post_signup():
 
         
 @app.route('/podcast/<int:id>')
-def podcast(id):
+def podcast(id: int):
     podcast = dao.get_podcast(id)
+    row_last_update = dao.get_last_update(id)
+    if row_last_update['last_update']: # type: ignore
+        last_update = days_ago(last_update['last_update']) # type: ignore
+    else:
+        last_update = False
     episodes = dao.get_episodes(id_podcast = id)
     category = dao.get_category(id)
 
     if podcast:
-        return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category)
+        return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category, last_update=last_update)
     else:
         flash(message='Il podcast cercato non esiste', category='warning')
         return redirect(url_for('index'))
@@ -285,7 +293,7 @@ def post_new_podcast():
 
 @app.route('/podcast/<int:id>/delete/elab')
 @login_required
-def post_delete_podcast(id):
+def post_delete_podcast(id: int):
 
     # If the podcast doesnt exist or the user that is trying to delete it is not the owner abort
     podcast = dao.get_podcast(id)
@@ -323,7 +331,7 @@ def post_delete_podcast(id):
 
 @app.route('/podcast/<int:id>/edit/elab', methods=['POST'])
 @login_required
-def post_edit_podcast(id):
+def post_edit_podcast(id: int):
 
     # Retriving data 
     #TODO! Check, via javascript, che il titolo non esista già
@@ -396,7 +404,7 @@ def post_edit_podcast(id):
         return redirect(url_for('podcast', id=id))
 
 @app.route('/podcast/<int:id>/img/edit/elab', methods=['POST'])
-def post_update_podcast_img(id):
+def post_update_podcast_img(id: int):
 
     img = request.files['img']
 
@@ -440,23 +448,24 @@ def post_update_podcast_img(id):
     return redirect(url_for('podcast', id=id))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
-def episode(id_pod, id_ep):
+def episode(id_pod: int, id_ep: int):
     episode = dao.get_episode(id_ep)
     if episode and episode['id_podcast'] == id_pod:
+        daysago = days_ago(episode['timestamp'])
         podcast = dao.get_podcast(id_pod)
         comments = dao.get_comments_extended(id_ep)
         if comments:
             n_comments = len(comments)
         else:
             n_comments = 0
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, comments=comments, n_comments = n_comments)
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments = n_comments)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id_pod>/episode/new')
 @login_required
-def new_episode(id_pod):
+def new_episode(id_pod: int):
     podcast = dao.get_podcast(id_pod)
     if not podcast:
         flash('Il podcast nel quale hai cercato di creare l\'episodio non esiste', 'warning')
@@ -469,7 +478,7 @@ def new_episode(id_pod):
 
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
 @login_required
-def post_new_episode(id_pod):
+def post_new_episode(id_pod: int):
     
     # Retriving data
     title = request.form['title']
@@ -555,7 +564,7 @@ def post_new_episode(id_pod):
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/delete/elab')
 @login_required
-def post_delete_episode(id_pod, id_ep):
+def post_delete_episode(id_pod: int, id_ep: int):
     episode = dao.get_episode(id_ep)
     podcast = dao.get_podcast(id_pod)
 
@@ -586,7 +595,7 @@ def post_delete_episode(id_pod, id_ep):
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/edit/elab', methods=['POST'])
 @login_required
-def post_edit_episode(id_pod, id_ep):
+def post_edit_episode(id_pod: int, id_ep: int):
 
     # Retriving data 
     title = request.form['title']
@@ -645,7 +654,7 @@ def post_edit_episode(id_pod, id_ep):
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/new/elab', methods=['POST'])
-def post_new_comment(id_pod, id_ep):
+def post_new_comment(id_pod: int, id_ep: int):
 
     # Retriving data
     text = request.form['text']
@@ -691,7 +700,7 @@ def post_new_comment(id_pod, id_ep):
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/delete/elab', methods=['POST'])
 @login_required
-def post_delete_comment(id_pod, id_ep):
+def post_delete_comment(id_pod: int, id_ep: int):
 
     timestamp = request.form['timestamp']
     
@@ -715,7 +724,7 @@ def post_delete_comment(id_pod, id_ep):
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/edit/elab', methods=['POST'])
 @login_required
-def post_edit_comment(id_pod, id_ep):
+def post_edit_comment(id_pod: int, id_ep: int):
 
     # Retriving data
     text = request.form['new-text']

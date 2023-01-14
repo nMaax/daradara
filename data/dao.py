@@ -1,10 +1,13 @@
 import sqlite3
 import os
+from datetime import datetime
 from data.errors.daoExceptions import dataManipulationError
 
 FILENAME = 'data.db'
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 PATH = os.path.join(SCRIPT_DIR, FILENAME)
+
+ISO_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
 
 # SELECT queries
 
@@ -283,19 +286,39 @@ def get_podcast_extended(id_podcast):
     close(conn, cursor)
     return podcast
 
-def get_podcasts_onfire(number_of_podcasts=5):
+def get_last_update(id_pod):
     conn, cursor = connect()
-    podcast = []
+    date = False
 
     try:
-        sql = 'SELECT podcasts.id, COUNT(follows.id_user) AS "n_follows", podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows WHERE podcasts.id = follows.id_podcast GROUP BY podcasts.id ORDER BY n_follows DESC'
-        cursor.execute(sql)
-        podcast = cursor.fetchall()
+        sql = "SELECT MAX(timestamp) as 'last_update' FROM podcasts, episodes WHERE podcasts.id = episodes.id_podcast AND podcasts.id = ?"
+        cursor.execute(sql, (id_pod,))
+        date = cursor.fetchone()
     except Exception as e:
         print(e)
 
     close(conn, cursor)
-    return podcast[:number_of_podcasts]
+    return date
+
+def get_podcasts_onfire(number_of_podcasts=5):
+    """
+    Questa funzione restituisce una lista di podcast più seguiti e con almeno un episodio
+    
+    :param number_of_podcast: Il numero di podcast che si vuole ricevere come risultato, se troppo alto verranno restituiti quanti più podcast possibili
+    """
+
+    conn, cursor = connect()
+    podcasts = []
+
+    try:
+        sql = 'SELECT podcasts.id, COUNT(follows.id_user) AS "n_follows", last_update, podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows, (SELECT podcasts.id AS "id_podcast_lu", MAX(timestamp) AS "last_update" FROM podcasts, episodes WHERE podcasts.id = episodes.id_podcast GROUP BY podcasts.id) AS "last_updates"WHERE podcasts.id = follows.id_podcast AND last_updates.id_podcast_lu = podcasts.id GROUP BY podcasts.id ORDER BY n_follows DESC'
+        cursor.execute(sql)
+        podcasts = cursor.fetchmany(size=number_of_podcasts)
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return podcasts
 
 def get_podcasts():
     output = []
@@ -520,8 +543,10 @@ def update_episode_field(id, field, value):
     success = True
 
     try:
-        if field == 'title' or field == 'description' or field == 'audio' or field == 'timestamp':
+        if field == 'title' or field == 'description' or field == 'timestamp':
             sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
+        elif field == 'audio':
+            sql = 'UPDATE episodes SET audio = ?, timestamp = '+ datetime.now().strftime(ISO_TIMESTAMP) +' WHERE id = ?'
         else:
             raise ValueError('Invalid field name')
 
