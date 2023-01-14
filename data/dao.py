@@ -154,7 +154,7 @@ def get_episode_by_title(title, id_pod):
     episode = False
 
     try:
-        sql = 'SELECT * FROM episodes WHERE title = ? AND id_pod = ?'
+        sql = 'SELECT * FROM episodes WHERE title = ? AND id_podcast = ?'
         cursor.execute(sql, (title, id_pod))
         episode = cursor.fetchone()
     except Exception as e:

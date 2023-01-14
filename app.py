@@ -17,32 +17,37 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-# Constants
+# Flask-Session constants
 SECRET_KEY = secrets.token_hex(32)
 SESSION_TYPE = 'filesystem'
 SESSION_PERMANENT = False
 
+# Flask-Login constants
+LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60minuti
 #? Mi servono queste costanti?
 LOGIN_VIEW = 'post_login'
 LOGIN_MSG = 'Accedi per visualizzare questa pagina'
 LOGIN_MSG_CATEGORY = 'warning'
 
-LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60minuti
-
-DEFAULT_HOUR = "00:00:01"
+# Auxiliary constants
 ISO_DATE = "%Y-%m-%d"
 ISO_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
+DEFAULT_HOUR = "00:00:00"
 
-COVER_FOLDER = 'static/images/covers'
+PROPICS_PATH = 'static/uploads/images/propics/'
+COVERS_PATH = 'static/uploads/images/covers/'
+AUDIOS_PATH = 'static/uploads/audios/'
 
 # App init
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
+# Session init
 app.config['SESSION_TYPE'] = SESSION_TYPE
 app.config['SESSION_PERMANENT'] = SESSION_PERMANENT
 Session(app)
 
+# Login init
 login_manager = LoginManager()
 #? Cosa significano questi attributi?
 #login_manager.login_view = LOGIN_VIEW # type: ignore
@@ -176,7 +181,7 @@ def post_signup():
                 raise dataManipulationError('Unable to register new user')
 
             # Save the propic (only if the user has been saved)
-            save_directory = 'static/uploads/images/propics/'
+            save_directory = PROPICS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             propic.save(save_directory+propicname) # type: ignore
@@ -267,7 +272,7 @@ def post_new_podcast():
                 raise dataManipulationError('Unable to add entry into the database')
 
             # Save the image (only if the podcast has been saved)
-            save_directory = 'static/uploads/images/covers/'
+            save_directory = COVERS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             img.save(save_directory+imgname) # type: ignore
@@ -284,6 +289,11 @@ def post_delete_podcast(id):
 
     # If the podcast doesnt exist or the user that is trying to delete it is not the owner abort
     podcast = dao.get_podcast(id)
+    episodes = dao.get_episodes(id)
+
+    if not episodes:
+        episodes = []
+
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
         return redirect(url_for('index'))
@@ -295,9 +305,17 @@ def post_delete_podcast(id):
     result = dao.delete_podcast(id)
     if result:
         #path = os.path.join(app.root_path, url_for('static', filename='uploads/images/covers/'+str(podcast['id'])+podcast['img']))
-        file_path = 'static/uploads/images/covers/'+str(podcast['id'])+podcast['img']
+        file_path = COVERS_PATH+str(podcast['id'])+podcast['img']
         abs_path = os.path.abspath(file_path)
-        os.remove(abs_path)
+        if os.path.exists(abs_path):
+                os.remove(abs_path)
+
+        for episode in episodes:
+            file_path = AUDIOS_PATH+str(episode['id'])+episode['audio']
+            abs_path = os.path.abspath(file_path)
+            if os.path.exists(abs_path):
+                os.remove(abs_path)
+
         flash(message='Podcast eliminato correttamente', category='success')
     else:
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
@@ -404,7 +422,7 @@ def post_update_podcast_img(id):
             imgname = str(id) + imgext
 
             # Save the image (only if the podcast has been saved)
-            save_directory = 'static/uploads/images/covers/'
+            save_directory = COVERS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             img.save(save_directory+imgname) # type: ignore
@@ -487,9 +505,12 @@ def post_new_episode(id_pod):
         if py_date.date() < min_date.date():
             raise ValueError("The date is before the date lower bound")
         elif py_date.date() > max_date.date(): #TODO! Controlla con js che la data non vada oltre oggi
-            raise ValueError("The date is before the date lower bound")
+            raise ValueError("The date is after the date upper bound (today)")
+        elif py_date.date() == datetime.now().date():#now().replace(hour=0, minute=0, second=0, microsecond=0):
+            timestamp = datetime.now().strftime(ISO_TIMESTAMP)
+        else:
+            timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
 
-        timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
     except Exception as e:
         flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
         timestamp = datetime.now().strftime(ISO_TIMESTAMP)
@@ -521,7 +542,7 @@ def post_new_episode(id_pod):
                 raise dataManipulationError('Unable to add entry into the database')
 
             # Save the audio
-            save_directory = 'static/uploads/audios/'
+            save_directory = AUDIOS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             audio.save(save_directory+audioname) # type: ignore
@@ -552,9 +573,11 @@ def post_delete_episode(id_pod, id_ep):
         if result:
             #TODO! in cascata devi eliminare anche tutti gli audio
             #path = os.path.join(app.root_path, url_for('static', filename='uploads/audios/'+str(episode['id'])+episode['img']))
-            file_path = 'static/uploads/audios/'+str(episode['id'])+episode['audio']
+            file_path = AUDIOS_PATH+str(episode['id'])+episode['audio']
             abs_path = os.path.abspath(file_path)
-            os.remove(abs_path)
+            if os.path.exists(abs_path):
+                os.remove(abs_path)
+
             flash(message='Episodio eliminato correttamente', category='success')
             return redirect(url_for('podcast', id=id_pod))
         else:
