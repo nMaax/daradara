@@ -31,8 +31,9 @@
 [X] Aggiungi sistema di modifica commenti
 
 [ ] Aggiungi permessi di modifica, eliminazione e creazione
+[ ] Aggiungi logica jinja per la privacy
 
-[ ] Aggiugni riproduzione audio (howler)
+[-] Aggiugni riproduzione audio (howler)
 [X] Aggiungi upload multimediale
 
 [X] Sposta CSS e JS in file a parte

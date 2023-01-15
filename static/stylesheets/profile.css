@@ -11,3 +11,15 @@
 .card-scroll::-webkit-scrollbar-thumb {
     background-color: #000000; /*colore scrollbar*/
 }
+
+/*@media (min-width: 1200px) and (max-width: 1400px) {
+    .text-wrapper {
+      font-size: 0.875em !important;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    .text-wrapper {
+      font-size: 0.75em !important;
+    }
+}*/

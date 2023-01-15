@@ -17,7 +17,12 @@
         
         <!-- Episode title -->
         <div class="row d-flex justify-content-center align-items-center mb-3">
-            <h1 class="">{{episode.title}}<a type="button" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a></h1>
+            <h1 class="">
+                {{episode.title}}
+                {% if is_owner %}
+                <a type="button" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a>
+                {% endif %}
+            </h1>
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
         </div>
 
@@ -44,18 +49,25 @@
         <!-- Episode info (bootstrap card) -->
         <div class="card">
             <div class="card-body">
-              <p class="card-text">{{episode.description}}</p>
+                <p class="card-text">{{episode.description}}</p>
+                {% if not has_saved %}
+                <a href="{{url_for('save', id_ep=id, id_pod=id_pod)}}" class="btn btn-light btn-outline-dark">Salva l'episodio</a>
+                {% else %}
+                <a href="{{url_for('unsave', id_ep=id, id_pod=id_pod)}}" class="text-white btn btn-danger">Elimina dalla lista</a>
+                {% endif %}
             </div>
             <div class="card-footer">
                 Pubblicato {{daysago}}
             </div>
         </div>
+        {% if is_owner %}
         <div class="row mx-0 my-2 d-flex justify-content-center align-content-center display-5">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
                 Elimina episodio
             </button>
         </div>
+        {% endif %}
 
     </div>
 </div>

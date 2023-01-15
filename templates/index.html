@@ -16,7 +16,7 @@
 
         <!-- Body -->
         {% if saves|length %}
-            {% for save in saves[:5] %}
+            {% for save in saves[:4] %}
             <!-- Saved episode (bootstrap card) -->
             <div class="row card mb-3 mx-2 mx-lg-0">
                 <div class="row g-0">
@@ -40,7 +40,7 @@
 
             <div class="d-flex justify-content-center align-items-center">
                 <!--TODO? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
-                {% if saves|length > 1 %}
+                {% if saves|length > 4 %}
                     <a  href="{{url_for('saves', id=current_user.id)}}" type="button" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">Visualizza tutti</a>
                 {% endif %}
             </div>

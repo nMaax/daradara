@@ -194,7 +194,10 @@ def profile(id: int):
         for creator in creators:
             if creator['id'] == user['id']:
                 is_creator = True
-        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator=is_creator, privacy=privacy)
+        is_owner = False
+        if current_user.is_authenticated: # type: ignore
+            is_owner = current_user.id == id # type: ignore
+        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator=is_creator, is_owner=is_owner, privacy=privacy)
     else:
         flash(message='L\'utente cercato non esiste', category='warning')
         return redirect(url_for('index'))
@@ -218,7 +221,7 @@ def privatize_owned(id: int):
         return redirect(url_for('profile', id=id)+"#owned")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return render_template(url_for('index'))
+        return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>/follows')
 def follows(id: int):
@@ -228,7 +231,7 @@ def follows(id: int):
         return render_template('follows.html', podcasts=podcasts)
     else:
         flash('Il profilo cercato non esiste', 'warning')
-        return render_template('index')
+        return redirect('index')
 
 @app.route('/profile/<int:id>/priv_follows')
 @login_required
@@ -239,7 +242,7 @@ def privatize_follows(id: int):
         return redirect(url_for('profile', id=id)+"#follows")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return render_template(url_for('index'))
+        return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>/saves')
 def saves(id: int):
@@ -249,7 +252,7 @@ def saves(id: int):
         return render_template('saves.html', podcasts=podcasts)
     else:
         flash('Il profilo cercato non esiste', 'warning')
-        return render_template('index')
+        return redirect('index')
 
 @app.route('/profile/<int:id>/priv_saves')
 @login_required
@@ -260,13 +263,16 @@ def privatize_saves(id: int):
         return redirect(url_for('profile', id=id)+"#saves")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return render_template(url_for('index'))
+        return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id>')
 def podcast(id: int):
     podcast = dao.get_podcast(id)
     
     if podcast:
+
+        creator = dao.get_user(podcast['id_user'])
+        
 
         row_last_update = dao.get_last_update(id)
         last_update = row_last_update['last_update'] # type: ignore
@@ -276,10 +282,42 @@ def podcast(id: int):
             last_update = False
         episodes = dao.get_episodes(id_podcast = id)
         category = dao.get_category(id)
+        
+        is_owner = False
+        is_following = False
+        if current_user.is_authenticated: # type: ignore
+           is_following = dao.is_following(id_user=current_user.id, id_pod=id) # type: ignore
+           is_owner = podcast['id_user'] == current_user.id # type: ignore
 
-        return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update)
+        return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
     else:
         flash(message='Il podcast cercato non esiste', category='warning')
+        return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id>/follow')
+def follow(id: int):
+
+    if not current_user.is_authenticated: # type: ignore
+        flash('Fai l\'accesso per seguire il podcast', 'info')
+        return redirect(url_for('login'))
+
+    podcast = dao.get_podcast(id)
+    if podcast:
+        dao.follow(id_pod=id, id_user=current_user.id, timestamp=datetime.now().strftime(ISO_TIMESTAMP)) # type: ignore 
+        return redirect(url_for('podcast', id=id))
+    else:
+        flash('Non puoi seguire un podcast che non esiste', 'warning')
+        return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id>/unfollow')
+@login_required
+def unfollow(id: int):
+    podcast = dao.get_podcast(id)
+    if podcast:
+        dao.unfollow(id_pod=id, id_user=current_user.id) # type: ignore 
+        return redirect(url_for('podcast', id=id))
+    else:
+        flash('Non puoi seguire un podcast che non esiste', 'warning')
         return redirect(url_for('index'))
 
 @app.route('/podcast/new')
@@ -528,10 +566,42 @@ def episode(id_pod: int, id_ep: int):
         mime_type = 'mpeg'
         if episode['audio'] == '.wav':
             mime_type='wav'
+
+        is_owner = False
+        has_saved = False
+        if current_user.is_authenticated: # type: ignore
+           has_saved = dao.has_saved(id_user=current_user.id, id_ep=id_ep) # type: ignore
+           is_owner = podcast['id_user'] == current_user.id # type: ignore
         
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments = n_comments, mime_type=mime_type)
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments=n_comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
+        return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/save')
+def save(id_pod :int, id_ep: int):
+
+    if not current_user.is_authenticated: # type: ignore
+        flash('Fai l\'accesso per salvare l\'episodio', 'info')
+        return redirect(url_for('login'))
+
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        dao.save(id_ep=id_ep, id_user=current_user.id, timestamp=datetime.now().strftime(ISO_TIMESTAMP)) # type: ignore 
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    else:
+        flash('Non puoi seguire un episodio che non esiste', 'warning')
+        return redirect(url_for('index'))
+
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/unsave')
+@login_required
+def unsave(id_pod :int, id_ep: int):
+    episode = dao.get_episode(id_ep)
+    if episode and episode['id_podcast'] == id_pod:
+        dao.unsave(id_ep=id_ep, id_user=current_user.id) # type: ignore 
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    else:
+        flash('Non puoi smettere di seguire un episodio che non esiste', 'warning')
         return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id_pod>/episode/new')

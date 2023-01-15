@@ -71,12 +71,28 @@ def get_priv_saves(id_user):
     close(conn, cursor)
     return priv_saves
 
+def has_saved(id_user, id_ep):
+    conn, cursor = connect()
+    has_saved = False
+
+    try:
+        sql = 'SELECT * FROM saves WHERE id_ep = ? AND id_user = ?'
+        cursor.execute(sql, (id_ep, id_user))
+        saves = cursor.fetchone()
+        if saves:
+            has_saved = True
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return has_saved
+
 def get_saves_join_episodes_podcasts(id_user):
     conn, cursor = connect()
     saves = False
 
     try:
-        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ?'
+        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ? ORDER BY saves.timestamp DESC' #TODO! ORDER BY saves.timestamp
         cursor.execute(sql, (id_user,))
         saves = cursor.fetchall()
     except Exception as e:
@@ -99,13 +115,29 @@ def get_saves(id_user):
     close(conn, cursor)
     return saves
 
+def is_following(id_user, id_pod):
+    conn, cursor = connect()
+    is_following = False
+
+    try:
+        sql = 'SELECT * FROM follows WHERE id_podcast = ? AND id_user = ?'
+        cursor.execute(sql, (id_pod, id_user))
+        follows = cursor.fetchone()
+        if follows:
+            is_following = True
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return is_following
+
 def get_follows_join_podcasts(id_user):
     conn, cursor = connect()
     follows = False
 
     try:
         # Nonostante non vi siano altre collonne che si chiamino 'id_user' COMUNQUE sqlite vuole che si tolga ambiguità con follows.id_user invece di id_user e basta, uffi :(
-        sql = 'SELECT * FROM follows, podcasts WHERE follows.id_podcast = podcasts.id AND follows.id_user = ?'
+        sql = 'SELECT * FROM follows, podcasts WHERE follows.id_podcast = podcasts.id AND follows.id_user = ? ORDER BY follows.timestamp DESC'
         cursor.execute(sql, (id_user,))
         follows = cursor.fetchall()
     except Exception as e:
@@ -119,7 +151,7 @@ def get_follows(id_user):
     follows = False
 
     try:
-        sql = 'SELECT * FROM follows WHERE id_user = ?'
+        sql = 'SELECT * FROM follows WHERE id_user = ? ORDER BY timestamp DESC'
         cursor.execute(sql, (id_user,))
         follows = cursor.fetchall()
     except Exception as e:
@@ -445,13 +477,13 @@ def get_last_podcast_id():
 
 # INSERT queries
 
-def new_follow(id_user, id_podcast):
+def new_follow(id_user, id_podcast, timestamp):
     conn, cursor = connect()
     success = True
 
     try:
-        sql = 'INSERT INTO follows(id_user, id_podcast) VALUES (?, ?)'
-        cursor.execute(sql, (id_user, id_podcast))
+        sql = 'INSERT INTO follows(id_user, id_podcast, timestamp) VALUES (?, ?, ?)'
+        cursor.execute(sql, (id_user, id_podcast, timestamp))
         conn.commit()
     except Exception as e:
         success = False
@@ -461,13 +493,13 @@ def new_follow(id_user, id_podcast):
     close(conn, cursor)
     return success
 
-def new_save(id_user, id_ep):
+def new_save(id_user, id_ep, timestamp):
     conn, cursor = connect()
     success = True
 
     try:
-        sql = 'INSERT INTO saves(id_user, id_ep) VALUES (?, ?)'
-        cursor.execute(sql, (id_user, id_ep))
+        sql = 'INSERT INTO saves(id_user, id_ep, timestamp) VALUES (?, ?, ?)'
+        cursor.execute(sql, (id_user, id_ep, timestamp))
         conn.commit()
     except Exception as e:
         success = False
@@ -543,6 +575,40 @@ def new_user(email, password, name, surname, propic):
     try:
         sql = 'INSERT INTO users(email, password, name, surname, propic) VALUES (?, ?, ?, ?, ?)'
         cursor.execute(sql, (email, password, name, surname, propic))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+# INSERT queries
+
+def follow(id_pod, id_user, timestamp):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'INSERT INTO follows(id_user, id_podcast, timestamp) VALUES (?, ?, ?) '
+        cursor.execute(sql, (id_user, id_pod, timestamp))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+def save(id_ep, id_user, timestamp):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'INSERT INTO saves(id_user, id_ep, timestamp) VALUES (?, ?, ?) '
+        cursor.execute(sql, (id_user, id_ep, timestamp))
         conn.commit()
     except Exception as e:
         success = False
@@ -715,14 +781,44 @@ def update_podcast_field(id, field, value):
 
 # DELETE queries
 
+def unfollow(id_pod, id_user):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'DELETE FROM follows WHERE id_user = ? AND id_podcast = ?'
+        cursor.execute(sql, (id_user, id_pod))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+def unsave(id_ep, id_user):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'DELETE FROM saves WHERE id_user = ? AND id_ep = ?'
+        cursor.execute(sql, (id_user, id_ep))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
 def delete_comment_by_PK(id_ep, id_user, timestamp):
     conn, cursor = connect()
     success = True
 
     try:
-
         sql = 'DELETE FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
-
         cursor.execute(sql, (id_ep, id_user, timestamp))
         conn.commit()
     except Exception as e:
