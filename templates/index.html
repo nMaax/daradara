@@ -38,17 +38,12 @@
             </div>
             {% endfor %}
 
-            <!--TODO? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
-        
+            <div class="d-flex justify-content-center align-items-center">
+                <!--TODO? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
+                {% if saves|length > 1 %}
+                    <a  href="{{url_for('saves', id=current_user.id)}}" type="button" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">Visualizza tutti</a>
+                {% endif %}
+            </div>
         {% else %}
 
             <!-- Placeholder for no-saves case (bootstrap card) -->
@@ -100,7 +95,7 @@
                 </div>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">
-                        <p class="card-title display-6">{{ podcast.title }}</p>
+                        <p class="card-title display-6">{{podcast.title}}</p>
                         <p class="card-text">{{podcast.desc}}</p>
                     </div>
                    

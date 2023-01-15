@@ -68,10 +68,11 @@
                   <p class="card-text">{{podcast.desc}}</p>
                 </div>
                 <div class="card-footer d-flex flex-column justify-content-evenly">
-                    <p>Categoria: <i>{{category.tag|capitalize}}</i></p> 
                     {% if last_update %}
-                        <p>Ultimo aggiornamento {{last_update}}</p>
+                    <p class="m-0 mt-1">Ultimo aggiornamento {{last_update}}</p>
+                    <hr class="my-2">
                     {% endif %}
+                    <p class="m-0 mb-1">Categoria: <i>{{category.tag|capitalize}}</i></p> 
                 </div>
             </div>
 

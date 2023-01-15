@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+
+{% if podcasts %}
+<!-- Header -->
+<div class="row">
+    <p class="text-center display-1">I podcast che segui</p>
+</div>
+
+<!-- Body -->
+<div class="row">
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        
+            {% for podcast in podcasts %}
+            <div class="col">
+            <div class="card">
+                <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{podcast.title}} image">
+                <div class="card-body">
+                <h5 class="card-title">{{podcast.title}}</h5>
+                <p class="card-text">{{podcast.desc}}</p>
+                </div>  
+            </div>
+            </div>
+            {% endfor %}
+
+</div>
+{% else %}
+<div class="row">
+    <p class="text-center display-1">Non segui ancora nessun podcast 😢</p>
+    <p class="text-center"><small>(per ora...)</small></p>
+</div>
+{% endif %}
+
+{% endblock %}

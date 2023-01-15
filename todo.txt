@@ -37,7 +37,7 @@
 
 [X] Sposta CSS e JS in file a parte
 
-[ ] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
+[X] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Commenta ogni statemnt jinja (almeno i {%%})

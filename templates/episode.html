@@ -84,13 +84,15 @@
     <!-- Traccia audio (howler) -->
     <!--TODO! Metti il tasto di modifica audio -->
     <!--TODO! implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
-    <div id="player" class="col-md-7">
-        <div class="card-body row g-2">
-            <div class="text-light p-3">
-                <audio controls>
-                    <source src="audio-file.mp3" type="audio/mpeg">
-                    Il tuo browser non supporta l'elemento audio.
-                </audio>
+    <div class="row d-flex justify-content-center">
+        <div id="player" class="col-md-7 w-100">
+            <div class="row g-2">
+                <div class="text-light p-3">
+                    <audio controls class="w-100">
+                        <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
+                        Il tuo browser non supporta l'elemento audio.
+                    </audio>
+                </div>
             </div>
         </div>
     </div>

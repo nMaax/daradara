@@ -14,7 +14,7 @@
     </div>
     <div class="col">
         <!--Nome e cognome -->
-        <div class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2">{{user.name}} {{user.surname}}</div>
+        <div class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2"><p class="text-nowrap">{{user.name}} {{user.surname}} {% if is_creator %}<i class="ms-2 fa-solid fa-podcast fa-xs"></i>{% endif %}</p></div>
         <!--Bio-->
         <div class="row mx-lg-0 mx-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, tempora. Eius, at. Id repellat consectetur maiores cupiditate at amet tempore sequi excepturi, nihil, sapiente nostrum nam magnam iure ipsa architecto!
         Ex autem commodi quidem repellendus ad rem unde modi velit rerum, reprehenderit vitae assumenda sint, cumque repudiandae corporis asperiores vero! Accusamus eveniet aliquam fugiat accusantium quidem laudantium libero labore ipsa!
@@ -28,12 +28,15 @@
     {% if current_user.id == user.id %}
     <!-- Lista podcast pubblicati (bootstrap card) -->
     <div class="row mt-3">
-        <div class="card mb-3 mx-lg-0 mx-2 p-0">
+        <div id="owned" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
                 <!-- Card header -->
                 <div class="col-12 col-lg-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
-                    <p class="text-nowrap">I tuoi podcast 🎙️</p>
-                    <a type="button" class="btn btn-light btn-outline-dark">Visualizza tutti</a>
+                    <p class="row text-nowrap">I tuoi podcast 🎙️</p>
+                    <div class="row g-5">
+                        <a href="{{url_for('privatize_owned', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[0]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                        <a href="{{url_for('owned', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                    </div>
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -80,12 +83,15 @@
 
     <!-- Lista podcast seguiti (bootstrap card) -->
     <div class="row mt-3">
-        <div class="card mb-3 mx-lg-0 mx-2 p-0">
+        <div id="follows" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
                 <!-- Card header -->
                 <div class="col-12 col-lg-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="text-nowrap">Podcast seguiti 🥳</p>
-                    <a type="button" class="btn btn-light btn-outline-dark">Visualizza tutti</a>
+                    <div class="row g-5">
+                        <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                        <a href="{{url_for('follows', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                    </div>
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -123,12 +129,15 @@
 
     <!-- Lista episodi salvati -->
     <div class="row mt-3">
-        <div class="card mb-3 mx-lg-0 mx-2 p-0">
+        <div id="saves" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
                 <!-- Card header -->
                 <div class="col-12 col-lg-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="text-nowrap">Episodi salvati 📋</p>
-                    <a type="button" class="btn btn-light btn-outline-dark">Visualizza tutti</a>
+                    <div class="row g-5">
+                        <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                        <a href="{{url_for('saves', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                    </div>
                 </div>
                 <!-- Card body -->
                 <div class="col">

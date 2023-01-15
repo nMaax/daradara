@@ -1,12 +1,24 @@
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime
 
-def to_dict(row: sqlite3.Row):
+def to_dict(row: sqlite3.Row) -> dict:
+    """
+    Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary
+
+    :param row: the row object to be converted
+    """
+
     data = dict(row) # Convert the sqlite3.Row object to a dictionary
     data = {key: data[key] for key in row.keys()} # Make the keys of the dictionary mutable
     return data
 
 def add_days_ago(podcasts: list) -> list:
+    """
+    Takes as parameter a list of podcasts as sqlite3.Rows and adds a column containing a string saying how many days/hours/minutes ago was the last episode of the podcast posted
+
+    :param podcasts: the list of podcasts as rows 
+    """
+
     output = []
     for podcast in podcasts:
         podcast = to_dict(podcast)
@@ -17,6 +29,13 @@ def add_days_ago(podcasts: list) -> list:
     return output
 
 def days_ago(timestamp: str) -> str:
+    """
+    Takes a timestamp string and returns a string indicating how many days/hours/minutes ago the timestamp was.
+
+    :param timestamp: the timestamp string in format '%Y-%m-%d %H:%M:%S'
+    :return: the string indicating how many days/hours/minutes ago the timestamp was
+    """
+
     # Parse the timestamp string to a datetime object
     date_time_obj = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
     # Get the current date and time

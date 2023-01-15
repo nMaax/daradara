@@ -11,6 +11,66 @@ ISO_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
 
 # SELECT queries
 
+def get_priv_owned(id_user):
+    conn, cursor = connect()
+    priv_owned = None
+
+    try:
+        sql = 'SELECT priv_owned FROM users WHERE id = ?'
+        cursor.execute(sql, (id_user,))
+        priv_owned = cursor.fetchone()
+        if priv_owned and priv_owned['priv_owned'] == 1:
+            priv_owned = True
+        elif priv_owned and priv_owned['priv_owned'] == 0:
+            priv_owned = False
+        else:
+            priv_owned = None
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return priv_owned
+
+def get_priv_follows(id_user):
+    conn, cursor = connect()
+    priv_follows = None
+
+    try:
+        sql = 'SELECT priv_follows FROM users WHERE id = ?'
+        cursor.execute(sql, (id_user,))
+        priv_follows = cursor.fetchone()
+        if priv_follows and priv_follows['priv_follows'] == 1:
+            priv_follows = True
+        elif priv_follows and priv_follows['priv_follows'] == 0:
+            priv_follows = False
+        else:
+            priv_follows = None
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return priv_follows
+
+def get_priv_saves(id_user):
+    conn, cursor = connect()
+    priv_saves = None
+
+    try:
+        sql = 'SELECT priv_saves FROM users WHERE id = ?'
+        cursor.execute(sql, (id_user,))
+        priv_saves = cursor.fetchone()
+        if priv_saves and priv_saves['priv_saves'] == 1:
+            priv_saves = True
+        elif priv_saves and priv_saves['priv_saves'] == 0:
+            priv_saves = False
+        else:
+            priv_saves = None
+    except Exception as e:
+        print(e)
+
+    close(conn, cursor)
+    return priv_saves
+
 def get_saves_join_episodes_podcasts(id_user):
     conn, cursor = connect()
     saves = False
@@ -493,6 +553,69 @@ def new_user(email, password, name, surname, propic):
     return success
 
 # UPDATE queries
+
+def switch_priv_owned(id):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        current_value = get_priv_owned(id)
+        if current_value:
+            value = 0
+        else:
+            value = 1
+        sql = 'UPDATE users SET priv_owned = ? WHERE id = ?'
+        cursor.execute(sql, (value, id))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+def switch_priv_follows(id):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        current_value = get_priv_follows(id)
+        if current_value:
+            value = 0
+        else:
+            value = 1
+        sql = 'UPDATE users SET priv_follows = ? WHERE id = ?'
+        cursor.execute(sql, (value, id))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+def switch_priv_saves(id):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        current_value = get_priv_saves(id)
+        if current_value:
+            value = 0
+        else:
+            value = 1
+        sql = 'UPDATE users SET priv_saves = ? WHERE id = ?'
+        cursor.execute(sql, (value, id))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
 
 def update_tag(id_pod, tag):
     conn, cursor = connect()

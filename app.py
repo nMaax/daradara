@@ -104,23 +104,6 @@ def logout():
     flash('Logout effettuato', 'success')
     return redirect(url_for('index'))
 
-@app.route('/profile/<int:id>')
-def profile(id: int):
-    user = dao.get_user(id)
-    creators = dao.get_creators()
-    is_creator = False
-    if user and creators:
-        podcasts = dao.get_podcasts_by_user(id_user=id)
-        follows = dao.get_follows_join_podcasts(id_user=id)
-        saves = dao.get_saves_join_episodes_podcasts(id_user=id)
-        for creator in creators:
-            if creator['id'] == user['id']:
-                is_creator = True
-        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator = is_creator)
-    else:
-        flash(message='L\'utente cercato non esiste', category='warning')
-        return redirect(url_for('index'))
-
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
@@ -198,20 +181,103 @@ def post_signup():
             flash("Impossibile registrare il nuovo utente, qualcosa è andato storto - ERR: " + str(e), 'danger')
             return redirect(url_for('signup'))
 
-        
+@app.route('/profile/<int:id>')
+def profile(id: int):
+    user = dao.get_user(id)
+    creators = dao.get_creators()
+    is_creator = False
+    if user and creators:
+        podcasts = dao.get_podcasts_by_user(id_user=id)
+        follows = dao.get_follows_join_podcasts(id_user=id)
+        saves = dao.get_saves_join_episodes_podcasts(id_user=id)
+        privacy = [dao.get_priv_owned(id), dao.get_priv_follows(id), dao.get_priv_saves(id)]
+        for creator in creators:
+            if creator['id'] == user['id']:
+                is_creator = True
+        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator=is_creator, privacy=privacy)
+    else:
+        flash(message='L\'utente cercato non esiste', category='warning')
+        return redirect(url_for('index'))
+    
+@app.route('/profile/<int:id>/podcasts')
+def owned(id: int):
+    user = dao.get_user(id)
+    if user:
+        podcasts = dao.get_podcasts_by_user(id)
+        return render_template('owned.html', podcasts=podcasts)
+    else:
+        flash('Il profilo cercato non esiste', 'warning')
+        return redirect(url_for('index'))
+
+@app.route('/profile/<int:id>/priv_owned')
+@login_required
+def privatize_owned(id: int):
+    user = dao.get_user(id)
+    if user and current_user.id == id: # type: ignore 
+        dao.switch_priv_owned(id)
+        return redirect(url_for('profile', id=id)+"#owned")
+    else:
+        flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
+        return render_template(url_for('index'))
+
+@app.route('/profile/<int:id>/follows')
+def follows(id: int):
+    user = dao.get_user(id)
+    if user:
+        podcasts = dao.get_follows_join_podcasts(id)
+        return render_template('follows.html', podcasts=podcasts)
+    else:
+        flash('Il profilo cercato non esiste', 'warning')
+        return render_template('index')
+
+@app.route('/profile/<int:id>/priv_follows')
+@login_required
+def privatize_follows(id: int):
+    user = dao.get_user(id)
+    if user and current_user.id == id: # type: ignore 
+        dao.switch_priv_follows(id)
+        return redirect(url_for('profile', id=id)+"#follows")
+    else:
+        flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
+        return render_template(url_for('index'))
+
+@app.route('/profile/<int:id>/saves')
+def saves(id: int):
+    user = dao.get_user(id)
+    if user:
+        podcasts = dao.get_saves_join_episodes_podcasts(id)
+        return render_template('saves.html', podcasts=podcasts)
+    else:
+        flash('Il profilo cercato non esiste', 'warning')
+        return render_template('index')
+
+@app.route('/profile/<int:id>/priv_saves')
+@login_required
+def privatize_saves(id: int):
+    user = dao.get_user(id)
+    if user and current_user.id == id: # type: ignore 
+        dao.switch_priv_saves(id)
+        return redirect(url_for('profile', id=id)+"#saves")
+    else:
+        flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
+        return render_template(url_for('index'))
+
 @app.route('/podcast/<int:id>')
 def podcast(id: int):
     podcast = dao.get_podcast(id)
-    row_last_update = dao.get_last_update(id)
-    if row_last_update['last_update']: # type: ignore
-        last_update = days_ago(last_update['last_update']) # type: ignore
-    else:
-        last_update = False
-    episodes = dao.get_episodes(id_podcast = id)
-    category = dao.get_category(id)
-
+    
     if podcast:
-        return render_template('podcast.html', id=id, podcast = podcast, episodes = episodes, category = category, last_update=last_update)
+
+        row_last_update = dao.get_last_update(id)
+        last_update = row_last_update['last_update'] # type: ignore
+        if last_update:
+            last_update = days_ago(last_update)
+        else:
+            last_update = False
+        episodes = dao.get_episodes(id_podcast = id)
+        category = dao.get_category(id)
+
+        return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update)
     else:
         flash(message='Il podcast cercato non esiste', category='warning')
         return redirect(url_for('index'))
@@ -458,7 +524,12 @@ def episode(id_pod: int, id_ep: int):
             n_comments = len(comments)
         else:
             n_comments = 0
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments = n_comments)
+
+        mime_type = 'mpeg'
+        if episode['audio'] == '.wav':
+            mime_type='wav'
+        
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments = n_comments, mime_type=mime_type)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(url_for('index'))
@@ -787,7 +858,6 @@ def not_found(error):
 # Route for testing pages (ignore this)
 @app.route('/test')
 def test():
-    flash(message='Messaggio', category='dark')
     return render_template('test.html')
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
