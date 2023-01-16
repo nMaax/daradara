@@ -42,7 +42,7 @@
 
 [ ] Aggiungi crop image
 [X] Aggiungi tasti di info nei form
-[ ] Aggiugni label nei modal di modifica
+[X] Aggiugni label nei modal di modifica
 [ ] Fai pagina di faq
 
 [ ] Fai ricerca nuovi podcast

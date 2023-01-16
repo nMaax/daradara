@@ -137,8 +137,6 @@ def post_signup():
         check = False
     elif len(email) < 6 or not email.__contains__('@') or not email.__contains__('.'):
         check = False
-    elif dao.get_user_by_email(email):
-        check = False
     elif len(password) < 8:
         check = False
     elif not is_image(secure_filename(propic.filename)): # type: ignore
@@ -147,6 +145,9 @@ def post_signup():
     # If the data isn't correct say it, otherwhise continue 
     if not check:
         flash("Dati inseriti mancanti o erronei, riprovare", 'warning')
+        return redirect(url_for('signup'))
+    elif dao.get_user_by_email(email):
+        flash("Esiste già un utente con quella email", 'warning')
         return redirect(url_for('signup'))
     else:
 
@@ -300,7 +301,6 @@ def podcast(id: int):
     if podcast:
 
         creator = dao.get_user(podcast['id_user'])
-        
 
         row_last_update = dao.get_last_update(id)
         last_update = row_last_update['last_update'] # type: ignore
@@ -354,14 +354,13 @@ def new_podcast():
         flash('Devi aver fatto l\'accesso prima di poter creare un podcast', category='warning')
         return redirect(url_for('index'))
     else:
-        return render_template('new-podcast.html')
+        return render_template('newpodcast.html')
 
 @app.route('/podcast/new/elab', methods=['POST'])
 @login_required
 def post_new_podcast():
 
     # Retriving data 
-    #TODO! Check, via javascript, che il titolo non esista già
     title = request.form['title']
     desc = request.form['desc']
     img = request.files['img']
@@ -379,8 +378,6 @@ def post_new_podcast():
         check = False
     elif len(title) < 4 or len(title) > 32:
         check = False
-    elif dao.get_podcast_by_title(title):
-        check = False
     elif len(desc)<16 or len(desc) > 516:
         check = False
     elif len(category) < 4 or len(category) > 32:
@@ -391,6 +388,9 @@ def post_new_podcast():
     # Check if all form fields are filled out and that each value is not violating the rules
     if not check:
         flash("Impossibile aggiugere il podcast, i dati iseriti sono mancanti o erronei", 'warning')
+        return redirect(url_for('new_podcast'))
+    elif dao.get_podcast_by_title(title):
+        flash("Esiste già un podcast con questo titolo", 'warning')
         return redirect(url_for('new_podcast'))
     else:
         # Retrive the id of the creator and the id the podcast will have
@@ -499,41 +499,41 @@ def post_edit_podcast(id: int):
     elif not check:
         flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
         return redirect(url_for('podcast', id=id))
+    else:
+        try:
 
-    try:
+            if podcast['title'] == title:
+                title = None
+            if podcast['desc'] == desc:
+                desc = None
+            if podcast['tag'] == category:
+                category = None
 
-        if podcast['title'] == title:
-            title = None
-        if podcast['desc'] == desc:
-            desc = None
-        if podcast['tag'] == category:
-            category = None
+            if dao.get_podcast_by_title(title):
+                raise dataManipulationError('A podcast with that title already exists')
 
-        if dao.get_podcast_by_title(title):
-            raise dataManipulationError('A podcast with that title already exists')
+            # Otherwise edit the podcast
+            if title or desc:
+                pod_result = dao.update_podcast(id=id, title=title, desc=desc)
+            else:
+                pod_result = True
 
-        # Otherwise edit the podcast
-        if title or desc:
-            pod_result = dao.update_podcast(id=id, title=title, desc=desc)
-        else:
-            pod_result = True
+            if category:
+                tag_result = dao.update_tag(id_pod=id, tag=category)
+            else:
+                tag_result = True
 
-        if category:
-            tag_result = dao.update_tag(id_pod=id, tag=category)
-        else:
-            tag_result = True
+            if not pod_result:
+                raise dataManipulationError('Unable to update title or description')
+            elif not tag_result:
+                raise dataManipulationError('Unable to update category')
 
-        if not pod_result:
-            raise dataManipulationError('Unable to update title or description')
-        elif not tag_result:
-            raise dataManipulationError('Unable to update category')
-
-        flash(message='Podcast modificato correttamente', category='success')
-        return redirect(url_for('podcast', id=id))
-            
-    except Exception as e:
-        flash(message='C\'è stato un errore durante la modifica del podcast - ERR: '+str(e), category='danger')
-        return redirect(url_for('podcast', id=id))
+            flash(message='Podcast modificato correttamente', category='success')
+            return redirect(url_for('podcast', id=id))
+                
+        except Exception as e:
+            flash(message='C\'è stato un errore durante la modifica del podcast - ERR: '+str(e), category='danger')
+            return redirect(url_for('podcast', id=id))
 
 @app.route('/podcast/<int:id>/img/edit/elab', methods=['POST'])
 def post_update_podcast_img(id: int):
@@ -643,7 +643,7 @@ def new_episode(id_pod: int):
         flash('Non sei il proprietario del podcast', 'warning')
         return redirect(url_for('podcast', id=id_pod))
     else:
-        return render_template('new-episode.html', id_pod=id_pod, podcast=podcast)
+        return render_template('newepisode.html', id_pod=id_pod, podcast=podcast)
 
 @app.route('/podcast/<int:id_pod>/episode/new/elab', methods=['POST'])
 @login_required
@@ -660,14 +660,11 @@ def post_new_episode(id_pod: int):
     desc = desc.strip()
     
     #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
-    #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
     # Checking that the data is valid
     check = True
     if not title or not desc or not audio:
         check = False
     elif len(title) < 4 or len(title) > 32:
-        check = False
-    elif dao.get_episode_by_title(title=title, id_pod=id_pod):
         check = False
     elif len(desc) < 16 or len(desc) > 516:
         check = False
@@ -943,6 +940,10 @@ def load_user(user_id):
 @app.route('/terms')
 def terms():
     return render_template('terms.html')
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 # Error handling routes
 @app.errorhandler(401)

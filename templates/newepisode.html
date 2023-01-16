@@ -1,5 +1,9 @@
 {% extends 'layout.html' %}
 
+{% block scripts %}
+<script src="{{url_for('static', filename='scripts/newepisode.js')}}" defer></script>
+{% endblock %}
+
 {% block content %}
 
 <!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
@@ -13,37 +17,37 @@
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Aggiungi un nuovo episodio a <i>{{podcast.title}}</i></p>
 
                 <!-- Form -->
-                <form action="{{ url_for('post_new_episode', id_pod=id_pod) }}" method="POST" enctype="multipart/form-data" class="mx-1 mx-md-4">
+                <form action="{{ url_for('post_new_episode', id_pod=id_pod) }}" method="POST" enctype="multipart/form-data" class="mx-1 mx-md-4" id="new-episode-form">
 
                     <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-heading fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                        <input type="text" placeholder="Bootstrap: come funziona" name="title" id="form3Example1c" class="form-control" minlength="4" maxlength="32" required/>
-                        <label class="form-label" for="form3Example1c">Titolo</label>
+                        <input type="text" placeholder="Bootstrap: come funziona" name="title" id="title-input" class="form-control" minlength="4" maxlength="32" required/>
+                        <label class="form-label" for="title-input">Titolo</label>
                     </div>
                     </div>
 
                     <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-quote-right fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                        <textarea type="text" rows="4" placeholder="Oggi vediamo insieme come funziona bootstrap..." name="desc" id="form3Example1c" class="form-control" minlength="16" maxlength="516" required></textarea>
-                        <label class="form-label" for="form3Example1c">Descrizione</label>
+                        <textarea type="text" rows="4" placeholder="Oggi vediamo insieme come funziona bootstrap..." name="desc" id="desc-input" class="form-control" minlength="16" maxlength="516" required></textarea>
+                        <label class="form-label" for="desc-input">Descrizione</label>
                     </div>
                     </div>
 
                     <div class="d-flex flex-row align-items-center mb-4">
-                        <i class="fas fa-clock fa-lg me-3 fa-fw"></i>
-                        <div class="form-outline flex-fill mb-0">
-                            <input type="date" name="date" id="form3Example1c" class="form-control" min="2022-01-01" required/>
-                            <label class="form-label" for="form3Example1c">Data</label>
-                        </div>
-                        </div>
+                    <i class="fas fa-clock fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <input type="date" name="date" id="date-input" class="form-control" min="2022-01-01" accept="audio/mp3, audio/wav" required/>
+                        <label class="form-label" for="date-input">Data</label>
+                    </div>
+                    </div>
 
                     <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-headphones fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                        <input type="file" name="audio" id="form3Example3c" class="form-control" required/>
-                        <label class="form-label" for="form3Example3c">Traccia audio</label>
+                        <input type="file" name="audio" id="audio-input" class="form-control" required/>
+                        <label class="form-label" for="audio-input">Traccia audio</label>
                     </div>
                     </div>
 

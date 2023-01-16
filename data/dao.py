@@ -92,7 +92,7 @@ def get_saves_join_episodes_podcasts(id_user):
     saves = False
 
     try:
-        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ? ORDER BY saves.timestamp DESC' #TODO! ORDER BY saves.timestamp
+        sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ? ORDER BY saves.timestamp DESC'
         cursor.execute(sql, (id_user,))
         saves = cursor.fetchall()
     except Exception as e:

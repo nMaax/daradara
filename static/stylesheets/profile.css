@@ -3,23 +3,27 @@
     white-space: nowrap;
 }
 
-.card-scroll::-webkit-scrollbar {
-    height: 0.5em; /*spessore scrollbar*/
-    background-color: #F5F5F5; /*colore background scrollbar*/
-}
 
+/* Webkit (Chromium) */
+.card-scroll::-webkit-scrollbar {
+    height: 0.4em; /*spessore scrollbar*/
+    background-color: #F5F5F5; /*colore background scrollbar*/
+    display: block;
+    -webkit-appearance: none;
+}
 .card-scroll::-webkit-scrollbar-thumb {
     background-color: #000000; /*colore scrollbar*/
 }
 
-/*@media (min-width: 1200px) and (max-width: 1400px) {
-    .text-wrapper {
-      font-size: 0.875em !important;
-    }
+/* Firefox */
+.card-scroll::-moz-scrollbar {
+    height: 0.4em; /*spessore scrollbar*/
+    background-color: #F5F5F5; /*colore background scrollbar*/
+    display: block;
+    -moz-appearance: none;
+}
+.card-scroll::-moz-scrollbar-thumb {
+    background-color: #000000; /*colore scrollbar*/
 }
 
-@media (min-width: 992px) and (max-width: 1200px) {
-    .text-wrapper {
-      font-size: 0.75em !important;
-    }
-}*/
+
