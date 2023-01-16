@@ -29,7 +29,8 @@
                 </div>
                 <div class="modal-body">
                     <form class="d-flex flex-column" action="{{url_for('post_update_podcast_img', id=id)}}" method="POST" enctype="multipart/form-data">
-                        <input type="file" name="img" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"    />
+                        <label class="form-label" for="img-input">Nuova immagine</label>
+                        <input type="file" id="img-input" name="img" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"/>
                         <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                     </form>
                 </div>
@@ -58,9 +59,12 @@
                     </div>
                     <div class="modal-body">
                         <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST">
-                            <input type="text" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"/>
-                            <textarea type="text" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
-                            <input type="text" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{category.tag|capitalize}}"/>
+                            <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"/>
+                            <label class="form-label" for="title-input">Nuovo titolo</label>
+                            <textarea type="text" id="desc-input" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
+                            <label class="form-label" for="desc-input">Nuova descrizione</label>
+                            <input type="text" id="category-input" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{category.tag|capitalize}}"/>
+                            <label class="form-label" for="category-input">Nuova categoria</label>
                             <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                         </form>
                     </div>

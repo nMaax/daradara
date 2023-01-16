@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}{% endblock %}
+{% block title %} - Seguiti di {{user.name}}{% endblock %}
 
 {% block content %}
 
@@ -19,13 +19,13 @@
     
     {% for podcast in podcasts %}
     <div class="col">
-    <div class="card">
+    <a class="card" href="{{url_for('podcast', id=podcast.id)}}">
         <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{podcast.title}} image">
         <div class="card-body">
         <h5 class="card-title">{{podcast.title}}</h5>
         <p class="card-text">{{podcast.desc}}</p>
         </div>  
-    </div>
+    </a>
     </div>
     {% endfor %}
 

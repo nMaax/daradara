@@ -139,7 +139,7 @@ def post_signup():
         check = False
     elif dao.get_user_by_email(email):
         check = False
-    elif len(password) < 8: #TODO! Controlla che vengano inseriti tutti i caratteri speciali
+    elif len(password) < 8:
         check = False
     elif not is_image(secure_filename(propic.filename)): # type: ignore
         check = False
@@ -206,10 +206,16 @@ def profile(id: int):
 def owned(id: int):
     user = dao.get_user(id)
     if user:
+
         podcasts = dao.get_podcasts_by_user(id)
         is_owner = False
         if current_user.is_authenticated and current_user.id == id: # type: ignore
             is_owner = True
+
+        if not is_owner and user['priv_owned'] == 1:
+            flash('A gli altri utenti non è permesso vedere i podcast di questo profilo', 'info')
+            return redirect(url_for('profile', id=id))
+
         return render_template('owned.html', podcasts=podcasts, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
@@ -228,10 +234,20 @@ def privatize_owned(id: int):
 
 @app.route('/profile/<int:id>/follows')
 def follows(id: int):
+    #TODO! Controlla la privacy utente qui
     user = dao.get_user(id)
     if user:
+
         podcasts = dao.get_follows_join_podcasts(id)
-        return render_template('follows.html', podcasts=podcasts)
+        is_owner = False
+        if current_user.is_authenticated and current_user.id == id: # type: ignore
+            is_owner = True
+
+        if not is_owner and user['priv_follows'] == 1:
+            flash('A gli altri utenti non è permesso vedere i seguiti di questo profilo', 'info')
+            return redirect(url_for('profile', id=id))
+
+        return render_template('follows.html', podcasts=podcasts, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
         return redirect('index')
@@ -251,10 +267,16 @@ def privatize_follows(id: int):
 def saves(id: int):
     user = dao.get_user(id)
     if user:
+
         episodes = dao.get_saves_join_episodes_podcasts(id)
         is_owner = False
         if current_user.is_authenticated and current_user.id == id: # type: ignore
             is_owner = True
+
+        if not is_owner and user['priv_saves'] == 1:
+            flash('A gli altri utenti non è permesso vedere gli episodi salvati di questo profilo', 'info')
+            return redirect(url_for('profile', id=id))
+
         return render_template('saves.html', episodes=episodes, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
@@ -918,6 +940,10 @@ def post_edit_comment(id_pod: int, id_ep: int):
 def load_user(user_id):
     return User(dao.get_user(user_id))
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 # Error handling routes
 @app.errorhandler(401)
 def unauthorized(error):
@@ -934,7 +960,7 @@ def not_found(error):
 # Route for testing pages (ignore this)
 @app.route('/test')
 def test():
-    return render_template('test.html')
+    return render_template('terms.html')
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')

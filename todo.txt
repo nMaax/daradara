@@ -41,17 +41,20 @@
 [X] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
 
 [ ] Aggiungi crop image
-[ ] Aggiungi tasti di info nei form
+[X] Aggiungi tasti di info nei form
+[ ] Aggiugni label nei modal di modifica
+[ ] Fai pagina di faq
+
+[ ] Fai ricerca nuovi podcast
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
 
-[ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
-[ ] Aggiungi dei simboli di info accanto a vari campi di form o se necessario (che dicano, per esepmpio quanto debba essere lunga la password ...)
-[ ] Definsci colori, icone e font
-    Cambia colori dei bottoni: usa nero bianco e rosso
 [ ] Definisci pagine di footer, link social e altre pagine
 [ ] Definisci pagine di errore
+[ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
+[ ] Definsci colori, icone e font
+    Cambia colori dei bottoni: usa nero bianco e rosso
 
 *** Extra ***
 
