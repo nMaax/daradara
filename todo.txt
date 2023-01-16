@@ -40,12 +40,15 @@
 
 [X] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
 
-[ ] Aggiungi crop image
+
 [X] Aggiungi tasti di info nei form
 [X] Aggiugni label nei modal di modifica
-[ ] Fai pagina di faq
+[X] Fai pagina di faq
 
 [ ] Fai ricerca nuovi podcast
+[X] Aggiungi controllo lunghezza caratteri nei modali di modifica
+[ ] Aggiungi crop image
+[ ] Sostituisci gli alert di js con altro
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Commenta ogni statemnt jinja (almeno i {%%})

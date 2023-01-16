@@ -4,6 +4,12 @@
 
 {% block stylesheets %} <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/episode.css')}}"> {% endblock %}
 
+{% block scripts %}
+
+<script src="{{url_for('static', filename='scripts/editepisode.js')}}" defer></script>
+
+{% endblock %}
+
 {% block content %}
 
 <!-- Header episodio -->
@@ -28,7 +34,7 @@
 
         <!-- Modal (edit episode) -->
         <!--TODO! Add labels -->
-        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" id="edit-episode-form">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

@@ -4,7 +4,20 @@
 
 {% block stylesheets %}<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/podcast.css')}}">{% endblock %}
 
+{% block scripts %}
+
+<script src="{{url_for('static', filename='scripts/editpodcast.js')}}" defer></script>
+<script src="{{url_for('static', filename='scripts/searchepisode.js')}}" defer></script>
+
+{% endblock %}
+
 {% block content %} 
+
+    <!-- Searchbar into the podcast -->
+
+    <div class="row d-flex justify-content-center align-items-center">
+        <input class="col-12 form-control mx-2 mb-5" id="searchbar" type="search" placeholder="Cerca tra gli episodi del podcast">
+    </div>
 
     <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
     <div class="row">
@@ -58,7 +71,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST">
+                        <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST" id="edit-podcast-form">
                             <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}"/>
                             <label class="form-label" for="title-input">Nuovo titolo</label>
                             <textarea type="text" id="desc-input" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
@@ -136,18 +149,22 @@
         {% if episodes %}
             {% for episode in episodes %}
             <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="row d-flex justify-content-center">
-                <div class="row mt-3">
+                <div class="row mt-3 episode">
                     <!-- Episodio  (bootstrap card) -->
                     <div class="card mb-3 ps-0">
                         <div class="row g-0">
                             <!-- Titolo episodio -->
                             <div class="col-md-4 bg-light d-flex justify-content-center align-items-center">
-                                <p class="text-center display-6 mx-2 my-4">{{episode.title}}</p>
+                                <p class="episode-title text-center display-6 mx-2 my-4">{{episode.title}}</p>
                             </div>
                             <!-- Traccia audio -->
                             <!--TODO implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
                             <div class="col-md-7">
                                 <div class="card-body row g-2">
+                                    <div class="d-flex justify-content-center align-items-center mt-4">
+                                        <!--TODO? tagliare la descrizione a meno caratteri se troppo lunga-->
+                                        <p class="episode-description card-text text-center">{{episode.description}}</p>
+                                    </div>
                                     <div class="text-light p-3">
                                         <audio controls class="w-100">
                                             <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">

@@ -1,7 +1,7 @@
 'use strict'
 
 // check inputs respect the min and max length attributes if trimmed
-let form = document.getElementById("new-episode-form");
+let form = document.getElementById("edit-podcast-form");
 
 form.addEventListener("submit", function(event) {
     event.preventDefault();

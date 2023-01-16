@@ -1,8 +1,8 @@
 # Vanilla Python libraries
 import os, re, secrets, sqlite3
+from random import randint
 from datetime import datetime, date, timedelta
 from dateutil import parser as date_parser
-
 
 # Personal libraries
 import data.dao as dao
@@ -932,10 +932,12 @@ def post_edit_comment(id_pod: int, id_ep: int):
 
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
-# Login manager
-@login_manager.user_loader
-def load_user(user_id):
-    return User(dao.get_user(user_id))
+@app.route('/random')
+def random_pod():
+    max_id = dao.get_last_podcast_id()
+    id = randint(1, max_id)
+    flash("Forse questo podcast potrebbe interessarti...", 'info')
+    return redirect(url_for('podcast', id=id))
 
 @app.route('/terms')
 def terms():
@@ -944,6 +946,11 @@ def terms():
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
+
+# Login manager
+@login_manager.user_loader
+def load_user(user_id):
+    return User(dao.get_user(user_id))
 
 # Error handling routes
 @app.errorhandler(401)
@@ -961,7 +968,7 @@ def not_found(error):
 # Route for testing pages (ignore this)
 @app.route('/test')
 def test():
-    return render_template('terms.html')
+    return render_template('test.html')
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')
