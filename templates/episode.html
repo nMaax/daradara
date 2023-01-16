@@ -26,7 +26,8 @@
             <h1 class="">
                 {{episode.title}}
                 {% if is_owner %}
-                <a type="button" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a>
+                <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
+                <a href="#" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a>
                 {% endif %}
             </h1>
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>

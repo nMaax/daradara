@@ -19,26 +19,25 @@
     <!-- Howler.js -->
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script-->
 
-    <!-- Media elements.js -->
-    <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/5.1.0/mediaelement.min.js" integrity="sha512-R7YELuFaYjrPINkF91+XWOrlfkhmSt0nRGL4Fv6io4dC4GxMomcEJejdhtIAzMWg9J+Eu+1S2eWg4O04ZJl1DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script-->
-
     <!-- Fontawesome icons -->
-    <!-- N.B. Il sito di fontawesome NON usa l'attributo defer  -->
+    <!-- N.B. Il sito di fontawesome ha fornito la seguente linea di codice, nel sito viene detto di metterla in head e NON usare defer -->
     <script src="https://kit.fontawesome.com/deded870c8.js" crossorigin="anonymous"></script>
     
-    <!-- Google font (League Spartan) -->
-    <link href='https://fonts.googleapis.com/css2?family=League+Spartan' rel='stylesheet'>
+    <!-- Google Font (League Spartan) -->
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan" rel="stylesheet">
+
+    <!-- Icon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='/ico/daradara_medium.ico') }}">
 
     <!-- Personal stylesheets -->
-    <link href="{{url_for('static', filename='stylesheets/layout.css')}}" rel="stylesheet" >
+    <link href="{{url_for('static', filename='stylesheets/layout.css')}}" rel="stylesheet">
     {% block stylesheets %}{% endblock %}
     
     <!-- Personal scripts -->
     {% block scripts %}{% endblock %}
 
-    <!-- Title and icon -->
+    <!-- Title -->
     <title>DaraDara{% block title %}{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='/ico/daradara_medium.ico') }}">
 </head>
 <body>
     <!-- Navbar -->
@@ -54,7 +53,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                <a class="nav-link {% block homeActive %}{% endblock %}" aria-current="page" href="{{ url_for('index') }}">Home</a>
+                <a class="nav-link {% block homeActive %}{% endblock %}" aria-current="page" href="{{url_for('index')}}">Home</a>
                 </li>
                 <li class="nav-item">
                 <a class="nav-link {% block searchActive %}{% endblock %}" href="{{url_for('categories')}}">Sfoglia</a>
@@ -78,14 +77,14 @@
 
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Trova un nuovo podcast" aria-label="Search">
-                <button class="btn btn-outline-light btn-dark" type="submit">Cerca</button>
+                <button class="btn btn-light btn-outline-dark" type="submit">Cerca</button>
             </form>
            
             {% if not current_user.is_authenticated %}
-            <a href = "{{ url_for('login') }}"><button type="button" id="loginBtn" class="btn btn-outline-light btn-dark my-3 my-lg-0 mx-lg-3">Accedi</button></a>
+            <a href = "{{url_for('login')}}" id="loginBtn" class="btn btn-light btn-outline-dark my-3 my-lg-0 mx-lg-3">Accedi</a>
             {% else %}
-            <a href="{{ url_for('profile', id = current_user.id) }}" ><button type="button" id="profileBtn" class="btn btn-outline-light btn-dark my-3 my-lg-0 mx-lg-3">Profilo</button></a>
-            <a href = "{{ url_for('logout') }}"><button type="button" id="logoutBtn" class="btn btn-outline-danger btn-dark my-3 my-lg-0 me-lg-3">Esci</button></a>
+            <a href="{{url_for('profile', id = current_user.id)}}" id="profileBtn" class="btn btn-light btn-outline-dark my-3 my-lg-0 mx-lg-3">Profilo</a>
+            <a href = "{{url_for('logout')}}" id="logoutBtn" class="btn btn-light btn-outline-dark my-3 my-lg-0 me-lg-3">Esci</a>
             {% endif %}
             
             </div>

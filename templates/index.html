@@ -14,51 +14,53 @@
 
         {% if current_user.is_authenticated %}
 
-        <!-- Body -->
-        {% if saves|length %}
-            {% for save in saves[:4] %}
-            <!-- Saved episode (bootstrap card) -->
-            <div class="row card mb-3 mx-2 mx-lg-0">
-                <div class="row g-0">
-                    <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                        <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">
-                        <img class="card-img img-fluid p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt='podcast "{{save.title}}" image'>   
-                        </a> 
-                    </div>
-                    <div class="col-10 col-lg-8">
-                        <div class="card-body">
-                            <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}"><h5 class="card-title">{{ save.title }}</h5></a>
-                            <a href="{{url_for('podcast', id=save.id)}}"><p class="card-text"><small class="text-muted">{{save.podcast_title}}</small></p></a>
+            <!-- Body -->
+            {% if saves|length %}
+
+                {% for save in saves[:4] %}
+                <!-- Saved episode (bootstrap card) -->
+                <div class="row card mb-3 mx-2 mx-lg-0">
+                    <div class="row g-0">
+                        <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
+                            <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">
+                            <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}"  alt='podcast "{{save.title}}" image'>   
+                            </a> 
+                        </div>
+                        <div class="col-10 col-lg-8">
+                            <div class="card-body">
+                                <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}"><h5 class="card-title">{{ save.title }}</h5></a>
+                                <a href="{{url_for('podcast', id=save.id)}}"><p class="card-text"><small class="text-muted">{{save.podcast_title}}</small></p></a>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-center justify-content-lg-start">
+                            <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark"><i class="fa-solid fa-play me-2"></i>Riproduci l'episodio</a>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-center justify-content-lg-start">
-                        <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark"><i class="fa-solid fa-play me-2"></i>Riproduci l'episodio</a>
+                </div>
+                {% endfor %}
+
+                <div class="d-flex justify-content-center align-items-center">
+                    {% if saves|length > 4 %}
+                        <a  href="{{url_for('saves', id=current_user.id)}}" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">Visualizza tutti</a>
+                    {% endif %}
+                </div>
+
+            {% else %}
+
+                <!-- Placeholder for no-saves case (bootstrap card) -->
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                     </div>
-                </div>
-            </div>
-            {% endfor %}
-
-            <div class="d-flex justify-content-center align-items-center">
-                <!--TODO? Bottone "Visualizza tutti gli episodi" si attiva solo se ci sono più di 5 episodi salvati -->
-                {% if saves|length > 4 %}
-                    <a  href="{{url_for('saves', id=current_user.id)}}" type="button" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">Visualizza tutti</a>
-                {% endif %}
-            </div>
-        {% else %}
-
-            <!-- Placeholder for no-saves case (bootstrap card) -->
-            <div class="card text-center">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
-                </div>
-                <div class="card-body">
+                    <div class="card-body">
+                        
+                        <p class="card-text">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</p>
+                        <a href="#" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
+                    </div>
                     
-                    <p class="card-text">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</p>
-                    <a href="#" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
                 </div>
-                
-            </div>
-        {% endif %}
+
+            {% endif %}
 
         {% else%}
 
@@ -68,9 +70,9 @@
                     Sai che puoi salvare i tuoi episodi preferiti? 🤔
                 </div>
                 <div class="card-body">
-                <h5 class="card-title">Accedi o registrati per salvare tutti gli episodi che vuoi!</h5>
-                <p class="card-text">Entra in DaraDara con il bottone qui sotto o in alto a destra</p>
-                <a href="{{url_for('login')}}" type='button' class="btn btn-outline-dark btn-light">Accedi o registrati</a>
+                    <h5 class="card-title">Accedi o registrati per salvare tutti gli episodi che vuoi!</h5>
+                    <p class="card-text">Entra in DaraDara con il bottone qui sotto o in alto a destra</p>
+                    <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi o registrati</a>
                 </div>
             </div>
 
@@ -85,24 +87,23 @@
 
         <!-- Body -->
         {% for podcast in onfire %}
-        <a href="{{url_for('podcast', id=podcast.id)}}">
 
         <!-- Podcast (bootstrap card) -->
         <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
-                <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                    <img class="card-img img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{i}} image">    
-                </div>
+                <a href="{{url_for('podcast', id=podcast.id)}}" class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
+                    <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="podcast {{i}} image">    
+                </a>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">
+                        <a href="{{url_for('podcast', id=podcast.id)}}">
                         <p class="card-title display-6">{{podcast.title}}</p>
+                        </a>
                         <p class="card-text">{{podcast.desc}}</p>
                     </div>
-                   
                 </div>
                 <div class="card-footer">
                 {% if podcast.last_update %}
-                    <!--TODO! daysgo con js -->
                     <p class="card-text"><small class="text-muted">Ultimo aggiornamento {{podcast.last_update}}</small></p>
                 {% else %}
                     <p class="card-text"><small class="text-muted">Nessun episodio pubblicato</small></p>
@@ -110,10 +111,7 @@
                 </div>
             </div>
         </div>
-        </a>
         {% endfor %}
-
-        <!--TODO? Bottone "Visualizza tutti i podcast" rimanda a pagina "sfoglia"? -->
 
     </main>
 </div>

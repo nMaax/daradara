@@ -45,7 +45,7 @@
                             {% if is_owner %}
                             <a href="{{url_for('privatize_owned', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[0]==1 %}-slash{% endif %} fa-xxs"></i></a>
                             {% endif %}
-                            <a href="{{url_for('owned', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                            <a href="{{url_for('owned', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                     {% endif %}
                     </div>
                 </div>
@@ -57,7 +57,7 @@
 
                             {% for podcast in podcasts[:5] %}
                             
-                            <a href="{{ url_for('podcast', id=podcast.id) }}" class="d-inline-block mx-2 border rounded-2 px-2">
+                            <a href="{{url_for('podcast', id=podcast.id)}}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="im-card img-fluid" alt="Card image" style="max-width: 100px;">
@@ -83,7 +83,7 @@
                 </div>
                 {% if current_user.id == user.id %}
                 <!-- Card footer -->
-                <a href="{{ url_for('new_podcast') }}" class="col-12 col-lg-1 btn btn-lg btn-light border-start rounded-0-start border-dark-start bg-light d-flex flex-lg-column justify-content-center align-items-center" role="button">
+                <a href="{{url_for('new_podcast')}}" class="col-12 col-lg-1 btn btn-lg btn-light border-start rounded-0-start border-dark-start bg-light d-flex flex-lg-column justify-content-center align-items-center" role="button">
                     <div>{% if podcasts %}Nuovo podcast{% else %}Diventa podcaster!{% endif %}</div>
                     <i class="fa-solid fa-microphone mt-0 ms-3 mt-lg-3 ms-lg-0" style="font-size: x-large;"></i>
                 </a>
@@ -107,9 +107,9 @@
                             <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
                         {% endif %}
                         {% if follows|length > 0 %}
-                            <a href="{{url_for('follows', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                            <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                         {% elif follows|length == 0 and is_owner %}
-                            <a href="#" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
+                            <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
                         {% endif %}
                     </div>
                 </div>
@@ -121,8 +121,7 @@
 
                             {% for follow in follows[:5] %}
                             
-                            <!--TODO metti ricerca tra i tuoi follow con js-->
-                            <a href="{{ url_for('podcast', id=follow.id_podcast) }}"class="d-inline-block mx-2 border rounded-2 px-2">
+                            <a href="{{url_for('podcast', id=follow.id_podcast)}}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(follow.id, follow.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">
@@ -166,7 +165,7 @@
                         <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
                         {% endif %}
                         {% if follows|length > 0 %} 
-                        <a href="{{url_for('saves', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                        <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                         {% endif %}
                     </div>
                 </div>
@@ -179,7 +178,7 @@
                             {% for save in saves[:5] %}
                             
                             <!--TODO metti ricerca tra i tuoi follow con js-->
-                            <a href="{{ url_for('episode', id_pod=save.id, id_ep=save.ep_id) }}"class="d-inline-block mx-2 border rounded-2 px-2">
+                            <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">

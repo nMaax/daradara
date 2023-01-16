@@ -50,10 +50,13 @@
 [ ] Aggiungi crop image
 [ ] Sostituisci gli alert di js con altro
 [ ] Blocca ascolto per i non registrati
+[ ] Metti ricerca nelle pagine owned, follows e saves
+
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
+[ ] Fai html validator
 
 [ ] Definisci pagine di footer, link social e altre pagine
 [ ] Definisci pagine di errore

@@ -317,6 +317,7 @@ def podcast(id: int):
            is_following = dao.is_following(id_user=current_user.id, id_pod=id) # type: ignore
            is_owner = podcast['id_user'] == current_user.id # type: ignore
 
+        session['last_podcast_visited'] = id
         return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
     else:
         flash(message='Il podcast cercato non esiste', category='warning')
@@ -601,6 +602,7 @@ def episode(id_pod: int, id_ep: int):
            has_saved = dao.has_saved(id_user=current_user.id, id_ep=id_ep) # type: ignore
            is_owner = podcast['id_user'] == current_user.id # type: ignore
         
+        session['last_podcast_visited'] = id_pod
         return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments=n_comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
@@ -940,8 +942,14 @@ def categories():
 @app.route('/random')
 def random_pod():
     max_id = dao.get_last_podcast_id()
+    try:
+        visited_id = session['last_podcast_visited']
+    except Exception as e:
+        visited_id = 0
     id = randint(1, max_id)
-    flash("Forse questo podcast potrebbe interessarti...", 'info')
+    while id == visited_id:
+        id = randint(1, max_id)
+
     return redirect(url_for('podcast', id=id))
 
 @app.route('/terms')

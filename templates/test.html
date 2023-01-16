@@ -1,27 +1,5 @@
 {% extends 'layout.html' %}
+
 {% block content %}
-
-<div class="row">
-  <button id="hideme">Nascondi</button>
-</div>
-<div class="row">
-  <a class="line" href="" style="display: block;">  
-    <p>Titolo</p>
-    <p>Contenuto</p>
-  </a>
-</div>
-
-<script>
-
-btn = document.getElementById('hideme')
-line = document.getElementsByClassName('line')
-
-btn.addEventListener('click', e => {
-
-  line[0].style.display = 'none'
-
-});
-
-</script>
 
 {% endblock %}

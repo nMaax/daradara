@@ -8,19 +8,8 @@
 
 {% block content %}
 
-<style>
-    /* Add some styling for the tooltip */
-    .form-tooltip {
-		background-color: #f5f5f5;
-		border-radius: 3px;
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-		padding: 10px;
-		text-align: center;
-	}
-</style>
-
 <!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
-<section class="row d-flex justify-content-center align-items-center">
+<div class="row d-flex justify-content-center align-items-center">
 	
     <!-- Signup card -->
     <div class="card text-black rounded-4">
@@ -32,12 +21,12 @@
 					<p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Registrati</p>
                     
                     <!-- Form -->
-					<form action="{{ url_for('post_signup') }}" method="POST" class="mx-1 mx-md-4" enctype="multipart/form-data" id="signup-form">
+					<form action="{{url_for('post_signup')}}" method="POST" class="mx-1 mx-md-4" enctype="multipart/form-data" id="signup-form">
 	
 						<div class="d-flex flex-row align-items-center mb-4">
 						<i class="fas fa-user fa-lg me-3 fa-fw"></i>
 						<div class="form-outline flex-fill mb-0">
-							<input type="text" name="name" id="name-input" class="form-control" minlength="2" maxlength="32" placeholder="Mario" required/>
+							<input type="text" name="name" id="name-input" class="form-control" minlength="2" maxlength="32" placeholder="Mario" required>
 							<label class="form-label" for="name-input">Nome</label>
 						</div>
 						</div>
@@ -45,7 +34,7 @@
 						<div class="d-flex flex-row align-items-center mb-4">
 						<i class="fas fa-user fa-lg me-3 fa-fw"></i>
 						<div class="form-outline flex-fill mb-0">
-							<input type="text" name="surname" id="surname-input" class="form-control" minlength="2" maxlength="32" placeholder="Rossi" required/>
+							<input type="text" name="surname" id="surname-input" class="form-control" minlength="2" maxlength="32" placeholder="Rossi" required>
 							<label class="form-label" for="surname-input">Cognome</label>
 						</div>
 						</div>
@@ -53,7 +42,7 @@
 						<div class="d-flex flex-row align-items-center mb-4">
 						<i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
 						<div class="form-outline flex-fill mb-0">
-							<input type="email" name="email" id="email-input" class="form-control" minlength="5" placeholder="mario.rossi@darara.it" required/>
+							<input type="email" name="email" id="email-input" class="form-control" minlength="5" placeholder="mario.rossi@darara.it" required>
 							<label class="form-label" for="email-input">Email</label>
 						</div>
 						</div>
@@ -61,7 +50,8 @@
 						<div class="d-flex flex-row align-items-center mb-4">
 							<i class="fas fa-lock fa-lg me-3 fa-fw"></i>
 							<div class="form-outline flex-fill mb-0">
-								<input type="password" name="password" id="password-input" class="form-control" minlength="8" required/>
+								<!--TODO! Aggiungi pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" qui e in serverside -->
+								<input type="password" name="password" id="password-input" class="form-control" minlength="8" required>
 								<div class="mt-3">
 									<i class="fas fa-info-circle" id="password-info-icon"></i>
 									<label class="form-label" for="password-input">Password</label>
@@ -75,13 +65,13 @@
 						<div class="d-flex flex-row align-items-center mb-4">
 							<i class="fas fa-image fa-lg me-3 fa-fw"></i>
 							<div class="form-outline flex-fill mb-0">
-								<input type="file" name="propic" id="propic-input" class="form-control" accept="image/jpeg, image/jpg, image/png, image/gif" required/>
+								<input type="file" name="propic" id="propic-input" class="form-control" accept="image/jpeg, image/jpg, image/png, image/gif" required>
 								<label class="form-label" for="propic-input">Immagine del profilo</label>
 							</div>
 						</div>
 	
 						<div class="form-check d-flex justify-content-center mb-5">
-						<input class="form-check-input me-2" name="terms" type="checkbox" value="true" id="terms-input" required/>
+						<input class="form-check-input me-2" name="terms" type="checkbox" value="true" id="terms-input" required>
 						<label class="form-check-label"  for="terms-input">
 							Approvo i <a class="stock-a" href="{{url_for('terms')}}#terms" target="_blank">Termini di servizio</a> e le <a class="stock-a" href="{{url_for('terms')}}#privacy" target="_blank">politiche sulla privacy</a> di DaraDara
 						</label>
@@ -102,6 +92,6 @@
 			</div>
 		</div>
 	</div>
-</section>
+</div>
 
 {% endblock %}
