@@ -183,7 +183,11 @@
             <div class="row card text-center mt-3">
                 <div class="card-body">
                 <h5 class="card-title">Non c'è nulla da vedere qui 👀</h5>
-                <p class="card-text">Hai creato il podcast ma non c'è ancora alcun episodio... creane uno con il bottone soprastante!</p>
+                {% if is_owner %}
+                    <p class="card-text">Hai creato il podcast ma non c'è ancora alcun episodio... creane uno con il bottone soprastante!</p>
+                {% else %}
+                    <p class="card-text">Il proprietario del podcast non ha ancora pubblicato alcun episodio!</p>
+                {% endif %}
                 </div>
             </div>
         {% endif %}

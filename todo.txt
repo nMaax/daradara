@@ -49,8 +49,10 @@
 [X] Aggiungi controllo lunghezza caratteri nei modali di modifica
 [ ] Aggiungi crop image
 [ ] Sostituisci gli alert di js con altro
+[ ] Blocca ascolto per i non registrati
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
+[ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
 
 [ ] Definisci pagine di footer, link social e altre pagine

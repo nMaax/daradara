@@ -349,6 +349,12 @@ def get_last_id_user():
     close(conn, cursor)    
     return id
 
+def get_podcasts_with_tags():
+    output = []
+    for id in range(1, get_last_podcast_id() + 1):
+        output.append(get_podcast_with_tags(id))
+    return output
+    
 def get_podcast_with_tags(id):
     conn, cursor = connect()
     podcast = False

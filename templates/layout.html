@@ -57,7 +57,7 @@
                 <a class="nav-link {% block homeActive %}{% endblock %}" aria-current="page" href="{{ url_for('index') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link {% block searchActive %}{% endblock %}" href="#">Sfoglia</a>
+                <a class="nav-link {% block searchActive %}{% endblock %}" href="{{url_for('categories')}}">Sfoglia</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% block discoverActive %}{% endblock %}" href="{{url_for('random_pod')}}">Sorpendimi</a>

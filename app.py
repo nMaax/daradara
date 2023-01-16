@@ -932,6 +932,11 @@ def post_edit_comment(id_pod: int, id_ep: int):
 
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
+@app.route('/search')
+def categories():
+    podcasts = dao.get_podcasts_with_tags()
+    return render_template('categories.html', podcasts=podcasts)
+
 @app.route('/random')
 def random_pod():
     max_id = dao.get_last_podcast_id()
