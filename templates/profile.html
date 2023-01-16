@@ -27,6 +27,7 @@
 <!-- Profile body (podcast pubblicati e seguiti) -->
 <div class="row">
 
+    {% if is_owner or (not is_owner and privacy[0] == 0) %}
     {% if is_creator or is_owner %}
     <!-- Lista podcast pubblicati (bootstrap card) -->
     <div class="row mt-3">
@@ -36,10 +37,12 @@
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Podcast 🎙️</p>
                     <div class="row g-5">
-                        {% if is_owner %}
-                        <a href="{{url_for('privatize_owned', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[0]==1 %}-slash{% endif %} fa-xxs"></i></a>
-                        {% endif %}
-                        <a href="{{url_for('owned', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                    {% if is_creator %}
+                            {% if is_owner %}
+                            <a href="{{url_for('privatize_owned', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[0]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                            {% endif %}
+                            <a href="{{url_for('owned', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                    {% endif %}
                     </div>
                 </div>
                 <!-- Card body -->
@@ -85,7 +88,9 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 
+    {% if is_owner or (not is_owner and privacy[1] == 0) %}
     <!-- Lista podcast seguiti (bootstrap card) -->
     <div class="row mt-3">
         <div id="follows" class="card mb-3 mx-lg-0 mx-2 p-0">
@@ -94,10 +99,14 @@
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Seguiti 🥳</p>
                     <div class="row g-5">
-                        {% if is_owner %}
-                        <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                        {% if follows|length > 0 %}
+                            {% if is_owner %}
+                                <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                            {% endif %}
+                            <a href="{{url_for('follows', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                        {% elif follows|length == 0 and is_owner %}
+                            <a href="#" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
                         {% endif %}
-                        <a href="{{url_for('follows', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                     </div>
                 </div>
                 <!-- Card body -->
@@ -137,7 +146,9 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
+    {% if is_owner or (not is_owner and privacy[2] == 0) %}
     <!-- Lista episodi salvati -->
     <div class="row mt-3">
         <div id="saves" class="card mb-3 mx-lg-0 mx-2 p-0">
@@ -145,12 +156,14 @@
                 <!-- Card header -->
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Episodi salvati 📋</p>
+                    {% if follows|length > 0 %}
                     <div class="row g-5">
                         {% if is_owner %}
                         <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
                         {% endif %}
                         <a href="{{url_for('saves', id=user.id)}}" type="button" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                     </div>
+                    {% endif %}
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -194,6 +207,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 </div>
 

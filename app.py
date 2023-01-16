@@ -207,7 +207,10 @@ def owned(id: int):
     user = dao.get_user(id)
     if user:
         podcasts = dao.get_podcasts_by_user(id)
-        return render_template('owned.html', podcasts=podcasts)
+        is_owner = False
+        if current_user.is_authenticated and current_user.id == id: # type: ignore
+            is_owner = True
+        return render_template('owned.html', podcasts=podcasts, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
         return redirect(url_for('index'))
@@ -248,8 +251,11 @@ def privatize_follows(id: int):
 def saves(id: int):
     user = dao.get_user(id)
     if user:
-        podcasts = dao.get_saves_join_episodes_podcasts(id)
-        return render_template('saves.html', podcasts=podcasts)
+        episodes = dao.get_saves_join_episodes_podcasts(id)
+        is_owner = False
+        if current_user.is_authenticated and current_user.id == id: # type: ignore
+            is_owner = True
+        return render_template('saves.html', episodes=episodes, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
         return redirect('index')

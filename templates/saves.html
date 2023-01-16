@@ -4,35 +4,41 @@
 
 {% block content %}
 
-{% if podcasts %}
+{% if episodes %}
 <!-- Header -->
 <div class="row">
-    <p class="text-center display-1">Episodi salvati</p>
+    {% if is_owner %}
+        <p class="text-center display-1">I tuoi episodi salvati</p>
+    {% else %}
+        <p class="text-center display-1">Episodi salvati da {{user.name}}</p>
+    {% endif %}
 </div>
 
 <!-- Body -->
-<div class="row">
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        
-            {% for podcast in podcasts %}
-            <div class="col">
-            <div class="card">
-                <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="podcast {{podcast.title}} image">
-                <div class="card-body">
-                <h5 class="card-title">{{podcast.title}}</h5>
-                <p class="card-text">{{podcast.desc}}</p>
-                </div>  
+<div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for episode in episodes %}
+        <div class="col">
+        <div class="card">
+            <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+episode.id|string+episode.img)}}" class="card-img-left img-fluid h-100 w-100 d-block mx-auto" alt="episode {{episode.title}} image">
+            <div class="card-body">
+                <h5 class="card-title">{{episode.title}}</h5>
+                <p class="card-text">{{episode.desc}}</p>
             </div>
-            </div>
-            {% endfor %}
-
+        </div>
+        </div>
+        {% endfor %}
 </div>
-{% else %}
+
+{% elif not episodes and is_owner%}
 <div class="row">
-    <p class="text-center display-1">Non hai salvato ancora nessun episodio 😢</p>
+    <p class="text-center display-1">Non hai salvato nessun episodio 😢</p>
+    <p class="text-center"><small>(per ora...)</small></p>
+</div>
+{% elif not episodes and not is_owner %}
+<div class="row">
+    <p class="text-center display-1">{{user.name}} non ha salvato nessun episodio 😢</p>
     <p class="text-center"><small>(per ora...)</small></p>
 </div>
 {% endif %}
-
 {% endblock %}

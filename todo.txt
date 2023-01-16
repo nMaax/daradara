@@ -30,8 +30,8 @@
 [X] Aggiungi sistema di modifica episodio
 [X] Aggiungi sistema di modifica commenti
 
-[ ] Aggiungi permessi di modifica, eliminazione e creazione
-[ ] Aggiungi logica jinja per la privacy
+[X] Aggiungi permessi di modifica, eliminazione e creazione
+[X] Aggiungi logica jinja per la privacy
 
 [-] Aggiugni riproduzione audio (howler)
 [X] Aggiungi upload multimediale
@@ -39,6 +39,9 @@
 [X] Sposta CSS e JS in file a parte
 
 [X] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
+
+[ ] Aggiungi crop image
+[ ] Aggiungi tasti di info nei form
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
