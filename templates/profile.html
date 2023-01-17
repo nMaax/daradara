@@ -40,14 +40,16 @@
                 <!-- Card header -->
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Podcast 🎙️</p>
-                    <div class="row g-5">
+                    
                     {% if is_creator %}
+                    <div class="row g-5">
                             {% if is_owner %}
                             <a href="{{url_for('privatize_owned', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[0]==1 %}-slash{% endif %} fa-xxs"></i></a>
                             {% endif %}
                             <a href="{{url_for('owned', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
-                    {% endif %}
                     </div>
+                    {% endif %}
+                    
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -159,13 +161,12 @@
                 <!-- Card header -->
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Episodi salvati 📋</p>
-                    
                     <div class="row g-5">
                         {% if is_owner %}
-                        <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                            <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
                         {% endif %}
-                        {% if follows|length > 0 %} 
-                        <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                        {% if saves|length > 0 %} 
+                            <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                         {% endif %}
                     </div>
                 </div>

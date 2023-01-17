@@ -57,13 +57,12 @@
             <div class="row mx-0 mx-lg-2 mx-lg-0 my-2 d-flex justify-content-between align-content-center display-3">
                 <p class="col-8 text-wrap ps-1 ps-lg-0">{{podcast.title}}</p>
                 {% if is_owner %}
-                <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
+                <!--TODO! NON E' VERO!!! ==> NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
                 <a class="col-1 fa-solid fa-pen-to-square mx-3 me-lg-0 pe-0" data-bs-toggle="modal" data-bs-target="#editPodcast"></a>
                 {% endif %}
             </div>
 
             <!-- Modal (edit podcast) -->
-            <!--TODO! Add labels -->
             <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="editInfoPodcastLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
@@ -74,11 +73,11 @@
                     <div class="modal-body">
                         <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST" id="edit-podcast-form">
                             <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}">
-                            <label class="form-label" for="title-input">Nuovo titolo</label>
+                            <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
                             <textarea id="desc-input" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
-                            <label class="form-label" for="desc-input">Nuova descrizione</label>
+                            <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
                             <input type="text" id="category-input" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{category.tag|capitalize}}">
-                            <label class="form-label" for="category-input">Nuova categoria</label>
+                            <label class="form-label mt-2" for="category-input">Nuova categoria</label>
                             <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                         </form>
                     </div>
@@ -161,6 +160,7 @@
                             <!-- Traccia audio -->
                             <div class="col-md-7">
                                 <div class="card-body row g-2">
+                                    {% if current_user.is_authenticated %}
                                     <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="d-flex justify-content-center align-items-center my-4">
                                         <!--TODO? tagliare la descrizione a meno caratteri se troppo lunga-->
                                         <p class="episode-description card-text text-center">{{episode.description}}</p>
@@ -169,6 +169,14 @@
                                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
                                         Il tuo browser non supporta l'elemento audio.
                                     </audio>
+                                    {% else %}
+                                    <div class="d-flex flex-column align-items-center">
+                                        <p class="placeholder-glow d-flex justify-content-center align-items-center">
+                                            <span class="placeholder col-12">Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti! </span>
+                                        </p>
+                                        <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi per ascoltare!</a>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -182,9 +190,9 @@
                 <div class="card-body">
                 <h5 class="card-title">Non c'è nulla da vedere qui 👀</h5>
                 {% if is_owner %}
-                    <p class="card-text">Hai creato il podcast ma non c'è ancora alcun episodio... creane uno con il bottone soprastante!</p>
+                    <p class="card-text">Hai creato il podcast ma non c'è ancora nessun episodio... creane uno con il bottone soprastante!</p>
                 {% else %}
-                    <p class="card-text">Il proprietario del podcast non ha ancora pubblicato alcun episodio!</p>
+                    <p class="card-text">Il proprietario del podcast non ha ancora pubblicato nessun episodio!</p>
                 {% endif %}
                 </div>
             </div>

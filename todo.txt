@@ -45,18 +45,20 @@
 [X] Aggiugni label nei modal di modifica
 [X] Fai pagina di faq
 
-[ ] Fai ricerca nuovi podcast
+
 [X] Aggiungi controllo lunghezza caratteri nei modali di modifica
+[X] Fai ricerca nuovi podcast
 [ ] Aggiungi crop image
 [ ] Sostituisci gli alert di js con altro
-[ ] Blocca ascolto per i non registrati
-[ ] Metti ricerca nelle pagine owned, follows e saves
-
+[X] Blocca ascolto per i non registrati
+[ ] Metti il controllo dei caratteri nella password in input, sia server che client side
+[X] Metti ricerca nelle pagine owned, follows e saves
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
 [ ] Fai html validator
+[ ] Sostituisci tutti i dict[ ] con dict.get( )
 
 [ ] Definisci pagine di footer, link social e altre pagine
 [ ] Definisci pagine di errore

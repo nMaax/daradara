@@ -1,46 +1,44 @@
-{% extends 'layout.html' %}
+{% extends 'gallery.html' %}
 
 {% block title %} - Podcast di {{user.name}}{% endblock %}
 
-{% block content %}
-
-{% if podcasts %}
-<!-- Header -->
-<div class="row">
+{% block header %}
     {% if is_owner %}
         <p class="text-center display-1">I tuoi podcast</p>
     {% else %}
         <p class="text-center display-1">I podcast di {{user.name}}</p>
     {% endif %}
-</div>
+{% endblock %}
 
-<!-- Body -->
+{% block main %} 
+
+{% if podcasts %}
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    
-        {% for podcast in podcasts %}
+    {% for podcast in podcasts %}
         <div class="col">
-        <a class="card" href="{{url_for('podcast', id=podcast.id)}}">
+        <a class="podcast card" href="{{url_for('podcast', id=podcast.id)}}">
             <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
             <div class="card-body">
-            <h5 class="card-title">{{podcast.title}}</h5>
-            <p class="card-text">{{podcast.desc}}</p>
+                <h5 class="podcast-title card-title">{{podcast.title}}</h5>
+                <p class="podcast-description card-text">{{podcast.desc}}</p>
             </div>
         </a>
         </div>
-        {% endfor %}
+    {% endfor %}
 </div>
 
-{% elif not podcasts and is_owner%}
-<div class="row">
-    <p class="text-center display-1">Non sei un podcaster, vai sul tuo profilo e pubblica il tuo primo podcast per diventarlo! 🤗</p>
-    <p class="text-center"><small>(per ora...)</small></p>
-</div>
-{% elif not podcasts and not is_owner %}
-    <div class="row">
-        <p class="text-center display-1">{{user.name}} non è unə podcaster 😢</p>
-        <p class="text-center"><small>(per ora...)</small></p>
-    </div>
+{% else %}
+    {% if is_owner %}
+        <div class="row">
+            <h5 class="text-center">Non sei un podcaster, vai sul tuo profilo e pubblica il tuo primo podcast per diventarlo! 🤗</h5>
+        </div>
+    {% else %}
+        <div class="row">
+            <h5 class="text-center">{{user.name}} non è unə podcaster 😢</h5>
+            <p class="text-center"><small>(per ora...)</small></p>
+        </div>
+    {% endif %}
 {% endif %}
 
-{% endblock %}
+{%endblock%}

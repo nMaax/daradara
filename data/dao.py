@@ -302,10 +302,12 @@ def get_creators():
     return user
 
 def get_users():
-    output = []
-    for i in range(1, get_last_id_user() + 1):
-        output.append(get_user(id = i))
-    return output
+    users = []
+    for id in range(1, get_last_id_user() + 1):
+        user = get_user(id)
+        if user:
+            users.append(user)
+    return users
 
 def get_user_by_email(email):
     conn, cursor = connect()
@@ -350,10 +352,12 @@ def get_last_id_user():
     return id
 
 def get_podcasts_with_tags():
-    output = []
+    podcasts = []
     for id in range(1, get_last_podcast_id() + 1):
-        output.append(get_podcast_with_tags(id))
-    return output
+        podcast = get_podcast_with_tags(id)
+        if podcast:
+            podcasts.append(podcast)
+    return podcasts
     
 def get_podcast_with_tags(id):
     conn, cursor = connect()
@@ -419,10 +423,12 @@ def get_podcasts_onfire(number_of_podcasts=5):
     return podcasts
 
 def get_podcasts():
-    output = []
-    for i in range(1, get_last_podcast_id() + 1 ):
-        output.append(get_podcast(id = i))
-    return output
+    podcasts = []
+    for id in range(1, get_last_podcast_id() + 1 ):
+        podcast = get_podcast(id)
+        if podcast:
+            podcasts.append(podcast)
+    return podcasts
 
 def get_podcasts_by_user(id_user):
     conn, cursor = connect()

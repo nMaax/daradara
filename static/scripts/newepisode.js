@@ -2,7 +2,6 @@
 
 // check inputs respect the min and max length attributes if trimmed
 let form = document.getElementById("new-episode-form");
-
 form.addEventListener("submit", function(event) {
     event.preventDefault();
     let inputFields = form.getElementsByTagName("input");
@@ -22,3 +21,7 @@ form.addEventListener("submit", function(event) {
         form.submit();
     }
 });
+
+// Setting the maximum input date to today
+let inputDate = document.getElementById('date-input');
+inputDate.setAttribute('max', dayjs().format('YYYY-MM-DD'));

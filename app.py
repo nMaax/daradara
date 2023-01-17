@@ -65,7 +65,7 @@ def index():
         saves = []
     onfire = dao.get_podcasts_onfire(number_of_podcasts=3)
     onfire = add_days_ago(onfire)
-    app.logger.info(onfire)
+    session['previous_url'] = request.url
     return render_template('index.html', saves=saves, onfire = onfire)
 
 @app.route('/login')
@@ -91,7 +91,7 @@ def post_login():
             login_user(User(user), remember=False, duration=LOGIN_MAX_DURATION)
         # Return a success message if the login works
         flash(message='Login effettuato con successo!', category='success')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     else:
         # Return an error message if the login fails
         flash('Email e password non corretti, riprovare', 'warning')
@@ -102,7 +102,7 @@ def post_login():
 def logout():
     logout_user()
     flash('Logout effettuato', 'success')
-    return redirect(url_for('index'))
+    return redirect(session.get('previous_url', '/'))
 
 @app.route('/signup')
 def signup():
@@ -177,7 +177,7 @@ def post_signup():
             login_user(User(dao.get_user_by_email(email)), remember=False)
             
             flash("Utente registrato correttamente!", 'success')
-            return redirect(url_for('profile', id=user_id)) # type: ignore
+            return redirect(session.get('previous_url')) #redirect(url_for('profile', id=user_id)) # type: ignore
         except Exception as e:
             flash("Impossibile registrare il nuovo utente, qualcosa è andato storto - ERR: " + str(e), 'danger')
             return redirect(url_for('signup'))
@@ -198,10 +198,11 @@ def profile(id: int):
         is_owner = False
         if current_user.is_authenticated: # type: ignore
             is_owner = current_user.id == id # type: ignore
+        session['previous_url'] = request.url
         return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator=is_creator, is_owner=is_owner, privacy=privacy)
     else:
         flash(message='L\'utente cercato non esiste', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     
 @app.route('/profile/<int:id>/podcasts')
 def owned(id: int):
@@ -217,10 +218,11 @@ def owned(id: int):
             flash('A gli altri utenti non è permesso vedere i podcast di questo profilo', 'info')
             return redirect(url_for('profile', id=id))
 
+        session['previous_url'] = request.url
         return render_template('owned.html', podcasts=podcasts, user=user, is_owner=is_owner)
     else:
         flash('Il profilo cercato non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/profile/<int:id>/priv_owned')
 @login_required
@@ -231,7 +233,7 @@ def privatize_owned(id: int):
         return redirect(url_for('profile', id=id)+"#owned")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/profile/<int:id>/follows')
 def follows(id: int):
@@ -248,10 +250,11 @@ def follows(id: int):
             flash('A gli altri utenti non è permesso vedere i seguiti di questo profilo', 'info')
             return redirect(url_for('profile', id=id))
 
+        session['previous_url'] = request.url
         return render_template('follows.html', podcasts=podcasts, user=user, is_owner=is_owner)
     else:
-        flash('Il profilo cercato non esiste', 'warning')
-        return redirect('index')
+        flash('L\'utente cercato non esiste', 'warning')
+        return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>/priv_follows')
 @login_required
@@ -262,7 +265,7 @@ def privatize_follows(id: int):
         return redirect(url_for('profile', id=id)+"#follows")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/profile/<int:id>/saves')
 def saves(id: int):
@@ -278,10 +281,11 @@ def saves(id: int):
             flash('A gli altri utenti non è permesso vedere gli episodi salvati di questo profilo', 'info')
             return redirect(url_for('profile', id=id))
 
+        session['previous_url'] = request.url
         return render_template('saves.html', episodes=episodes, user=user, is_owner=is_owner)
     else:
-        flash('Il profilo cercato non esiste', 'warning')
-        return redirect('index')
+        flash('L\'utente cercato non esiste', 'warning')
+        return redirect(url_for('index'))
 
 @app.route('/profile/<int:id>/priv_saves')
 @login_required
@@ -292,7 +296,7 @@ def privatize_saves(id: int):
         return redirect(url_for('profile', id=id)+"#saves")
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id>')
 def podcast(id: int):
@@ -318,17 +322,18 @@ def podcast(id: int):
            is_owner = podcast['id_user'] == current_user.id # type: ignore
 
         session['last_podcast_visited'] = id
+        session['previous_url'] = request.url
         return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
     else:
         flash(message='Il podcast cercato non esiste', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id>/follow')
 def follow(id: int):
 
     if not current_user.is_authenticated: # type: ignore
         flash('Fai l\'accesso per seguire il podcast', 'info')
-        return redirect(url_for('login'))
+        return redirect(url_for('podcast', id=id))
 
     podcast = dao.get_podcast(id)
     if podcast:
@@ -336,7 +341,7 @@ def follow(id: int):
         return redirect(url_for('podcast', id=id))
     else:
         flash('Non puoi seguire un podcast che non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id>/unfollow')
 @login_required
@@ -347,15 +352,15 @@ def unfollow(id: int):
         return redirect(url_for('podcast', id=id))
     else:
         flash('Non puoi seguire un podcast che non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/new')
 def new_podcast():
     if not current_user.is_authenticated: # type: ignore
-        flash('Devi aver fatto l\'accesso prima di poter creare un podcast', category='warning')
-        return redirect(url_for('index'))
-    else:
-        return render_template('newpodcast.html')
+        flash('Fai l\'accesso per poter creare un podcast', category='info')
+        session['previous_url'] = request.url
+
+    return render_template('newpodcast.html')
 
 @app.route('/podcast/new/elab', methods=['POST'])
 @login_required
@@ -437,7 +442,7 @@ def post_delete_podcast(id: int):
 
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash(message='Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('podcast', id=id))
@@ -458,9 +463,12 @@ def post_delete_podcast(id: int):
                 os.remove(abs_path)
 
         flash(message='Podcast eliminato correttamente', category='success')
+        return redirect(url_for('index'))
     else:
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
-    return redirect(url_for('index'))
+        return redirect(url_for('podcast', id=podcast['id']))
+    
+    
 
 @app.route('/podcast/<int:id>/edit/elab', methods=['POST'])
 @login_required
@@ -478,7 +486,6 @@ def post_edit_podcast(id: int):
     category = category.strip()
     category = category.lower()
     
-    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
     check = True
     if not title or not desc or not category:
         check = False
@@ -492,8 +499,8 @@ def post_edit_podcast(id: int):
     # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
     podcast = dao.get_podcast_with_tags(id)
     if not podcast:
-        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
-        return redirect(url_for('index'))
+        flash(message='Il podcast di cui hai richiesto l\'eliminazione non esiste', category='warning')
+        return redirect(session.get('previous_url', '/'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash(message='Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('podcast', id=id))
@@ -530,11 +537,11 @@ def post_edit_podcast(id: int):
                 raise dataManipulationError('Unable to update category')
 
             flash(message='Podcast modificato correttamente', category='success')
-            return redirect(url_for('podcast', id=id))
                 
         except Exception as e:
             flash(message='C\'è stato un errore durante la modifica del podcast - ERR: '+str(e), category='danger')
-            return redirect(url_for('podcast', id=id))
+        
+        return redirect(url_for('podcast', id=id))
 
 @app.route('/podcast/<int:id>/img/edit/elab', methods=['POST'])
 def post_update_podcast_img(id: int):
@@ -603,17 +610,18 @@ def episode(id_pod: int, id_ep: int):
            is_owner = podcast['id_user'] == current_user.id # type: ignore
         
         session['last_podcast_visited'] = id_pod
+        session['previous_url'] = request.url
         return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments=n_comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/save')
 def save(id_pod :int, id_ep: int):
 
     if not current_user.is_authenticated: # type: ignore
         flash('Fai l\'accesso per salvare l\'episodio', 'info')
-        return redirect(url_for('login'))
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
     episode = dao.get_episode(id_ep)
     if episode and episode['id_podcast'] == id_pod:
@@ -621,7 +629,7 @@ def save(id_pod :int, id_ep: int):
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
     else:
         flash('Non puoi seguire un episodio che non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/unsave')
 @login_required
@@ -632,7 +640,7 @@ def unsave(id_pod :int, id_ep: int):
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
     else:
         flash('Non puoi smettere di seguire un episodio che non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/<int:id_pod>/episode/new')
 @login_required
@@ -640,7 +648,7 @@ def new_episode(id_pod: int):
     podcast = dao.get_podcast(id_pod)
     if not podcast:
         flash('Il podcast nel quale hai cercato di creare l\'episodio non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash('Non sei il proprietario del podcast', 'warning')
         return redirect(url_for('podcast', id=id_pod))
@@ -681,9 +689,9 @@ def post_new_episode(id_pod: int):
 
         if py_date.date() < min_date.date():
             raise ValueError("The date is before the date lower bound")
-        elif py_date.date() > max_date.date(): #TODO! Controlla con js che la data non vada oltre oggi
+        elif py_date.date() > max_date.date():
             raise ValueError("The date is after the date upper bound (today)")
-        elif py_date.date() == datetime.now().date():#now().replace(hour=0, minute=0, second=0, microsecond=0):
+        elif py_date.date() == datetime.now().date():
             timestamp = datetime.now().strftime(ISO_TIMESTAMP)
         else:
             timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
@@ -738,10 +746,10 @@ def post_delete_episode(id_pod: int, id_ep: int):
 
     if not episode or not podcast:
         flash('L\'episodio che hai richiesto di eliminare non esiste', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif episode['id_podcast'] != id_pod:
         flash('L\'episodio e il podcast nell\'url non corrispondono', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash('Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
@@ -773,7 +781,6 @@ def post_edit_episode(id_pod: int, id_ep: int):
     title = title.strip()
     desc = desc.strip()
     
-    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
     check = True
     if not title or not desc:
         check = False
@@ -787,7 +794,7 @@ def post_edit_episode(id_pod: int, id_ep: int):
     podcast = dao.get_podcast(id_pod)
     if not episode:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif podcast['id_user'] != current_user.id: # type: ignore
         flash(message='Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
@@ -854,9 +861,9 @@ def post_new_comment(id_pod: int, id_ep: int):
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     elif not checkExist:
         flash("Impossibile aggiugere il commento, il podcast e/o l'episidio non esistono o non sono compatibili", 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif not current_user.is_authenticated: # type: ignore
-        flash("Fare il login prima di aggiungere il commento", 'warning')
+        flash('Fai l\'accesso prima di aggiungere il commento', 'info')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     else:
 
@@ -881,7 +888,7 @@ def post_delete_comment(id_pod: int, id_ep: int):
 
     if not episode or not podcast or episode['id_podcast'] != id_pod:
         flash("Non puoi eliminare commenti da episodi che non esistono", category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif not comment:
         flash("Non puoi eliminare questo commento", category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
@@ -922,7 +929,7 @@ def post_edit_comment(id_pod: int, id_ep: int):
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
     elif not episode or not podcast or episode['id_podcast'] != id_pod:
         flash("Non puoi modificare commenti da episodi che non esistono", category='warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
     elif not comment:
         flash("Non puoi modificare questo commento", category='warning')
         return redirect(url_for('episode', id_pod=id_pod, id_ep=id_ep))
@@ -937,6 +944,7 @@ def post_edit_comment(id_pod: int, id_ep: int):
 @app.route('/search')
 def categories():
     podcasts = dao.get_podcasts_with_tags()
+    session['previous_url'] = request.url
     return render_template('categories.html', podcasts=podcasts)
 
 @app.route('/random')
@@ -944,20 +952,23 @@ def random_pod():
     max_id = dao.get_last_podcast_id()
     try:
         visited_id = session['last_podcast_visited']
-    except Exception as e:
+    except KeyError as e:
         visited_id = 0
     id = randint(1, max_id)
     while id == visited_id:
         id = randint(1, max_id)
 
+    session['previous_url'] = request.url
     return redirect(url_for('podcast', id=id))
 
 @app.route('/terms')
 def terms():
+    session['previous_url'] = request.url
     return render_template('terms.html')
 
 @app.route('/faq')
 def faq():
+    session['previous_url'] = request.url
     return render_template('faq.html')
 
 # Login manager

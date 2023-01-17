@@ -45,9 +45,9 @@
                 <div class="modal-body">
                     <form class="d-flex flex-column" action="{{url_for('post_edit_episode', id_pod=id_pod, id_ep=id)}}" method="POST">
                         <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{episode.title}}"/>
-                        <label class="form-label" for="title-input">Nuovo titolo</label>
+                        <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
                         <textarea type="text" id="desc-input" name="desc" class="form-control mt-2" rows="16" minlength="16" maxlength="516">{{episode.description}}</textarea>
-                        <label class="form-label" for="desc-input">Nuova descrizione</label>
+                        <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
                         <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                     </form>
                 </div>
@@ -106,6 +106,7 @@
     <!--TODO! Metti il tasto di modifica audio -->
     <!--TODO! implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
     <div class="row d-flex justify-content-center">
+        {% if current_user.is_authenticated %}
         <div id="player" class="col-md-7 w-100">
             <div class="row g-2">
                 <div class="text-light p-3">
@@ -116,6 +117,14 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="d-flex flex-column align-items-center">
+            <p class="placeholder-glow d-flex justify-content-center align-items-center">
+                <span class="placeholder col-12">Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti! </span>
+            </p>
+            <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi per ascoltare!</a>
+        </div>
+        {% endif %}
     </div>
     <div class="row d-flex justify-content-center align-content-center my-2">
         <div class="row d-flex justify-content-center">

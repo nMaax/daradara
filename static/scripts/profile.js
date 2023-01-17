@@ -1,6 +1,8 @@
 "use strict";
 
-const cardBody = document.getElementsByClassName("card-scroll");
+//TODO! Rimuovi o migliora
+
+const cardScrollers = document.getElementsByClassName("card-scroll");
 
 const wheelHandler = event => {
     event.preventDefault();
@@ -11,10 +13,14 @@ const wheelHandler = event => {
     }
 };
 
-cardBody.addEventListener("mouseenter", e => {
-  cardBody.addEventListener("wheel", wheelHandler);
-});
+for (let cardScroll of cardScrollers) {
 
-cardBody.addEventListener("mouseleave", e => {
-  cardBody.removeEventListener("wheel", wheelHandler);
-});
+  cardScroll.addEventListener("mouseenter", e => {
+    cardBody.addEventListener("wheel", wheelHandler);
+  });
+
+  cardScroll.addEventListener("mouseleave", e => {
+    cardBody.removeEventListener("wheel", wheelHandler);
+  });
+
+}

@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %} - Sfoglia{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='scripts/searchpodcasts.js')}}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    {% block header %}{% endblock %}
+</div>
+
+{% block searchbar %}
+<div class="row mb-5">
+    <div class="col-12 d-flex align-items-center">
+        <input class="form-control" id="searchbar" type="search" placeholder="Cerca tra i podcast">
+    </div>
+</div>
+{% endblock %}
+
+{% block main %}
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% block gallery %}{% endblock %}
+</div>
+{% endblock %}
+
+{% endblock %}

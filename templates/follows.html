@@ -1,48 +1,45 @@
-{% extends 'layout.html' %}
+{% extends 'gallery.html' %}
 
 {% block title %} - Seguiti di {{user.name}}{% endblock %}
 
-{% block content %}
-
-{% if podcasts %}
-<!-- Header -->
-<div class="row">
+{% block header %}
     {% if is_owner %}
         <p class="text-center display-1">I podcast che segui</p>
     {% else %}
         <p class="text-center display-1">Podcast seguiti da {{user.name}}</p>
     {% endif %}
-</div>
+{% endblock %}
 
-<!-- Body -->
+{% block main %} 
+
+{% if podcasts %}
+
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    
     {% for podcast in podcasts %}
-    <!-- Se dispongo le classi col e card nello stesso div la UI non risulta come voluta, quindi li tengo divisi -->
-    <div class="col">
-    <div class="card">
-        <a href="{{url_for('podcast', id=podcast.id)}}">
+        <div class="col">
+        <a class="podcast card" href="{{url_for('podcast', id=podcast.id)}}">
             <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
+            <div class="card-body">
+                <h5 class="podcast-title card-title">{{podcast.title}}</h5>
+                <p class="podcast-description card-text">{{podcast.desc}}</p>
+            </div>
         </a>
-        <div class="card-body">
-        <a href="{{url_for('podcast', id=podcast.id)}}" class="card-title h5">{{podcast.title}}</a>
-        <p class="card-text">{{podcast.desc}}</p>
-        </div>  
-    </div>
-    </div>
+        </div>
     {% endfor %}
+</div>
 
-</div>
-{% elif not podcasts and is_owner%}
-<div class="row">
-    <p class="text-center display-1">Non segui nessun podcast 😢</p>
-    <p class="text-center"><small>(per ora...)</small></p>
-</div>
-{% elif not podcasts and not is_owner %}
-<div class="row">
-    <p class="text-center display-1">{{user.name}} non segue nessun podcast 😢</p>
-    <p class="text-center"><small>(per ora...)</small></p>
-</div>
+{% else %}
+    {% if is_owner %}
+        <div class="row">
+            <h5 class="text-center">Non segui nessun podcast 😢</h5>
+            <p class="text-center"><small>(per ora...)</small></p>
+        </div>
+    {% else %}
+        <div class="row">
+            <h5 class="text-center">{{user.name}} non segue nessun podcast 😢</h5>
+            <p class="text-center"><small>(per ora...)</small></p>
+        </div>
+    {% endif %}
 {% endif %}
 
-{% endblock %}
+{%endblock%}
