@@ -137,7 +137,7 @@ def post_signup():
         check = False
     elif len(email) < 6 or not email.__contains__('@') or not email.__contains__('.'):
         check = False
-    elif len(password) < 8:
+    elif len(password) < 8 or not re.search("[A-Z]", password) or not re.search("[a-z]", password) or not re.search("[0-9]", password):
         check = False
     elif not is_image(secure_filename(propic.filename)): # type: ignore
         check = False

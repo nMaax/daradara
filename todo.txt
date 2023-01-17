@@ -51,7 +51,7 @@
 [ ] Aggiungi crop image
 [ ] Sostituisci gli alert di js con altro
 [X] Blocca ascolto per i non registrati
-[ ] Metti il controllo dei caratteri nella password in input, sia server che client side
+[X] Metti il controllo dei caratteri nella password in input, sia server che client side
 [X] Metti ricerca nelle pagine owned, follows e saves
 
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore

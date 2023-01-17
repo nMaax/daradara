@@ -81,6 +81,7 @@ function checkPassword() {
             break;
     }
 
+    passwordTooltip.classList.remove('d-none')
     passwordTooltip.innerText = strengthText;
 
     if (checkLenght) {
