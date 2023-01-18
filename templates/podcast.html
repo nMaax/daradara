@@ -157,6 +157,7 @@
                         <div class="row g-0">
                             <!-- Titolo episodio -->
                             <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="col-md-4 bg-light d-flex justify-content-center align-items-center">
+                                <!--TODO! tagliare il titolo a meno caratteri se troppo lungo -->
                                 <p class="episode-title text-center display-6 mx-2 my-4">{{episode.title}}</p>
                             </a>
                             <!-- Traccia audio -->
@@ -164,7 +165,7 @@
                                 <div class="card-body row g-2">
                                     {% if current_user.is_authenticated %}
                                     <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="d-flex justify-content-center align-items-center my-4">
-                                        <!--TODO? tagliare la descrizione a meno caratteri se troppo lunga-->
+                                        <!--TODO! tagliare la descrizione a meno caratteri se troppo lunga -->
                                         <p class="episode-description card-text text-center">{{episode.description}}</p>
                                     </a>
                                     <audio controls class="w-100">

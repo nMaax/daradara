@@ -7,7 +7,7 @@ Il nome deriva dall'onomatopea giapponese「だらだら」che, secondo [Tofugu]
 ## Installare le dipendenze
 
 ```prompt
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Risorse utilizzate
