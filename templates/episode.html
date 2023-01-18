@@ -143,7 +143,7 @@
                         </div>
                     </form>
 
-                    {% for i in range(n_comments) %}
+                    {% for i in range(comments|length) %}
                     
                     <!-- Comments (bootstrap card) -->
                     <div class="card mb-4">
@@ -154,9 +154,9 @@
                                 <div class="d-flex flex-row align-items-center">
                                     <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="avatar" width="25"
                                         height="25"/>
-                                    <p class="small mb-0 ms-2">{{comments[i].name}} {{comments[i].surname}}</p>
+                                    <p class="small mb-0 ms-2"><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></p>
                                 </div>
-                                <p class="mt-2 m-0"><small class="text-muted">{{comments[i].timestamp}}</small></p>
+                                <p class="mt-2 m-0"><small class="text-muted">{{comments[i].posted}}</small></p>
                             </div>
 
                             <!--p class="mt-2 m-0"><small class="text-muted">{{comments[i].timestamp}}</small></p-->

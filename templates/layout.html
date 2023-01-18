@@ -37,6 +37,7 @@
     {% block stylesheets %}{% endblock %}
     
     <!-- Personal scripts -->
+    <script src="{{url_for('static', filename='scripts/layout.js')}}" defer></script>
     {% block scripts %}{% endblock %}
 
     <!-- Title -->
@@ -62,25 +63,24 @@
                 <a class="nav-link {% block searchActive %}{% endblock %}" href="{{url_for('categories')}}">Sfoglia</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% block discoverActive %}{% endblock %}" href="{{url_for('random_pod')}}">Sorpendimi</a>
+                    <a class="nav-link" href="{{url_for('random_pod')}}">Sorpendimi</a>
                 </li>
                 <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Per i podcasters
                 </a>
-                <!--TODO se in hoover espandi il menu-->
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{url_for('faq')}}#how-why">Come pubblicare il tuo primo podcast</a></li>
-                    <li><a class="dropdown-item" href="{{url_for('faq')}}#how-why">Perchè scegliere DaraDara?</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('faq')}}#how">Come pubblicare il tuo primo podcast</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('faq')}}#why">Perchè scegliere DaraDara?</a></li>
                     <li><hr class="dropdown-divider"></li>    
-                    <li><a class="dropdown-item" href="{{url_for('faq')}}">Tutte le F.A.Q.</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('faq')}}#faq">Tutte le F.A.Q.</a></li>
                 </ul>
                 </li>
             </ul>
 
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Trova un nuovo podcast" aria-label="Search">
-                <button class="btn btn-light btn-outline-dark" type="submit">Cerca</button>
+            <form class="d-flex" role="search" action="{{url_for('categories')}}">
+                <input id="input-searchCategories" class="form-control me-2" type="search" name="query" placeholder="Trova un nuovo podcast" aria-label="Search">
+                <button id="searchCategories" class="btn btn-light btn-outline-dark" type="submit">Cerca</button>
             </form>
            
             {% if not current_user.is_authenticated %}

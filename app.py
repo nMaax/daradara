@@ -1,15 +1,15 @@
 # Vanilla Python libraries
-import os, re, secrets, sqlite3
+import os, re, secrets
 from random import randint
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 from dateutil import parser as date_parser
 
 # Personal libraries
 import data.dao as dao
 from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerError
 from utils.models import User
-from utils.detector import is_image, is_static_image, is_audio
-from utils.utils import to_dict, days_ago, add_days_ago, crop_mantain_aspect_ratio, make_square
+from utils.detector import is_static_image, is_audio
+from utils.utils import days_ago, add_days_ago, make_square
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -312,8 +312,10 @@ def post_edit_bio(id: int):
     
     # Checking data
     check = True
-    if not bio or len(bio) > 516:
+    if len(bio) > 516:
         check = False
+    elif bio == None or bio == "":
+        bio = None
 
     # If the profile doesnt exist or the user that is trying to edit it is not the owner abort
     user = dao.get_user(id)
@@ -333,10 +335,7 @@ def post_edit_bio(id: int):
                 bio = None
 
             # Otherwise edit the podcast
-            if bio:
-                update_bio_result = dao.update_user_bio(id, bio)
-            else:
-                update_bio_result = True
+            update_bio_result = dao.update_user_bio(id, bio)
 
             if not update_bio_result:
                 raise dataManipulationError('Unable to update bio')
@@ -689,9 +688,7 @@ def episode(id_pod: int, id_ep: int):
         podcast = dao.get_podcast(id_pod)
         comments = dao.get_comments_extended(id_ep)
         if comments:
-            n_comments = len(comments)
-        else:
-            n_comments = 0
+            comments = add_days_ago(comments)
 
         mime_type = 'mpeg'
         if episode['audio'] == '.wav':
@@ -705,7 +702,7 @@ def episode(id_pod: int, id_ep: int):
         
         session['last_podcast_visited'] = id_pod
         session['previous_url'] = request.url
-        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, n_comments=n_comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
+        return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
     else:
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(session.get('previous_url', '/'))

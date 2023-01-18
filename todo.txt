@@ -54,6 +54,7 @@
 [X] Aggiungi logica dei 3 puntini anche in galleria
 [X] Imposta modifica immagine del profilo
 [X] Metti Humaaans
+[ ] Fai funzionare il tasto di ricerca podcast sulla nav
 [ ] Rendi il codice di app e dao più leggibile
 
 [ ] Togli style e script tags

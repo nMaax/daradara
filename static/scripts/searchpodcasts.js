@@ -3,7 +3,17 @@
 const searchbar = document.getElementById('searchbar');
 const podcasts = document.getElementsByClassName('podcast');
 
-searchbar.addEventListener('input', function() {
+searchbar.addEventListener('input', search);
+
+const urlParams = new URLSearchParams(window.location.search);
+const query = urlParams.get('query');
+if (query) {
+    searchbar.value = query
+    let event = new Event('input');
+    searchbar.dispatchEvent(event);
+}
+
+function search() {
     const searchString = this.value.toLowerCase();
     for (let podcast of podcasts) {
         let title, description, category;
@@ -29,4 +39,4 @@ searchbar.addEventListener('input', function() {
             podcast.parentNode.classList.add('d-none');
         }
     }
-});
+}

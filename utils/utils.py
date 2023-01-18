@@ -3,32 +3,28 @@ from datetime import datetime
 from PIL import Image
 import os
 
-def to_dict(row: sqlite3.Row) -> dict:
-    """
-    Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary
-
-    :param row: the row object to be converted
-    """
-
-    data = dict(row) # Convert the sqlite3.Row object to a dictionary
-    data = {key: data[key] for key in row.keys()} # Make the keys of the dictionary mutable
-    return data
-
-def add_days_ago(podcasts: list) -> list:
+def add_days_ago(table: list) -> list:
     """
     Takes as parameter a list of podcasts as sqlite3.Rows and adds a column containing a string saying how many days/hours/minutes ago was the last episode of the podcast posted
 
     :param podcasts: the list of podcasts as rows 
     """
 
-    output = []
-    for podcast in podcasts:
-        podcast = to_dict(podcast)
-        last_update = podcast['last_update']
-        if last_update:
-            podcast['last_update'] = days_ago(last_update) 
-        output.append(podcast)
-    return output
+    new_table = []
+    for row in table:
+        row = to_dict(row)
+
+        try:
+            last_update = row['last_update']
+            row['last_update'] = days_ago(last_update)
+        except KeyError as ke:
+            posted = row['timestamp']
+            row['posted'] = days_ago(posted) 
+        except Exception as e:
+            pass
+
+        new_table.append(row)
+    return new_table
 
 def days_ago(timestamp: str) -> str:
     """
@@ -75,3 +71,13 @@ def make_square(im, min_size=256, fill_color=(255, 255, 255)): # fill_color=(248
     new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
     return new_im
 
+def to_dict(row: sqlite3.Row) -> dict:
+    """
+    Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary
+
+    :param row: the row object to be converted
+    """
+
+    data = dict(row) # Convert the sqlite3.Row object to a dictionary
+    data = {key: data[key] for key in row.keys()} # Make the keys of the dictionary mutable
+    return data

@@ -20,7 +20,7 @@
         {% if is_owner %}
         <!-- Button trigger modal -->
         <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
-        <a class="text-center mt-3" data-bs-toggle="modal" data-bs-target="#editPropic">Clicca per modificare l'immagine del profilo<i class="fa-solid fa-pen-to-square ms-3"></i></a>
+        <a class="text-center mt-3 vanilla-a" data-bs-toggle="modal" data-bs-target="#editPropic">Clicca qui per modificare l'immagine del profilo<i class="fa-solid fa-pen-to-square ms-3"></i></a>
         {% endif %}
     </div>
 
@@ -51,9 +51,13 @@
 
             {% if not user.bio %}
                 {% if is_owner %}
-                <p>Nessuna bio... 😢 <a class="vanilla-a" data-bs-toggle="modal" data-bs-target="#editBio"> vuoi aggiungerne una?</a></p>
+                <p class="text-muted">
+                    Nessuna bio... 😢 <a class="vanilla-a" data-bs-toggle="modal" data-bs-target="#editBio"> vuoi aggiungerne una?</a>
+                </p>
                 {% else %}
-                Nessuna bio... 😢
+                <p class="text-muted">
+                    Nessuna bio... 😢
+                </p>
                 {% endif %}
             {% else %}
                 <p class="text-center text-lg-start">{{user.bio}}
@@ -144,7 +148,6 @@
                         {% else %}
                             <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                             <p class="card-text">Diventa un podcaster per pubblicare il tuo primo podcast!</p>
-                            <small class="text-muted">Premi il bottone a <b>diventa un podcaster</b> 👉</small>
                         {% endif %}                            
                         
                     </div>
