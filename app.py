@@ -1073,20 +1073,24 @@ def load_user(user_id):
 # Error handling routes
 @app.errorhandler(401)
 def unauthorized(error):
-  return render_template('401.html', error=error)
+  return render_template('error.html', error=error, code=401, previous_url=session.get('previous_url', '/'))
 
 @app.errorhandler(403)
 def forbidden(error):
-  return render_template('403.html', error=error)
+  return render_template('error.html', error=error, code=403, previous_url=session.get('previous_url', '/'))
 
 @app.errorhandler(404)
 def not_found(error):
-  return render_template('404.html', error=error)
+  return render_template('error.html', error=error, code=404, previous_url=session.get('previous_url', '/'))
+
+@app.errorhandler(405)
+def handle_method_not_allowed(error):
+    return render_template('error.html', error=error, code=405, previous_url=session.get('previous_url', '/'))
 
 # Route for testing pages (ignore this)
 @app.route('/test')
 def test():
-    return render_template('test.html')
+    return render_template('error.html')
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')

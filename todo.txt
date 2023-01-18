@@ -53,7 +53,7 @@
 
 [X] Aggiungi logica dei 3 puntini anche in galleria
 [X] Imposta modifica immagine del profilo
-[ ] Metti Humaaans
+[X] Metti Humaaans
 [ ] Rendi il codice di app e dao più leggibile
 
 [ ] Togli style e script tags
@@ -66,9 +66,9 @@
 [ ] Fai html validator
 
 [X] Definisci pagine di footer, link social e altre pagine
-[ ] Definisci pagine di errore
+[X] Definisci pagine di errore
 [ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
-[ ] Definsci colori, icone e font
+[X] Definsci colori, icone e font
     Cambia colori dei bottoni: usa nero bianco e rosso
 [ ] Metti controllo whitespaces anche su modifica bio user 
 [ ] Sostituisci gli alert di js con altro
@@ -78,7 +78,7 @@
 --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 
 [ ] Controlla i TODO?
-[ ] Aggiungi sistema di modifica profilo
-[ ] Aggiungi bio del profilo
+[X] Aggiungi sistema di modifica profilo
+[X] Aggiungi bio del profilo
 [ ] Cambia attirbuto tabella episode in desc e non description
 [ ] Fai una schermata di welcome
