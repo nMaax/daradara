@@ -9,7 +9,8 @@ import data.dao as dao
 from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerError
 from utils.models import User
 from utils.detector import is_static_image, is_audio
-from utils.utils import days_ago, add_days_ago, make_square
+from utils.cropper import make_square
+from utils.utils import days_ago, add_days_ago
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session

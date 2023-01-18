@@ -54,10 +54,11 @@
 [X] Aggiungi logica dei 3 puntini anche in galleria
 [X] Imposta modifica immagine del profilo
 [X] Metti Humaaans
-[ ] Fai funzionare il tasto di ricerca podcast sulla nav
+[X] Fai funzionare il tasto di ricerca podcast sulla nav
 [ ] Rendi il codice di app e dao più leggibile
+[ ] Ripulisci data.db (resetta le sql-sequences)
 
-[ ] Togli style e script tags
+[-] Togli style e script tags --> Se lo fai la ricerca javascript non funziona
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta dove necessario
@@ -75,6 +76,9 @@
 [ ] Sostituisci gli alert di js con altro
 
 *** Extra ***
+
+[ ] Utilizza più CSS?
+[ ] Evita variabili js globali
 
 --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 

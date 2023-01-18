@@ -21,11 +21,7 @@
             <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
             <div class="card-body">
                 <h5 class="podcast-title card-title">{{podcast.title}}</h5>
-                {% if podcast.desc|length > 70 %}
-                    <p class="podcast-description card-text">{{podcast.desc[:67]}}...</p>
-                {% else %}
-                    <p class="podcast-description card-text">{{podcast.desc}}</p>
-                {% endif %}
+                <p class="podcast-description card-text">{{podcast.desc}}</p>
             </div>
         </a>
         </div>

@@ -35,22 +35,29 @@ function checkPassword() {
     let password = passwordInput.value;
     let strength = 0;
     let strengthText = "";
-    let checkLenght = false
+
+    let check1 = false;
+    let check2 = false;
+    let check3 = false;
+    let check4 = false;
 
     if (password.length >= 8) {
-        checkLenght = true
+        check1 = true;
         strength++;
     }
     if (password.length >= 12) {
         strength++;
     }
     if (password.match(/[a-z]/)) {
+        check2 = true;
         strength++;
     }
     if (password.match(/[A-Z]/)) {
+        check3 = true;
         strength++;
     }
     if (password.match(/[0-9]/)) {
+        check4 = true;
         strength++;
     }
     if (password.match(/[!@#\$%\^&\*]/)) {
@@ -84,7 +91,7 @@ function checkPassword() {
     passwordTooltip.classList.remove('d-none')
     passwordTooltip.innerText = strengthText;
 
-    if (checkLenght) {
+    if (check1 && check2 && check3 && check4) {
         passwordInfoIcon.classList.remove("fa-times-circle");
         passwordInfoIcon.classList.add("fa-circle-check");
     } else {

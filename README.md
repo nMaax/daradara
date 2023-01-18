@@ -1,14 +1,57 @@
 # DaraDara
 
-DaraDara è una semplice applicazione web per l'ascolto e la condivisione di podcast.
+DaraDara è una semplice applicazione web per l'ascolto e la pubblicazione di podcast.
 
-Il nome deriva dall'onomatopea giapponese「だらだら」che, secondo [Tofugu](https://www.tofugu.com/japanese/japanese-onomatopoeia/), si usa per indicare che una persona sta "parlando o spiegando qualcosa di molto poco chiaro e ci sta mettendo tantissimo tempo per farlo"
+Il nome deriva dall'onomatopea giapponese「だらだら」che, secondo [Tofugu](https://www.tofugu.com/japanese/japanese-onomatopoeia/), si usa per indicare il "vocio" che si crea quando una persona sta "parlando o spiegando qualcosa di molto poco chiaro e ci sta mettendo tantissimo tempo per farlo"
 
-## Installare le dipendenze
+## Installazione veloce
+
+Per avviare l'applicazioe è sufficente collocarsi nel percorso file opportuno e digitare i seguenti comandi sul proprio terminale
 
 ```prompt
 pip install -r requirements.txt
+flask run
 ```
+
+Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito.
+
+## Utenti e serie già presenti
+
+DaraDara è già fornito di alcuni dati di esempio per fornire un esperienza utente basilare per testare tutte le feature messe a disposizione e richieste dal tema d'esame
+
+### Utenti
+
+In DaraDara ci sono già 6 utenti: **2 ascoltatori** e **4 creatori**
+
+Ogni utente è identificato da un indirizzo email e il suo account è protetto da una password
+
+> ***Note***
+> Gli utenti forniti di default *non* rispettano gli standard di sicurezza di DaraDara in materia di password, ovvero, le loro password sono lunghe meno di 8 caratteri e contengono solo lettere minuscole, tuttavia questo non significa che un nuovo utente non debba rispettare questi standard, infatti ogni nuovo utente, come si potrà notare nella UI, deve rispettare degli standard per quanto riguarda la complessità della password. Questa scelta è stata fatta per facilitare il debugging dell'applicazione.
+
+#### Creatori
+
+* John Doe (email: `john.doe@email.com`  password: `john`)
+* Jane Smith (email: `jane.smith@email.com` password: `jane`)
+* Robert Johnson (email: `robert.johnson@email.com` password: `robert`)
+* Michael Brown (email: `michael.brown@email.com` password: `michael`)
+
+#### Ascoltatori
+
+* Emily Williams (email: `emily.williams@email.com` password: `emily`)
+* Massimiliano Carli (email: `admin@daradara.it` password: `admin`)
+
+### Podcast (serie)
+
+In DaraDara ci sono già 6 serie, solo Soccer e Basketball dispongono già di alcuni episodi, le altre non hanno nessun episodio
+
+Alcuni utenti già seguono alcune serie, altri ancora hanno già salvato degli episodi. Queste informazioni sono facilmente reperibili del database data.db dentro la cartella data, nelle tabelle saves e follows
+
+* Soccer (di John)
+* Baseball (di John)
+* Golf (di John)
+* Football (di Robert)
+* Basketball (di Jane)
+* Tennis (di Michael)
 
 ## Risorse utilizzate
 

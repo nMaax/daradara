@@ -16,7 +16,7 @@
 <div class="row">
     <div class="row col-12 col-lg-4 d-flex justify-content-center align-items-center">
         <!--Propic-->
-        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine del profilo di {{user.name}}" class="img-fluid border rounded-4">
+        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine del profilo di {{user.name}}" class="img-fluid rounded-4">
         {% if is_owner %}
         <!-- Button trigger modal -->
         <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->

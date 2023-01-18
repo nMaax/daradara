@@ -1,7 +1,16 @@
 import sqlite3
 from datetime import datetime
-from PIL import Image
-import os
+
+def to_dict(row: sqlite3.Row) -> dict:
+    """
+    Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary
+
+    :param row: the row object to be converted
+    """
+
+    data = dict(row) # Convert the sqlite3.Row object to a dictionary
+    data = {key: data[key] for key in row.keys()} # Make the keys of the dictionary mutable
+    return data
 
 def add_days_ago(table: list) -> list:
     """
@@ -56,28 +65,3 @@ def days_ago(timestamp: str) -> str:
     elif difference.seconds // 60 == 0:
         return f"meno di 1 minuto fa"
     return f"{difference.seconds // 60} minuti fa"
-
-def crop_mantain_aspect_ratio(path):
-    image = Image.open(path)
-    new_image = make_square(image)
-    save_path = os.path.join(os.path.dirname(path), "resized_" + os.path.basename(path))
-    new_image.save(save_path)
-
-def make_square(im, min_size=256, fill_color=(255, 255, 255)): # fill_color=(248, 249, 250) per i colori light di bs
-    im = Image.open(im)
-    x, y = im.size
-    size = max(min_size, x, y)
-    new_im = Image.new('RGB', (size, size), fill_color)
-    new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
-    return new_im
-
-def to_dict(row: sqlite3.Row) -> dict:
-    """
-    Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary
-
-    :param row: the row object to be converted
-    """
-
-    data = dict(row) # Convert the sqlite3.Row object to a dictionary
-    data = {key: data[key] for key in row.keys()} # Make the keys of the dictionary mutable
-    return data
