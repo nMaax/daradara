@@ -40,30 +40,35 @@
 
 [X] In caso di eliminazione del podcast / episodio devi eliminare anche i file statici (immagini e audio)
 
-
 [X] Aggiungi tasti di info nei form
 [X] Aggiugni label nei modal di modifica
 [X] Fai pagina di faq
 
 [X] Aggiungi controllo lunghezza caratteri nei modali di modifica
 [X] Fai ricerca nuovi podcast
-[ ] Aggiungi crop image
-[ ] Sostituisci gli alert di js con altro
+[X] Aggiungi crop image
 [X] Blocca ascolto per i non registrati
 [X] Metti il controllo dei caratteri nella password in input, sia server che client side
 [X] Metti ricerca nelle pagine owned, follows e saves
 
+[ ] Aggiungi logica dei 3 puntini anche in galleria
+[ ] Imposta modifica immagine del profilo
+
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
+[ ] Commenta dove necessario
+[ ] Fai la javadoc di tutti i programmi al di fuori di dao e app
 [ ] Commenta ogni statemnt jinja (almeno i {%%})
-[ ] Fai html validator
 [ ] Sostituisci tutti i dict[ ] con dict.get( )
+[ ] Fai html validator
 
-[ ] Definisci pagine di footer, link social e altre pagine
+[X] Definisci pagine di footer, link social e altre pagine
 [ ] Definisci pagine di errore
 [ ] Rendi le pagine html più definite, con margini, bordi e i ***giusti tag: section, nav, ...***
 [ ] Definsci colori, icone e font
     Cambia colori dei bottoni: usa nero bianco e rosso
+[ ] Metti controllo whitespaces anche su modifica bio user 
+[ ] Sostituisci gli alert di js con altro
 
 *** Extra ***
 
