@@ -1,1 +1,6 @@
-python-magic(?), python-dateutil, Flask, Flask-Login, Flask-Session, PIL (Python Image Library aka Pillow)
+python-dateutil
+Pillow
+Flask
+Flask-Login
+Flask-Session
+werkzeug
