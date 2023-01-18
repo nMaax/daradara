@@ -348,7 +348,48 @@ def post_edit_bio(id: int):
         
         return redirect(url_for('profile', id=id))
 
-    return 'ciao'
+@app.route('/profile/<int:id>/propic/edit/elab', methods=['POST'])
+def post_update_propic(id):
+
+    img = request.files['img']
+
+    check = True
+    if not img or not is_static_image(secure_filename(img.filename)): # type: ignore
+        check = False
+
+    user = dao.get_user(id)
+
+    if not check:
+        flash("Impossibile modificare l'immagine, il file fornito non è compatibile", 'warning')
+    elif not user:
+        flash("Impossibile modificare l'immagine, il profilo non esiste", 'warning')
+    elif user['id'] != current_user.id: # type: ignore
+        flash("Impossibile modificare l'immagine, non sei il proprietario del profilo", 'warning')
+    else:
+        try:
+
+            filename = secure_filename(img.filename) # type: ignore
+            imgext = '.' + filename.split('.')[-1] # type: ignore
+            imgname = str(id) + imgext
+
+            # Save the image (only if the podcast has been saved)
+            save_directory = PROPICS_PATH
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            img = make_square(img)
+            img.save(save_directory+imgname) # type: ignore
+
+            result = dao.update_user_img(id, img=imgext)
+
+            if not result:
+                raise dataManipulationError('Unable to update the image')
+
+            flash('Immagine modificata correttamente', 'success')
+
+        except Exception as e:
+            flash("Impossibile aggiornare l'immagine, qualcosa è andato storto - ERR: " + str(e), 'danger')
+
+    return redirect(url_for('profile', id=id))
 
 @app.route('/podcast/<int:id>')
 def podcast(id: int):

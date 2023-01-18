@@ -52,7 +52,7 @@
 [X] Metti ricerca nelle pagine owned, follows e saves
 
 [X] Aggiungi logica dei 3 puntini anche in galleria
-[ ] Imposta modifica immagine del profilo
+[X] Imposta modifica immagine del profilo
 [ ] Metti Humaaans
 [ ] Rendi il codice di app e dao più leggibile
 

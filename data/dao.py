@@ -808,6 +808,22 @@ def update_user_bio(id, bio):
     close(conn, cursor)
     return success
 
+def update_user_img(id, img):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'UPDATE users SET propic = ? WHERE id = ?'
+        cursor.execute(sql, (img, id))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
 # DELETE queries
 
 def unfollow(id_pod, id_user):

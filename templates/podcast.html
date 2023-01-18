@@ -27,17 +27,17 @@
             {% if is_owner %}
             <!-- Button trigger modal -->
             <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
-            <a class="text-center" data-bs-toggle="modal" data-bs-target="#editPodcastImg">Clicca per modificare la copertina<i class="fa-solid fa-pen-to-square ms-3"></i></a>
+            <a class="text-center" data-bs-toggle="modal" data-bs-target="#editCover">Clicca per modificare la copertina<i class="fa-solid fa-pen-to-square ms-3"></i></a>
             {% endif %}
 
         </div>
 
         <!-- Modal (edit podcast image) -->
-        <div class="modal fade" id="editPodcastImg" tabindex="-1" aria-labelledby="editImgPodcastLabel" aria-hidden="true">
+        <div class="modal fade" id="editCover" tabindex="-1" aria-labelledby="editCoverLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editImgPodcastLabel">Modifica immagine podcast</h1>
+                <h1 class="modal-title fs-5" id="editCoverLabel">Modifica immagine podcast</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

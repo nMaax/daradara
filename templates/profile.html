@@ -14,13 +14,38 @@
 
 <!-- Profile header (propic, info) -->
 <div class="row">
-    <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
+    <div class="row col-12 col-lg-4 d-flex justify-content-center align-items-center">
         <!--Propic-->
-        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine profilo" class="img-fluid border rounded-4">
+        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine del profilo di {{user.name}}" class="img-fluid border rounded-4">
+        {% if is_owner %}
+        <!-- Button trigger modal -->
+        <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
+        <a class="text-center mt-3" data-bs-toggle="modal" data-bs-target="#editPropic">Clicca per modificare l'immagine del profilo<i class="fa-solid fa-pen-to-square ms-3"></i></a>
+        {% endif %}
     </div>
+
+    <!-- Modal (edit propic image) -->
+    <div class="modal fade" id="editPropic" tabindex="-1" aria-labelledby="editPropicLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="editPropicLabel">Modifica immagine del profilo</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="d-flex flex-column" action="{{url_for('post_update_propic', id=user.id)}}" method="POST" enctype="multipart/form-data">
+                    <label class="form-label" for="img-input">Nuova immagine</label>
+                    <input type="file" id="img-input" name="img" class="form-control mt-2">
+                    <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
     <div class="col">
         <!--Nome e cognome -->
-        <div class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2"><p class="text-nowrap">{{user.name}} {{user.surname}} {% if is_creator %}<i class="ms-2 fa-solid fa-podcast fa-xs"></i>{% endif %}</p></div>
+        <div class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2"><p class="text-nowrap text-center text-lg-start">{{user.name}} {{user.surname}} {% if is_creator %}<i class="ms-2 fa-solid fa-podcast fa-xs"></i>{% endif %}</p></div>
         <!--Bio-->
         <div class="row mx-lg-0 mx-2 ps-2">
 
@@ -31,7 +56,7 @@
                 Nessuna bio... 😢
                 {% endif %}
             {% else %}
-                <p>{{user.bio}}
+                <p class="text-center text-lg-start">{{user.bio}}
                     {% if is_owner %}
                         <a data-bs-toggle="modal" data-bs-target="#editBio" class="vanilla-a"><i class="ms-2">Modifica bio</i><i class="fa-solid fa-pen-to-square ms-2"></i></a>
                     {% endif %}
@@ -62,7 +87,7 @@
 </div>
 
 <!-- Profile body (podcast pubblicati e seguiti) -->
-<div class="row">
+<div class="row mt-lg-3">
 
     {% if is_owner or (not is_owner and privacy[0] == 0) %}
     {% if is_creator or is_owner %}
@@ -119,7 +144,7 @@
                         {% else %}
                             <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                             <p class="card-text">Diventa un podcaster per pubblicare il tuo primo podcast!</p>
-                            <small class="text-muted">Premi il bottone a destra 👉</small>
+                            <small class="text-muted">Premi il bottone a <b>diventa un podcaster</b> 👉</small>
                         {% endif %}                            
                         
                     </div>
@@ -232,7 +257,7 @@
                         <div class="row g-5">
                             <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
                             {% if follows|length > 0 %}
-                                <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                                <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
                             {% elif follows|length == 0 and is_owner %}
                                 <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
                             {% endif %}
