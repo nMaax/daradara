@@ -51,9 +51,12 @@
 [X] Metti il controllo dei caratteri nella password in input, sia server che client side
 [X] Metti ricerca nelle pagine owned, follows e saves
 
-[ ] Aggiungi logica dei 3 puntini anche in galleria
+[X] Aggiungi logica dei 3 puntini anche in galleria
 [ ] Imposta modifica immagine del profilo
+[ ] Metti Humaaans
+[ ] Rendi il codice di app e dao più leggibile
 
+[ ] Togli style e script tags
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta dove necessario

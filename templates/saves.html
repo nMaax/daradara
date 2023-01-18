@@ -27,11 +27,15 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for episode in episodes %}
         <div class="col">
-        <a class="episode card" href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">
+        <a class="episode card h-100" href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">
             <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+episode.id|string+episode.img)}}" alt="episode {{episode.title}} image">
             <div class="card-body">
                 <h5 class="episode-title card-title">{{episode.title}}</h5>
-                <p class="episode-description card-text">{{episode.desc}}</p>
+                {% if episode.desc|length > 70 %}
+                    <p class="episode-description card-text">{{episode.desc[:67]}}...</p>
+                {% else %}
+                    <p class="episode-description card-text">{{episode.desc}}</p>
+                {% endif %}
             </div>
         </a>
         </div>

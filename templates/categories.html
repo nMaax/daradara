@@ -10,11 +10,15 @@
 
 {% for podcast in podcasts %}
     <div class="col">
-    <a href="{{url_for('podcast', id=podcast.id)}}" class="podcast card">
+    <a class="podcast card h-100" href="{{url_for('podcast', id=podcast.id)}}">
         <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
         <div class="card-body">
             <h5 class="podcast-title card-title">{{podcast.title}}</h5>
-            <p class="podcast-description card-text">{{podcast.desc}}</p>
+            {% if podcast.desc|length > 70 %}
+                <p class="podcast-description card-text">{{podcast.desc[:67]}}...</p>
+            {% else %}
+                <p class="podcast-description card-text">{{podcast.desc}}</p>
+            {% endif %}
         </div>
         <div class="card-footer podcast-category">
             {{podcast.tag|capitalize}}
