@@ -1,5 +1,7 @@
 import sqlite3
 from datetime import datetime
+from PIL import Image
+import os
 
 def to_dict(row: sqlite3.Row) -> dict:
     """
@@ -52,12 +54,24 @@ def days_ago(timestamp: str) -> str:
         return f"{difference.seconds // 3600} ora fa"
     elif difference.seconds // 3600 != 0:
         return f"{difference.seconds // 3600} ore fa"
+    # Check the number of minutes ago
     elif difference.seconds // 60 == 1:
         return f"{difference.seconds // 60} minuto fa"
     elif difference.seconds // 60 == 0:
         return f"meno di 1 minuto fa"
-    # Check the number of minutes ago
     return f"{difference.seconds // 60} minuti fa"
 
+def crop_mantain_aspect_ratio(path):
+    image = Image.open(path)
+    new_image = make_square(image)
+    save_path = os.path.join(os.path.dirname(path), "resized_" + os.path.basename(path))
+    new_image.save(save_path)
 
+def make_square(im, min_size=256, fill_color=(255, 255, 255)): # fill_color=(248, 249, 250) per i colori light di bs
+    im = Image.open(im)
+    x, y = im.size
+    size = max(min_size, x, y)
+    new_im = Image.new('RGB', (size, size), fill_color)
+    new_im.paste(im, (int((size - x) / 2), int((size - y) / 2)))
+    return new_im
 

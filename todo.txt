@@ -45,7 +45,6 @@
 [X] Aggiugni label nei modal di modifica
 [X] Fai pagina di faq
 
-
 [X] Aggiungi controllo lunghezza caratteri nei modali di modifica
 [X] Fai ricerca nuovi podcast
 [ ] Aggiungi crop image

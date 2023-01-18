@@ -62,6 +62,8 @@
                 {% endif %}
             </div>
 
+            <div class="row"><p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p></div>
+
             <!-- Modal (edit podcast) -->
             <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="editInfoPodcastLabel" aria-hidden="true">
                 <div class="modal-dialog">

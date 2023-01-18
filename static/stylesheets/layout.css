@@ -2,10 +2,19 @@
     font-family: 'League Spartan', sans-serif;
 }
 
+img {
+    max-width: 800px;
+    max-height: 800px;
+}
+
 /* Rimuovo il colore blue e la sottolineatura che i tag <a> impongono ai loro figli */
-a:not(.stock-a, .nav-link) {
+a:not(.stock-a, .vanilla-a, .nav-link) {
     color: inherit;
     text-decoration: none;
+}
+
+.vanilla-a {
+    color: inherit;
 }
 
 /* Forzo il logo in navbar a essere dentro un 50x50 */

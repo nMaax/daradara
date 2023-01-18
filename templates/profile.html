@@ -16,15 +16,48 @@
 <div class="row">
     <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
         <!--Propic-->
-        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine profilo" class="img-fluid">
+        <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(user.id, user.propic))}}" alt="Immagine profilo" class="img-fluid border rounded-4">
     </div>
     <div class="col">
         <!--Nome e cognome -->
         <div class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2"><p class="text-nowrap">{{user.name}} {{user.surname}} {% if is_creator %}<i class="ms-2 fa-solid fa-podcast fa-xs"></i>{% endif %}</p></div>
         <!--Bio-->
-        <div class="row mx-lg-0 mx-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, tempora. Eius, at. Id repellat consectetur maiores cupiditate at amet tempore sequi excepturi, nihil, sapiente nostrum nam magnam iure ipsa architecto!
-        Ex autem commodi quidem repellendus ad rem unde modi velit rerum, reprehenderit vitae assumenda sint, cumque repudiandae corporis asperiores vero! Accusamus eveniet aliquam fugiat accusantium quidem laudantium libero labore ipsa!
-        Placeat repellat molestias et illo quasi tenetur, ex eaque. Dicta modi iste maiores! Voluptatum adipisci totam voluptate debitis commodi, nisi officiis atque cupiditate quos nostrum officia sit sequi nulla ut?</div>
+        <div class="row mx-lg-0 mx-2 ps-2">
+
+            {% if not user.bio %}
+                {% if is_owner %}
+                <p>Nessuna bio... 😢 <a class="vanilla-a" data-bs-toggle="modal" data-bs-target="#editBio"> vuoi aggiungerne una?</a></p>
+                {% else %}
+                Nessuna bio... 😢
+                {% endif %}
+            {% else %}
+                <p>{{user.bio}}
+                    {% if is_owner %}
+                        <a data-bs-toggle="modal" data-bs-target="#editBio" class="vanilla-a"><i class="ms-2">Modifica bio</i><i class="fa-solid fa-pen-to-square ms-2"></i></a>
+                    {% endif %}
+                </p>
+            {% endif %}
+
+        </div>
+        
+        <!-- Modal (update bio) -->
+        <div class="modal fade" id="editBio" tabindex="-1" aria-labelledby="editBioLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editBioLabel">Modifica biografia profilo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{url_for('post_edit_bio', id=user.id)}}" method="POST">
+                        <textarea id="bio-input" name="bio" class="form-control mt-2" rows="16" maxlength="516">{{user.bio}}</textarea>
+                        <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -64,9 +97,17 @@
                                 <div class="col-4 d-flex align-items-center justify-content-center">
                                     <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="im-card img-fluid" alt="Card image" style="max-width: 100px;">
                                 </div>
-                                <div class="col-8">
-                                    <h5 class="">{{podcast.title}}</h5>
-                                    <p class="text-wrap">{{podcast.desc}}</p>
+                                <div class="col-8 mt-2" style="max-width: 250px;">
+                                    {% if podcast.title|length > 23 %}
+                                        <h5 class="text-wrap text-break">{{podcast.title[:20]}}...</h5>
+                                    {% else %}
+                                        <h5 class="text-wrap text-break">{{podcast.title}}</h5>
+                                    {% endif %}
+                                    {% if podcast.desc|length > 70 %}
+                                        <p class="text-wrap text-break">{{podcast.desc[:67]}}...</p>
+                                    {% else %}
+                                        <p class="text-wrap text-break">{{podcast.desc}}</p>
+                                    {% endif %}
                                 </div>
                                 </div>
                             </a>
@@ -103,17 +144,31 @@
             <div class="row g-0">
                 <!-- Card header -->
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
-                    <p class="row text-nowrap text-wrapper">Seguiti 🥳</p>
-                    <div class="row g-5">
-                        {% if is_owner %}
-                            <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
-                        {% endif %}
-                        {% if follows|length > 0 %}
-                            <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
-                        {% elif follows|length == 0 and is_owner %}
-                            <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
-                        {% endif %}
+                    <div class="row my-4 d-flex justify-content-center align-items-center">
+                        <p class="text-nowrap text-center mb-0">Seguiti 🥳</p>
                     </div>
+                    
+                    {% if is_owner %}
+                        <div class="row g-5">
+                            <a href="{{url_for('privatize_follows', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[1]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                            {% if follows|length > 0 %}
+                                <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                            {% elif follows|length == 0 and is_owner %}
+                                <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        {% if follows|length > 0 %}
+                        <div class="row g-5">
+                            <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                        </div>
+                        {% elif follows|length == 0 and is_owner %}
+                        <div class="row g-5">
+                            <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -125,13 +180,22 @@
                             
                             <a href="{{url_for('podcast', id=follow.id_podcast)}}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
-                                <div class="col-4 d-flex align-items-center justify-content-center">
-                                    <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(follow.id, follow.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">
-                                </div>
-                                <div class="col-8">
-                                    <h5 class="">{{follow.title}}</h5>
-                                    <p class="text-wrap">{{follow.desc}}</p>
-                                </div>
+                                    <div class="col-4 d-flex align-items-center justify-content-center">
+                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(follow.id, follow.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">
+                                    </div>
+                                    <div class="col-8 mt-2" style="max-width: 250px;">
+                                        {% if follow.title|length > 23 %}
+                                            <h5 class="text-wrap text-break">{{follow.title[:20]}}...</h5>
+                                        {% else %}
+                                            <h5 class="text-wrap text-break">{{follow.title}}</h5>
+                                        {% endif %}
+                                        <!--TODO! Incorpora la logica dei puntini... anche per episodi salvati e i tuoi podcast-->
+                                        {% if follow.desc|length > 70 %}
+                                            <p class="text-wrap text-break">{{follow.desc[:67]}}...</p>
+                                        {% else %}
+                                            <p class="text-wrap text-break">{{follow.desc}}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </a>
 
@@ -160,15 +224,31 @@
             <div class="row g-0">
                 <!-- Card header -->
                 <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
-                    <p class="row text-nowrap text-wrapper">Episodi salvati 📋</p>
-                    <div class="row g-5">
-                        {% if is_owner %}
-                            <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
-                        {% endif %}
-                        {% if saves|length > 0 %} 
-                            <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
-                        {% endif %}
+                    <div class="row my-4 d-flex justify-content-center align-items-center">
+                        <p class="text-nowrap text-center mb-0">Episodi salvati 📋</p>
                     </div>
+
+                    {% if is_owner %}
+                        <div class="row g-5">
+                            <a href="{{url_for('privatize_saves', id=user.id)}}" class="col d-flex justify-content-center align-items-center"><i class="fa-solid fa-eye{% if privacy[2]==1 %}-slash{% endif %} fa-xxs"></i></a>
+                            {% if follows|length > 0 %}
+                                <a href="{{url_for('follows', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                            {% elif follows|length == 0 and is_owner %}
+                                <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        {% if follows|length > 0 %}
+                        <div class="row g-5">
+                            <a href="{{url_for('saves', id=user.id)}}" class="col btn btn-light btn-outline-dark text-nowrap">Visualizza tutti</a>
+                        </div>
+                        {% elif follows|length == 0 and is_owner %}
+                        <div class="row g-5">
+                            <a href="{{url_for('categories')}}" class="col btn btn-light btn-outline-dark text-nowrap">Trova podcasts</a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
                 </div>
                 <!-- Card body -->
                 <div class="col">
@@ -178,21 +258,25 @@
 
                             {% for save in saves[:5] %}
                             
-                            <!--TODO metti ricerca tra i tuoi follow con js-->
                             <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}" class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
-                                <div class="col-4 d-flex align-items-center justify-content-center">
-                                    <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">
-                                </div>
-                                <div class="col-8 w" style="max-width: 250px;">
-                                    <h5 class="">{{save.title}}</h5>
-                                    <!--TODO! Incorpora la logica dei puntini... anche per episodi salvati e i tuoi podcast-->
-                                    {% if save.desc|length > 70 %}
-                                        <p class="text-wrap text-break">{{save.desc[:67]}}...</p>
-                                    {% else %}
-                                        <p class="text-wrap text-break">{{save.desc}}</p>
-                                    {% endif %}
-                                </div>
+                                    <div class="col-4 d-flex align-items-center justify-content-center">
+                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="img-fluid" alt="Card image" style="max-width: 100px;">
+                                    </div>
+                                    <!--TODO! Rimovi l'attribute style-->
+                                    <div class="col-8 mt-2" style="max-width: 250px;">
+                                        {% if save.title|length > 23 %}
+                                            <h5 class="text-wrap text-break">{{save.title[:20]}}...</h5>
+                                        {% else %}
+                                            <h5 class="text-wrap text-break">{{save.title}}</h5>
+                                        {% endif %}
+                                        <!--TODO! Incorpora la logica dei puntini... anche per episodi salvati e i tuoi podcast-->
+                                        {% if save.desc|length > 70 %}
+                                            <p class="text-wrap text-break">{{save.desc[:67]}}...</p>
+                                        {% else %}
+                                            <p class="text-wrap text-break">{{save.desc}}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </a>
 

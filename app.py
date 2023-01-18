@@ -9,7 +9,7 @@ import data.dao as dao
 from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerError
 from utils.models import User
 from utils.detector import is_image, is_static_image, is_audio
-from utils.utils import to_dict, days_ago, add_days_ago
+from utils.utils import to_dict, days_ago, add_days_ago, crop_mantain_aspect_ratio, make_square
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -139,7 +139,7 @@ def post_signup():
         check = False
     elif len(password) < 8 or not re.search("[A-Z]", password) or not re.search("[a-z]", password) or not re.search("[0-9]", password):
         check = False
-    elif not is_image(secure_filename(propic.filename)): # type: ignore
+    elif not is_static_image(secure_filename(propic.filename)): # type: ignore
         check = False
 
     # If the data isn't correct say it, otherwhise continue 
@@ -171,7 +171,9 @@ def post_signup():
             save_directory = PROPICS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
+            propic = make_square(propic)
             propic.save(save_directory+propicname) # type: ignore
+            
             
             # Automatic login after registration
             login_user(User(dao.get_user_by_email(email)), remember=False)
@@ -297,6 +299,56 @@ def privatize_saves(id: int):
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
         return redirect(session.get('previous_url', '/'))
+
+@app.route('/profile/<int:id>/bio/edit/elab', methods=['POST'])
+@login_required
+def post_edit_bio(id: int):
+
+    # Retriving data 
+    bio = request.form['bio']
+
+    # Cleaning data
+    bio.strip()
+    
+    # Checking data
+    check = True
+    if not bio or len(bio) > 516:
+        check = False
+
+    # If the profile doesnt exist or the user that is trying to edit it is not the owner abort
+    user = dao.get_user(id)
+    if not user:
+        flash(message='Il profilo dove hai richiesto la modifica della bio non esiste', category='warning')
+        return redirect(session.get('previous_url', '/'))
+    elif user['id'] != current_user.id: # type: ignore
+        flash(message='Non sei il proprietario del profilo', category='warning')
+        return redirect(url_for('profile', id=id))
+    elif not check:
+        flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
+        return redirect(url_for('profile', id=id))
+    else:
+        try:
+
+            if user['bio'] == bio:
+                bio = None
+
+            # Otherwise edit the podcast
+            if bio:
+                update_bio_result = dao.update_user_bio(id, bio)
+            else:
+                update_bio_result = True
+
+            if not update_bio_result:
+                raise dataManipulationError('Unable to update bio')
+
+            flash(message='Biografia modificata correttamente', category='success')
+            
+        except Exception as e:
+            flash(message='C\'è stato un errore durante la modifica della biografia - ERR: '+str(e), category='danger')
+        
+        return redirect(url_for('profile', id=id))
+
+    return 'ciao'
 
 @app.route('/podcast/<int:id>')
 def podcast(id: int):
@@ -543,7 +595,7 @@ def post_edit_podcast(id: int):
         
         return redirect(url_for('podcast', id=id))
 
-@app.route('/podcast/<int:id>/img/edit/elab', methods=['POST'])
+@app.route('/podcast/<int:id>/cover/edit/elab', methods=['POST'])
 def post_update_podcast_img(id: int):
 
     img = request.files['img']
@@ -573,6 +625,7 @@ def post_update_podcast_img(id: int):
             save_directory = COVERS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
+            img = make_square(img)
             img.save(save_directory+imgname) # type: ignore
 
             result = dao.update_podcast(id, img=imgext)

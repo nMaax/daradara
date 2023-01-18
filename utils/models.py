@@ -2,8 +2,7 @@ from flask_login import UserMixin
 
 class User(UserMixin):
     def __init__(self, user):
-
-        (id, email, password, name, surname, propic, priv_owner, priv_follows, priv_saves) = user
+        (id, email, password, name, surname, propic, priv_owner, priv_follows, priv_saves, bio) = user
         self.id = id
         self.email = email
         self.password = password
@@ -11,3 +10,4 @@ class User(UserMixin):
         self.surname = surname
         self.propic = propic
         self.privacy = [priv_owner, priv_follows, priv_saves]
+        self.bio = bio

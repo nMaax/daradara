@@ -791,6 +791,23 @@ def update_podcast_field(id, field, value):
     close(conn, cursor)
     return success
 
+def update_user_bio(id, bio):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'UPDATE users SET bio = ? WHERE id = ?'
+
+        cursor.execute(sql, (bio, id))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
 # DELETE queries
 
 def unfollow(id_pod, id_user):

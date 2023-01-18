@@ -3,7 +3,6 @@
     white-space: nowrap;
 }
 
-
 /* Webkit (Chromium) */
 .card-scroll::-webkit-scrollbar {
     height: 0.4em; /*spessore scrollbar*/
