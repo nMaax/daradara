@@ -15,6 +15,36 @@ flask run
 
 Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito.
 
+## Dispositivi compatibili
+
+DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 450px di larghezza e 800x di altezza). DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
+
+## Alcune linee guida per utilizzare DaraDara
+
+Qui sotto potete trovare elencate una serie di linee guida utili per utilizzare e debuggare DaraDara
+
+### Come posso registrarmi?
+
+Non esiste un tasto che dalla homepage rimandi direttamente alla registrazione, bisogna prima dirigersi nella pagina di login con il tasto accedi e poi premere sulla scritta rossa "Registrati!"
+
+### Cosa indicano le icone dell'occhio nel profilo?
+
+Ogni icona rappresentante un occhio indica se si vuole tenere quella data sezione del profilo pubblica o privata a gli altri utenti. Se l'icona consiste in un normale un occhio allora la data sezione è pubblica a gli altri utenti, se c'è una barra sopra l'occhio allora la sezione è privata e solo il proprietario del profilo può vederla
+
+### Cosa fa il tasto "sorprendimi"?
+
+Il tasto "sorprendimi", presente nella navabar, sceglie semplicemente a caso un podcast tra i vari disponibili su DaraDara e lo mostra all'utente
+
+### Reset dei dati di Flask
+
+Per facilitare il debug sono state aggiunte due root "nascoste" per ripulire i dati relativi a Flask-Session e Flask-Login, da utilizzare al bisogno.
+
+* Route per ripulire le sessioni: ```/clear_session```
+* Route per ripulire il login: ```/clear_login```
+
+Si consieri che queste route non sarebbero ovviamente pubblicate in un applicazione web aperta al pubblico, sono da utilizzare solo a scopo di debugging.
+
+
 ## Utenti e serie già presenti
 
 DaraDara è già fornito di alcuni dati di esempio per fornire un esperienza utente basilare per testare tutte le feature messe a disposizione e richieste dal tema d'esame

@@ -2,10 +2,6 @@
 
 {% block title %} - {{user.name}}{% endblock %}
 
-{% block scripts %}
-    <script src="{{url_for('static', filename='scripts/profile.js')}}" defer></script>
-{% endblock %}
-
 {% block stylesheets %} <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/profile.css')}}"> {% endblock %}
 
 {% block content %}
