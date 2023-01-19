@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash
 
 def main():
 
-    now = datetime.now()
+    #now = datetime.now()
     #now_str = now.strftime("%Y-%m-%d %H:%M:%S")
     now_str = '2023-01-10 10:30:50'
 

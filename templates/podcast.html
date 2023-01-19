@@ -169,7 +169,7 @@
                                         <p class="episode-description card-text text-center">{{episode.description}}</p>
                                     </a>
                                     <audio controls class="w-100">
-                                        <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
+                                        <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{episode.mime_type}}">
                                         Il tuo browser non supporta l'elemento audio.
                                     </audio>
                                     {% else %}

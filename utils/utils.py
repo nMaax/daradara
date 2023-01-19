@@ -1,6 +1,19 @@
 import sqlite3
 from datetime import datetime
 
+def to_list_of_dict(list: list) -> list:
+    """
+    Takes as parameter a list of sqlite3.Row Object and returns a corrispondent list of mutable dictionary
+
+    :param row: the list of row object to be converted
+    """
+
+    output = []
+    for row in list:
+        output.append(to_dict(row))
+    return output
+
+
 def to_dict(row: sqlite3.Row) -> dict:
     """
     Takes as parameter an sqlite3.Row Object and returns a corrispondent mutable dictionary

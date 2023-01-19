@@ -10,7 +10,7 @@ from data.errors.daoExceptions import dataManipulationError, notPodcastOwnerErro
 from utils.models import User
 from utils.detector import is_static_image, is_audio
 from utils.cropper import make_square
-from utils.utils import days_ago, add_days_ago
+from utils.utils import days_ago, add_days_ago, to_list_of_dict
 
 # Flask libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -408,7 +408,14 @@ def podcast(id: int):
             last_update = days_ago(last_update)
         else:
             last_update = False
-        episodes = dao.get_episodes(id_podcast = id)
+
+        episodes = to_list_of_dict(dao.get_episodes(id_podcast=id))
+        for episode in episodes:
+            mime_type = 'mpeg'
+            if episode['audio'] == '.wav':
+                mime_type='wav'
+            episode['mime_type'] = mime_type 
+
         category = dao.get_category(id)
         
         is_owner = False

@@ -266,6 +266,8 @@ def get_last_episode_id():
         sql = 'SELECT MAX(id) FROM episodes'
         cursor.execute(sql)
         id = cursor.fetchone()['MAX(id)']
+        if id == None:
+            id = 0
     except Exception as e:
         print(e)
 
@@ -344,6 +346,8 @@ def get_last_id_user():
         sql = 'SELECT MAX(id) FROM users'
         cursor.execute(sql)
         id = cursor.fetchone()['MAX(id)']
+        if id == None:
+            id = 0
     except Exception as e:
         print(e)
 
@@ -472,6 +476,8 @@ def get_last_podcast_id():
         sql = 'SELECT MAX(id) FROM podcasts'
         cursor.execute(sql)
         id = cursor.fetchone()['MAX(id)']
+        if id == None:
+            id = 0
     except Exception as e:
         print(e)
 
@@ -552,13 +558,7 @@ def new_podcast(title, description, img, id_user, tag):
         sql = 'INSERT INTO podcasts(title, desc, img, id_user) VALUES (?, ?, ?, ?)'
         cursor.execute(sql, (title, description, img, id_user))
 
-        #TODO! Rendi questo pezzo di codice più elegante
-        id_podcast = get_last_podcast_id()
-        if id_podcast:
-            id_podcast += 1
-        else:
-            id_podcast = 1
-            
+        id_podcast = get_last_podcast_id() + 1
         sql = 'INSERT INTO categories(id_podcast, tag) VALUES (?, ?)'
         cursor.execute(sql, (id_podcast, tag))
 
