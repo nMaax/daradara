@@ -14,14 +14,17 @@
 
 <!-- Header episodio -->
 
-<div class="row">   
+<header class="row">   
     
+    <!-- Immagine podcast dell'episodio -->
     <div class="col-12 col-lg-2 d-flex justify-content-center">
         <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
     </div>
+
+    <!-- Info episodio -->
     <div class="col mt-4 mt-lg-0">
         
-        <!-- Episode title -->
+        <!-- Titolo episodio -->
         <div class="row d-flex justify-content-center align-items-center mb-3">
             <h1 class="">
                 {{episode.title}}
@@ -33,13 +36,12 @@
             <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
         </div>
 
-        <!-- Modal (edit episode) -->
-        <!--TODO! Add labels -->
-        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" id="edit-episode-form">
+        <!-- Modal (Modifica info episodio) -->
+        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="editEpisodeLabel" aria-hidden="true" id="edit-episode-form">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modifica informazioni episodio</h1>
+                <h1 class="modal-title fs-5" id="editEpisodeLabel">Modifica informazioni episodio</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -71,7 +73,7 @@
         </div>
         {% if is_owner %}
         <div class="row mx-0 my-2 d-flex justify-content-center align-content-center display-5">
-            <!-- Button trigger modal -->
+            <!-- Bottone trigger modale di eliminazione -->
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
                 Elimina episodio
             </button>
@@ -79,9 +81,9 @@
         {% endif %}
 
     </div>
-</div>
+</header>
 
-<!-- Modal (are you sure to delete?) -->
+<!-- Modal (eliminazione episodio) -->
 <div class="modal fade" id="deleteEpisodeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteEpisodeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
     <div class="modal-content">
@@ -101,23 +103,51 @@
 </div>
 
 <!-- Body episodio -->
-<div class="row mt-3 mx-lg-0 mx-2">
-    <!-- Traccia audio (howler) -->
-    <!--TODO! Metti il tasto di modifica audio -->
-    <!--TODO! implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
+<main class="row mt-3 mx-lg-0 mx-2">
+
+    <!-- Traccia audio-->
+    <!--TODO? implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
     <div class="row d-flex justify-content-center">
         {% if current_user.is_authenticated %}
         <div id="player" class="col-md-7 w-100">
             <div class="row g-2">
                 <div class="text-light p-3">
-                    <audio controls class="w-100">
+                    <audio controls class="row w-100">
                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
                         Il tuo browser non supporta l'elemento audio.
                     </audio>
+                    {% if is_owner %}
+                    <div class="row">
+                        <a class="text-center text-dark text-center vanilla-a mt-3 " data-bs-toggle="modal" data-bs-target="#editAudio">
+                            Clicca qui per modificare la traccia audio<i class="fa-solid fa-pen-to-square ms-3"></i>
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
+
+        <!-- Modale di modifica audio -->
+        <div class="modal fade" id="editAudio" tabindex="-1" aria-labelledby="editAudioLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editAudioLabel">Modifica audio</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="d-flex flex-column" action="{{url_for('post_edit_audio', id_pod=id_pod, id_ep=id)}}" method="POST" enctype="multipart/form-data">
+                        <label class="form-label" for="audio-input">Nuovo audio</label>
+                        <input type="file" id="audio-input" name="audio" class="form-control mt-2" accept="audio/mp3, audio/wav">
+                        <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
         {% else %}
+        <!-- CTA per i non registrati -->
         <div class="d-flex flex-column align-items-center">
             <p class="placeholder-glow d-flex justify-content-center align-items-center">
                 <span class="placeholder col-12 px-0 px-sm-5">Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti! </span>
@@ -126,13 +156,14 @@
         </div>
         {% endif %}
     </div>
+
+    <!-- Sezione commenti (bootstrap card) -->
     <div class="row d-flex justify-content-center align-content-center my-2">
         <div class="row d-flex justify-content-center">
             <div class="">
-              <div class="card shadow-0 border bg-ligth">
-                <!-- Comment section (bootstrap card) -->
+                <div class="card shadow-0 border bg-ligth">
                 <div class="card-body p-4">
-                    <!-- New comment (form) -->
+                    <!-- Nuovo commento: form -->
                     <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
                         <div class="row">
                             <textarea type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." rows="4" maxlength="300"></textarea>
@@ -142,14 +173,13 @@
                             <button type="submit" class="col-12 col-lg-2 btn btn-outline-dark">Pubblica</button>
                         </div>
                     </form>
-
-                    {% for i in range(comments|length) %}
                     
-                    <!-- Comments (bootstrap card) -->
+                    <!-- Commenti (serie di bootstrap card) -->
+                    {% for i in range(comments|length) %}
+
                     <div class="card mb-4">
                         <div class="card-body">
                             <p>{{comments[i].text}}</p>
-                
                             <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
                                 <div class="d-flex flex-row align-items-center">
                                     <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="avatar" width="25"
@@ -158,9 +188,9 @@
                                 </div>
                                 <p class="mt-2 m-0"><small class="text-muted">{{comments[i].posted}}</small></p>
                             </div>
-
-                            <!--p class="mt-2 m-0"><small class="text-muted">{{comments[i].timestamp}}</small></p-->
                         </div>
+
+                        <!-- Modifica / Eliminazione del commento -->
                         {% if current_user.is_authenticated and current_user.id == comments[i].id_user %}
                         <div class="card-footer d-flex justify-content-between">
                             
@@ -180,7 +210,7 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Modal (comment edit) -->
+                    <!-- Modale (modifica comento) -->
                     <div class="modal fade" id="editComment-{{i}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
@@ -203,10 +233,11 @@
                     {% endfor %}
           
                 </div>
-              </div>
+                </div>
             </div>
-          </div>
+        </div>
     </div>
-</div>
+    
+</main>
 
 {% endblock %}

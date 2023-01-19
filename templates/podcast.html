@@ -18,21 +18,22 @@
         <input class="col-12 form-control mx-2 mb-5" id="searchbar" type="search" placeholder="Cerca tra gli episodi del podcast">
     </div>
 
-    <!-- Podcast header (immagine, nome, categorie, descrizione e eliminazione)-->
-    <div class="row">
-        <!-- Podcast image -->
+    <!-- Podcast header (immagine, nome, categorie, descrizione e modifica/eliminazione)-->
+    <header class="row">
+
+        <!-- Immagine podcast -->
         <div class="col-12 col-lg-4 row d-flex justify-content-center align-items-center">
+            
             <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast" class="col-12  img-fluid p-1 p-lg-2 podcast-img">
             
             {% if is_owner %}
-            <!-- Button trigger modal -->
-            <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
+            <!-- Modal trigger di modifica immagine podcast-->
             <a class="text-center vanilla-a" data-bs-toggle="modal" data-bs-target="#editCover">Clicca qui per modificare la copertina<i class="fa-solid fa-pen-to-square ms-3"></i></a>
             {% endif %}
 
         </div>
 
-        <!-- Modal (edit podcast image) -->
+        <!-- Modal (modifica immagine podcast) -->
         <div class="modal fade" id="editCover" tabindex="-1" aria-labelledby="editCoverLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
@@ -43,7 +44,7 @@
                 <div class="modal-body">
                     <form class="d-flex flex-column" action="{{url_for('post_update_podcast_img', id=id)}}" method="POST" enctype="multipart/form-data">
                         <label class="form-label" for="img-input">Nuova immagine</label>
-                        <input type="file" id="img-input" name="img" class="form-control mt-2">
+                        <input type="file" id="img-input" name="img" class="form-control mt-2" accept="image/jpeg, image/jpg, image/png">
                         <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                     </form>
                 </div>
@@ -51,18 +52,20 @@
             </div>
         </div>
         
-        <!-- Info podcast (bootstrap card) -->
+        <!-- Info podcast -->
         <div class="col">
             
-            <div class="row mx-0 mx-lg-2 mx-lg-0 my-2 d-flex justify-content-between align-content-center display-3">
-                <p class="col-8 text-wrap ps-1 ps-lg-0">{{podcast.title}}</p>
+            <!-- Info primarie podcast (Titolo e podcaster) -->
+            <div class="row d-flex justify-content-between align-content-center mx-0 mx-lg-2 mx-lg-0 my-2">
+                <h1 class="col-8 text-wrap display-3 ps-1 ps-lg-0">{{podcast.title}}</h1>
                 {% if is_owner %}
-                <!--TODO! NON E' VERO!!! ==> NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
-                <a class="col-1 fa-solid fa-pen-to-square mx-3 me-lg-0 pe-0" data-bs-toggle="modal" data-bs-target="#editPodcast"></a>
+                <i class="col-1 display-4 fa-solid fa-pen-to-square mx-3 me-lg-0 pe-0" data-bs-toggle="modal" data-bs-target="#editPodcast"></i>
                 {% endif %}
             </div>
 
-            <div class="row"><p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p></div>
+            <div class="row">
+                <p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p>
+            </div>
 
             <!-- Modal (edit podcast) -->
             <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="editInfoPodcastLabel" aria-hidden="true">
@@ -78,7 +81,7 @@
                             <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
                             <textarea id="desc-input" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
                             <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
-                            <input type="text" id="category-input" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{category.tag|capitalize}}">
+                            <input type="text" id="category-input" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.category|capitalize}}">
                             <label class="form-label mt-2" for="category-input">Nuova categoria</label>
                             <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                         </form>
@@ -87,6 +90,7 @@
                 </div>
             </div>
             
+            <!-- Info secondarie podcast (decrizione, ultimo aggiornamento, categoria) -->
             <div class="card">
                 <div class="card-body">
                     <p class="card-text">{{podcast.desc}}</p>
@@ -101,22 +105,22 @@
                     <p class="m-0 mt-1">Ultimo aggiornamento {{last_update}}</p>
                     <hr class="my-2">
                     {% endif %}
-                    <p class="m-0 mb-1">Categoria: <i>{{category.tag|capitalize}}</i></p> 
+                    <p class="m-0 mb-1">Categoria: <i>{{podcast.category|capitalize}}</i></p> 
                 </div>
             </div>
 
             {% if is_owner %}
             <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
-                <!-- Button trigger modal -->
+                <!-- Button trigger modale di eliminazione podcast -->
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePodcastModal">
                     Elimina podcast
                 </button>
             </div>
             {% endif %}
         </div>
-    </div>
+    </header>
 
-    <!-- Modal (are you sure to delete?) -->
+    <!-- Modal (eliminazione podcast) -->
     <div class="modal fade" id="deletePodcastModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deletePodcastModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -125,70 +129,106 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <p>
                 Una volta eliminato, il podcast non potrà essere in alcun modo recuperato e tutti i suoi episodi, commenti, o qualsiasi contenuto a esso relativo verranno definitivamente eliminati, sei sicuro di voler procedere?
+                </p>
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-            <a id="delPodBtn" href = "{{ url_for('post_delete_podcast', id=id) }}" class="btn btn-danger">Ho capito, elimina il podcast</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Annulla
+                </button>
+                <a id="delPodBtn" href="{{ url_for('post_delete_podcast', id=id) }}" class="btn btn-danger text-light">
+                    Ho capito, elimina il podcast
+                </a>
             </div>
         </div>
         </div>
     </div>
     
     <!-- Pocast body (episodi) -->
-    <div class="row mt-5">
-        <div class="row d-flex justify-content-center display-5">Episodi 🙌</div>
+    <main class="row mt-5">
 
+        <h1 class="row d-flex justify-content-center display-5">Episodi 🙌</h1>
+
+        <!-- Tasto di creazione episodio (solo se sei il proprietario) -->
         {% if is_owner %}
-        <div class="row d-flex justify-content-center">
-            <div class="row mt-3">
-                <!-- Bottone nuovo episodio -->
-                <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-dark text-light d-flex justify-content-center align-content-center ">Nuovo episodio</a>
+
+            <div class="row d-flex justify-content-center">
+                <div class="row mt-3">
+                    <!-- Bottone nuovo episodio -->
+                    <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-dark text-light d-flex justify-content-center align-content-center ">Nuovo episodio</a>
+                </div>
             </div>
-        </div>
+        
         {% endif %}
 
         {% if episodes %}
+
+            <!-- Episodi (bootstrap cards disposte una dopo l'altra) -->
             {% for episode in episodes %}
             <div class="row d-flex justify-content-center">
+
+                <!-- Episodio (bootstrap card) -->
                 <div class="row mt-3 episode">
-                    <!-- Episodio  (bootstrap card) -->
-                    <div class="card mb-3 ps-0">
-                        <div class="row g-0">
+                    <div class="card mb-3">
+                        <div class="row">
+                            
                             <!-- Titolo episodio -->
+                            <!-- Nota bene: il tag <p> è dentro <a> e non il contrario perché altrimenti il bg-light non si applicherebbe corretta,emte alla carta, peggiorando la UI -->
                             <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="col-md-4 bg-light d-flex justify-content-center align-items-center">
-                                <!--TODO! tagliare il titolo a meno caratteri se troppo lungo -->
                                 <p class="episode-title text-center display-6 mx-2 my-4">{{episode.title}}</p>
                             </a>
+
                             <!-- Traccia audio -->
                             <div class="col-md-7">
                                 <div class="card-body row g-2">
                                     {% if current_user.is_authenticated %}
-                                    <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="d-flex justify-content-center align-items-center my-4">
-                                        <!--TODO! tagliare la descrizione a meno caratteri se troppo lunga -->
-                                        <p class="episode-description card-text text-center">{{episode.description}}</p>
-                                    </a>
+                                    
+                                    <!--TODO tagliare la descrizione a meno caratteri se troppo lunga -->
+                                    <!-- Descrizione episodio -->
+                                    <p class="episode-description d-flex card-text text-center justify-content-center align-items-center my-4">
+                                        {{episode.description}}
+                                    </p>
+                                    
+                                    <hr>
+
+                                    <!-- Traccia audio -->
                                     <audio controls class="w-100">
                                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{episode.mime_type}}">
                                         Il tuo browser non supporta l'elemento audio.
                                     </audio>
+
                                     {% else %}
+                                    
+                                    <!-- Placeholder per i non iscritti -->
                                     <div class="d-flex flex-column align-items-center">
+                                        <!-- Placeholder shiny di bootstrap -->
                                         <p class="placeholder-glow d-flex justify-content-center align-items-center">
-                                            <span class="placeholder col-12 px-0 px-md-5">Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti! </span>
+                                            <span class="placeholder col-12 px-0 px-md-5">
+                                                Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti!
+                                            </span>
                                         </p>
-                                        <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi per ascoltare!</a>
+                                        <!-- Bottone CTA per iscriversi -->
+                                        <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">
+                                            Accedi per ascoltare!
+                                        </a>
                                     </div>
+
                                     {% endif %}
+
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
+
             </div>
             {% endfor%}
+
         {% else %}
-        <!-- Nessun episodio (bootstrap card) -->
+
+            <!-- Nessun episodio (bootstrap card) -->
             <div class="row card text-center mt-3">
                 <div class="card-body">
                 <h5 class="card-title">Non c'è nulla da vedere qui 👀</h5>
@@ -199,7 +239,8 @@
                 {% endif %}
                 </div>
             </div>
+
         {% endif %}
 
-    </div>
+    </main>
 {% endblock %}

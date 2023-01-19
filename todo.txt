@@ -56,9 +56,10 @@
 [X] Metti Humaaans
 [X] Fai funzionare il tasto di ricerca podcast sulla nav
 [ ] Rendi il codice di app e dao più leggibile
-[ ] Ripulisci data.db (resetta le sql-sequences)
+[X] Ripulisci data.db (resetta le sql-sequences)
 
-[-] Togli style e script tags --> Se lo fai la ricerca javascript non funziona
+[ ] Rimetti a posto i tag <a>
+[ ] Togli style e script tags --> Se lo fai la ricerca javascript non funziona
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [ ] Commenta dove necessario

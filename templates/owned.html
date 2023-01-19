@@ -23,6 +23,9 @@
                 <h5 class="podcast-title card-title">{{podcast.title}}</h5>
                 <p class="podcast-description card-text">{{podcast.desc}}</p>
             </div>
+            <div class="card-footer podcast-category">
+                {{podcast.category|capitalize}}
+            </div>
         </a>
         </div>
     {% endfor %}

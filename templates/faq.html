@@ -4,12 +4,14 @@
 
 {% block content %}
 
+<!-- Titolo F.A.Q. -->
 <div class="row d-flex justify-content-center align-items-center mb-2">
     <p class="display-1 text-center">F.A.Q.</p>
 </div>
 
-<div class="row d-flex justify-content-evenly my-2" id="how">
-    <div class="col-12 col-lg-5 mt-5 mt-lg-2">
+<!-- Header FAQ -->
+<header class="row d-flex justify-content-evenly my-2" id="how">
+    <section class="col-12 col-lg-5 mt-5 mt-lg-2">
         <h3><i class="fa fa-sign me-3"></i>Come pubblicare il tuo primo podcast</h3>
         <p>Pubblicare un nuovo podcast su DaraDara è intuitivo e semplice, ma se non sai da dove partire segui gli step sottostanti</p>
         <ol>
@@ -18,8 +20,8 @@
           <li>Premi sul bottone <b>diventa un podcaster</b> </li>
           <li>Inserisci i dati del nuovo podcast e <b>pubblica!</b></li>
         </ol>
-    </div>
-    <div class="col-12 off col-lg-5 mt-5 mt-lg-2" id="why">
+    </section>
+    <section class="col-12 off col-lg-5 mt-5 mt-lg-2" id="why">
         <h3><i class="fa fa-star me-3"></i> Perché scegliere DaraDara?</h3>
         DaraDara offre un servizio sempre attivo e segue dei pricisi standard nel rispetto sia dei podcaster che dei loro ascoltatori.
         <ul>
@@ -28,11 +30,15 @@
             <li>L'impegno di DaraDara per la <b>privacy e la sicurezza</b> dei dati garantisce che la tua esperienza di ascolto sia sicura e protetta.</li>
             <li>Le opzioni di <b>monetizzazione</b> di DaraDara per i creatori di contenuti consentono ai podcaster di guadagnare denaro per il loro lavoro senza dover trattere grosse fee di servizio <small>(<i>psss... Spotify!</i>)</small>.</li>
         </ul>
-    </div>
-</div>
+    </section>
+</header>
 
-<div class="row accordion accordion-flush" id="accordionFlushExample">
-    <p class="display-6 ms-3" id="faq">Altre domande</p>
+<!-- Main FAQ -->
+<main class="row accordion accordion-flush" id="accordionFlushExample">
+  <section>
+    <h1 class="display-6 ms-3" id="faq">Altre domande</h1>
+    
+    <!-- Elenco FAQ (accordion di bootstrap) -->
     <div class="accordion-item">
       <h2 class="accordion-header" id="flush-headingOne">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
@@ -40,8 +46,8 @@
         </button>
       </h2>
       <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-        <div class="accordion-body">In DaraDara, prendiamo molto sul serio la privacy e la sicurezza dei dati. Tutti i tuoi dati sono archiviati e protetti in modo sicuro in conformità con gli standard e le normative del settore. Non condivideremo o venderemo mai i tuoi dati a terzi senza il tuo esplicito consenso.</div>
-      </div>
+        <p class="accordion-body">In DaraDara, prendiamo molto sul serio la privacy e la sicurezza dei dati. Tutti i tuoi dati sono archiviati e protetti in modo sicuro in conformità con gli standard e le normative del settore. Non condivideremo o venderemo mai i tuoi dati a terzi senza il tuo esplicito consenso.</div>
+        </p>
     </div>
     <div class="accordion-item">
       <h2 class="accordion-header" id="flush-headingTwo">
@@ -50,8 +56,8 @@
         </button>
       </h2>
       <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-        <div class="accordion-body">DaraDara rispetta i diritti dei detentori del copyright e si aspetta che i nostri utenti facciano lo stesso. Abbiamo una rigorosa politica sul copyright e rimuoveremo qualsiasi contenuto che ci viene segnalato come violazione del copyright di altri. Se ritieni che il tuo lavoro sia stato utilizzato in un modo che costituisce una violazione del copyright, ti preghiamo di contattarci con i dettagli. Utilizzando il nostro servizio avrai sempre la paternità sul contenuto che realizzi, con i relativi diritti ed obblighi.
-        </div>
+        <p class="accordion-body">DaraDara rispetta i diritti dei detentori del copyright e si aspetta che i nostri utenti facciano lo stesso. Abbiamo una rigorosa politica sul copyright e rimuoveremo qualsiasi contenuto che ci viene segnalato come violazione del copyright di altri. Se ritieni che il tuo lavoro sia stato utilizzato in un modo che costituisce una violazione del copyright, ti preghiamo di contattarci con i dettagli. Utilizzando il nostro servizio avrai sempre la paternità sul contenuto che realizzi, con i relativi diritti ed obblighi.
+        </p>
       </div>
     </div>
     <div class="accordion-item">
@@ -61,9 +67,12 @@
         </button>
       </h2>
       <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-        <div class="accordion-body">I creatori di contenuti su DaraDara hanno l'opportunità di guadagnare denaro attraverso una varietà di metodi come pubblicità, sponsorizzazioni e abbonamenti a pagamento. I creatori possono anche utilizzare DaraDara per promuovere i propri prodotti, eventi e servizi. Esploriamo costantemente nuovi modi per aiutare i creatori a monetizzare i loro contenuti e continueremo ad aggiornare la nostra offerta.
-          <br>
-          Offriamo vari metodi di pagamento:
+        <div class="accordion-body">
+          <p>
+            I creatori di contenuti su DaraDara hanno l'opportunità di guadagnare denaro attraverso una varietà di metodi come pubblicità, sponsorizzazioni e abbonamenti a pagamento. I creatori possono anche utilizzare DaraDara per promuovere i propri prodotti, eventi e servizi. Esploriamo costantemente nuovi modi per aiutare i creatori a monetizzare i loro contenuti e continueremo ad aggiornare la nostra offerta.
+            <br><br>
+            Al momento DaraDara offre i seguenti metodi di pagamento:
+          </p>
           <ul>
             <li>Conto corrente o bonifico bancario, per qualsiasi circuito (Mastercard, Visa e AmericaExpress)</li>
             <li>Conto PayPal</li>
@@ -72,6 +81,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
+</main>
 
 {% endblock %}

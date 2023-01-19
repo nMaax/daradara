@@ -1,35 +1,42 @@
 {% extends 'layout.html' %}
 
-{% block title %}{% endblock %}
+{% block title %} - Termini di servizio{% endblock %}
 
 {% block content %}
-
-    <p class="display-1">Termini di servizio</p>
-
+<section>
+    <h1 class="display-1">Termini di servizio</h1>
     <p>
         DaraDara è un app di streaming di contenuti audio, in particolare podcast e audiolibri. La tua privacy è importante per noi e vogliamo assicurarci che tu comprenda come utilizziamo e proteggiamo le informazioni che ci fornisci. In questa pagina troverai le informazioni sulla nostra politica sulla privacy, i termini di servizio e le licenze per l'utilizzo dell'app.
     </p>
 
-    <p class="display-6 mt-3" id="privacy">Politiche sulla privacy:</p>
+    <section class="mt-3">
+    <h2 class="display-6" id="privacy">Politiche sulla privacy:</h2>
+    <p>
         DaraDara non raccoglie mai informazioni personali sui nostri utenti se non quelle espressamente richieste in fase di registrazione. Ciò significa che non salveremo mai il tuo indirizzo ip, il tuo numero di telefono o qualsiasi altra informazione di questo tipo. Utilizziamo solo informazioni aggregate per migliorare la tua esperienza sull'app, come ad esempio il numero di utenti attivi su base giornaliera.
-        <br>
-    <p class="display-6 mt-3" id="terms">Termini di servizio:</p>
+    </p>
+    </section>
+
+    <section class="mt-3">
+    <h2 class="display-6" id="terms">Termini di servizio:</h2>
         L'utilizzo di DaraDara è soggetto ai seguenti termini di servizio:
-        <br>
+        <br><br>
+
         L'app è fornita "così com'è" e non garantiamo che funzionerà in modo ininterrotto o senza errori.
         Non ci assumiamo alcuna responsabilità per eventuali danni causati dall'utilizzo dell'app.
         L'utilizzo dell'app è soggetto alle leggi del tuo paese.
-        <br>
-    <p class="display-6 mt-3" id="licences">Licenze:</p>
+    </section>
+
+    <section class="mt-3">
+    <h2 class="display-6" id="licences">Licenze:</h2>
         Tutti i contenuti su DaraDara sono protetti da copyright e utilizzati con autorizzazione. Non condivideremo mai i contenuti senza il permesso dei proprietari.
         <br><br>
         
-        <b>Regolamento generale sulla protezione dei dati (GDPR)</b>
-        <br>
+        <h5><b>Regolamento generale sulla protezione dei dati (GDPR)</b></h5>
 
         DaraDara rispetta il regolamento generale sulla protezione dei dati (GDPR) dell'Unione Europea. Ciò significa che rispettiamo la tua privacy e i tuoi diritti riguardo al trattamento dei dati personali. In caso di domande o preoccupazioni, non esitare a contattarci.
         <br><br>
 
         In sintesi, DaraDara è un'app di streaming podcast che non raccoglie informazioni personali sui suoi utenti e rispetta il copyright dei contenuti. Utilizzando l'app accetti i termini di servizio e la politica sulla privacy descritti in questa pagina.
-
+    </section>
+</section>
 {% endblock %}

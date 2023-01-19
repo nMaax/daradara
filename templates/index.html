@@ -41,7 +41,9 @@
 
                 <div class="d-flex justify-content-center align-items-center">
                     {% if saves|length > 4 %}
-                        <a  href="{{url_for('saves', id=current_user.id)}}" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">Visualizza tutti</a>
+                        <a href="{{url_for('saves', id=current_user.id)}}" class="mx-2 mx-lg-0 btn btn-light btn-outline-dark w-100">
+                            Visualizza tutti
+                        </a>
                     {% endif %}
                 </div>
 
@@ -53,9 +55,8 @@
                         <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                     </div>
                     <div class="card-body">
-                        
                         <p class="card-text">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</p>
-                        <a href="#" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
+                        <a href="{{url_for('categories')}}" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
                     </div>
                     
                 </div>
@@ -77,6 +78,7 @@
             </div>
 
         {% endif %}
+        
     </aside>
 
     <!-- Most famous podcasts -->

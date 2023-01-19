@@ -142,7 +142,6 @@ def post_signup():
         flash("Esiste già un utente con quella email", 'warning')
         return redirect(url_for('signup'))
     else:
-
         # Get what will the new user id be
         user_id = dao.get_last_id_user() + 1
 
@@ -235,7 +234,7 @@ def privatize_owned(id: int):
         dao.switch_priv_owned(id)
         return redirect(url_for('profile', id=id)+"#owned")
     else:
-        flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
+        flash('Non puoi modificare le impostazioni di un altro account', 'warning')
         return redirect(session.get('previous_url', '/'))
 
 @app.route('/profile/<int:id>/follows')
@@ -268,7 +267,7 @@ def privatize_follows(id: int):
         dao.switch_priv_follows(id)
         return redirect(url_for('profile', id=id))
     else:
-        flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
+        flash('Non puoi modificare le impostazioni di un altro account', 'warning')
         return redirect(session.get('previous_url', '/'))
 
 @app.route('/profile/<int:id>/saves')
@@ -321,7 +320,7 @@ def post_edit_bio(id: int):
     elif bio == None or bio == "":
         bio = None
 
-    # If the profile doesnt exist or the user that is trying to edit it is not the owner abort
+    # If the profile doesnt exist or the user that is trying to edit it is not the owner abort (and say it)
     user = dao.get_user(id)
     if not user:
         flash(message='Il profilo dove hai richiesto la modifica della bio non esiste', category='warning')
@@ -333,19 +332,20 @@ def post_edit_bio(id: int):
         flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
         return redirect(url_for('profile', id=id))
     else:
+        # Otherwise save the data
         try:
 
             if user['bio'] == bio:
                 bio = None
 
-            # Otherwise edit the podcast
-            update_bio_result = dao.update_user_bio(id, bio)
+            result = dao.update_user_bio(id, bio)
 
-            if not update_bio_result:
+            if not result:
                 raise dataManipulationError('Unable to update bio')
 
             flash(message='Biografia modificata correttamente', category='success')
-            
+        
+        # If something bad happens, abort and say it
         except Exception as e:
             flash(message='C\'è stato un errore durante la modifica della biografia - ERR: '+str(e), category='danger')
         
@@ -354,34 +354,48 @@ def post_edit_bio(id: int):
 @app.route('/profile/<int:id>/propic/edit/elab', methods=['POST'])
 def post_update_propic(id):
 
+    # Retriving data 
     img = request.files['img']
 
+    # Checking data
     check = True
     if not img or not is_static_image(secure_filename(img.filename)): # type: ignore
         check = False
 
+    # If the profile doesnt exist or the user that is trying to edit it is not the owner abort (and say it)
     user = dao.get_user(id)
 
-    if not check:
-        flash("Impossibile modificare l'immagine, il file fornito non è compatibile", 'warning')
-    elif not user:
-        flash("Impossibile modificare l'immagine, il profilo non esiste", 'warning')
+    if not user:
+        flash('Il profilo dove hai richiesto la modifica dell\'immagine non esiste', 'warning')
     elif user['id'] != current_user.id: # type: ignore
-        flash("Impossibile modificare l'immagine, non sei il proprietario del profilo", 'warning')
+        flash('Non sei il propriterio del profilo', 'warning')
+    elif not check:
+        flash("Impossibile modificare l'immagine, il file fornito non è compatibile", 'warning')
     else:
+        # Otherwise save the data
         try:
 
+            # Define filename and file extension
             filename = secure_filename(img.filename) # type: ignore
             imgext = '.' + filename.split('.')[-1] # type: ignore
             imgname = str(id) + imgext
 
-            # Save the image (only if the podcast has been saved)
+            # Save the image
             save_directory = PROPICS_PATH
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             img = make_square(img)
             img.save(save_directory+imgname) # type: ignore
 
+            # Delete old image if it has a different extension
+            if user['propic'] != imgext:
+                old_imgext = user['propic']
+                old_imgname = str(id) + old_imgext
+                old_file_path = save_directory + old_imgname
+                if os.path.exists(old_file_path):
+                    os.remove(old_file_path)
+
+            # Update the image extension in the db
             result = dao.update_user_img(id, img=imgext)
 
             if not result:
@@ -389,6 +403,7 @@ def post_update_propic(id):
 
             flash('Immagine modificata correttamente', 'success')
 
+        # If something bad happens, abort and say it
         except Exception as e:
             flash("Impossibile aggiornare l'immagine, qualcosa è andato storto - ERR: " + str(e), 'danger')
 
@@ -398,38 +413,35 @@ def post_update_propic(id):
 def podcast(id: int):
     podcast = dao.get_podcast(id)
     
-    if podcast:
-
-        creator = dao.get_user(podcast['id_user'])
-
-        row_last_update = dao.get_last_update(id)
-        last_update = row_last_update['last_update'] # type: ignore
-        if last_update:
-            last_update = days_ago(last_update)
-        else:
-            last_update = False
-
-        episodes = to_list_of_dict(dao.get_episodes(id_podcast=id))
-        for episode in episodes:
-            mime_type = 'mpeg'
-            if episode['audio'] == '.wav':
-                mime_type='wav'
-            episode['mime_type'] = mime_type 
-
-        category = dao.get_category(id)
-        
-        is_owner = False
-        is_following = False
-        if current_user.is_authenticated: # type: ignore
-           is_following = dao.is_following(id_user=current_user.id, id_pod=id) # type: ignore
-           is_owner = podcast['id_user'] == current_user.id # type: ignore
-
-        session['last_podcast_visited'] = id
-        session['previous_url'] = request.url
-        return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, category=category, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
-    else:
+    if not podcast:
         flash(message='Il podcast cercato non esiste', category='warning')
         return redirect(session.get('previous_url', '/'))
+
+    creator = dao.get_user(podcast['id_user'])
+
+    row_last_update = dao.get_last_update(id)
+    last_update = row_last_update['last_update'] # type: ignore
+    if last_update:
+        last_update = days_ago(last_update)
+    else:
+        last_update = False
+
+    episodes = to_list_of_dict(dao.get_episodes(id_podcast=id))
+    for episode in episodes:
+        mime_type = 'mpeg'
+        if episode['audio'] == '.wav':
+            mime_type='wav'
+        episode['mime_type'] = mime_type 
+    
+    is_owner = False
+    is_following = False
+    if current_user.is_authenticated: # type: ignore
+        is_following = dao.is_following(id_user=current_user.id, id_pod=id) # type: ignore
+        is_owner = podcast['id_user'] == current_user.id # type: ignore
+
+    session['last_podcast_visited'] = id
+    session['previous_url'] = request.url
+    return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
 
 @app.route('/podcast/<int:id>/follow')
 def follow(id: int):
@@ -454,14 +466,13 @@ def unfollow(id: int):
         dao.unfollow(id_pod=id, id_user=current_user.id) # type: ignore 
         return redirect(url_for('podcast', id=id))
     else:
-        flash('Non puoi seguire un podcast che non esiste', 'warning')
+        flash('Non puoi smettere di seguire un podcast che non esiste', 'warning')
         return redirect(session.get('previous_url', '/'))
 
 @app.route('/podcast/new')
 def new_podcast():
     if not current_user.is_authenticated: # type: ignore
         flash('Fai l\'accesso per poter creare un podcast', category='info')
-        session['previous_url'] = request.url
 
     return render_template('newpodcast.html')
 
@@ -481,7 +492,7 @@ def post_new_podcast():
     category = category.strip()
     category = category.lower()
     
-    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
+    # Checking data
     check = True
     if not title or not desc or not img or not category:
         check = False
@@ -502,21 +513,21 @@ def post_new_podcast():
         flash("Esiste già un podcast con questo titolo", 'warning')
         return redirect(url_for('new_podcast'))
     else:
+
         # Retrive the id of the creator and the id the podcast will have
         user_id = current_user.id # type: ignore
         podcast_id = dao.get_last_podcast_id() + 1
 
-        # Define image name
-        filename = secure_filename(img.filename) # type: ignore
-        imgext = '.' + filename.split('.')[-1] # type: ignore
-        imgname = str(podcast_id) + imgext
-
         # If dao is unable to insert data, abort and do not save the image
         try:
+            # Define image name
+            filename = secure_filename(img.filename) # type: ignore
+            imgext = '.' + filename.split('.')[-1] # type: ignore
+            imgname = str(podcast_id) + imgext
+
             # Inserting entry in the database
             result = dao.new_podcast(title, desc, imgext, user_id, category)
 
-            #TODO! con javascript controlla che non ci sia già un podcast con quel titolo
             if not result:
                 raise dataManipulationError('Unable to add entry into the database')
 
@@ -536,13 +547,10 @@ def post_new_podcast():
 @login_required
 def post_delete_podcast(id: int):
 
-    # If the podcast doesnt exist or the user that is trying to delete it is not the owner abort
     podcast = dao.get_podcast(id)
     episodes = dao.get_episodes(id)
 
-    if not episodes:
-        episodes = []
-
+    # If the podcast doesnt exist or the user that is trying to delete it is not the owner abort
     if not podcast:
         flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
         return redirect(session.get('previous_url', '/'))
@@ -550,35 +558,34 @@ def post_delete_podcast(id: int):
         flash(message='Non sei il proprietario del podcast', category='warning')
         return redirect(url_for('podcast', id=id))
 
-    # Otherwise delete the podcast (and its image)
+    # Otherwise delete the podcast (and its episodes)
     result = dao.delete_podcast(id)
-    if result:
-        #path = os.path.join(app.root_path, url_for('static', filename='uploads/images/covers/'+str(podcast['id'])+podcast['img']))
-        file_path = COVERS_PATH+str(podcast['id'])+podcast['img']
-        abs_path = os.path.abspath(file_path)
-        if os.path.exists(abs_path):
-                os.remove(abs_path)
 
-        for episode in episodes:
-            file_path = AUDIOS_PATH+str(episode['id'])+episode['audio']
-            abs_path = os.path.abspath(file_path)
-            if os.path.exists(abs_path):
-                os.remove(abs_path)
-
-        flash(message='Podcast eliminato correttamente', category='success')
-        return redirect(url_for('index'))
-    else:
+    if not result:
         flash(message='C\'è stato un errore durante l\'eliminazione del podcast, riprovare', category='danger')
         return redirect(url_for('podcast', id=podcast['id']))
-    
-    
+
+    # Delete the podcast image
+    file_path = COVERS_PATH+str(podcast['id'])+podcast['img']
+    abs_path = os.path.abspath(file_path)
+    if os.path.exists(abs_path):
+            os.remove(abs_path)
+
+    # Delete the aduio of the episodes (the entries are already deleted with dao)
+    for episode in episodes:
+        file_path = AUDIOS_PATH+str(episode['id'])+episode['audio']
+        abs_path = os.path.abspath(file_path)
+        if os.path.exists(abs_path):
+            os.remove(abs_path)
+
+    flash(message='Podcast eliminato correttamente', category='success')
+    return redirect(url_for('index'))
 
 @app.route('/podcast/<int:id>/edit/elab', methods=['POST'])
 @login_required
 def post_edit_podcast(id: int):
 
     # Retriving data 
-    #TODO! Check, via javascript, che il titolo non esista già
     title = request.form['title']
     desc = request.form['desc']
     category = request.form['category']
@@ -589,6 +596,7 @@ def post_edit_podcast(id: int):
     category = category.strip()
     category = category.lower()
     
+    # Checking the data
     check = True
     if not title or not desc or not category:
         check = False
@@ -599,8 +607,8 @@ def post_edit_podcast(id: int):
     elif len(category) < 4 or len(category) > 32:
         check = False
 
-    # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
-    podcast = dao.get_podcast_with_tags(id)
+    # If the podcast doesnt exist or the user that is trying to edit it is not the owner or the data inserted is not correct abort
+    podcast = dao.get_podcast(id)
     if not podcast:
         flash(message='Il podcast di cui hai richiesto l\'eliminazione non esiste', category='warning')
         return redirect(session.get('previous_url', '/'))
@@ -630,7 +638,7 @@ def post_edit_podcast(id: int):
                 pod_result = True
 
             if category:
-                tag_result = dao.update_tag(id_pod=id, tag=category)
+                tag_result = dao.update_category(id_pod=id, category=category)
             else:
                 tag_result = True
 
@@ -648,9 +656,11 @@ def post_edit_podcast(id: int):
 
 @app.route('/podcast/<int:id>/cover/edit/elab', methods=['POST'])
 def post_update_podcast_img(id: int):
-
+    
+    # Retriving data
     img = request.files['img']
 
+    # Checking data
     check = True
     if not img:
         check = False
@@ -658,7 +668,6 @@ def post_update_podcast_img(id: int):
         check = False
 
     podcast = dao.get_podcast(id)
-
     if not check:
         flash("Impossibile modificare l'immagine, il file fornito non è compatibile", 'warning')
     elif not podcast:
@@ -668,6 +677,7 @@ def post_update_podcast_img(id: int):
     else:
         try:
 
+            # Define image name and extension
             filename = secure_filename(img.filename) # type: ignore
             imgext = '.' + filename.split('.')[-1] # type: ignore
             imgname = str(id) + imgext
@@ -678,6 +688,14 @@ def post_update_podcast_img(id: int):
                 os.makedirs(save_directory)
             img = make_square(img)
             img.save(save_directory+imgname) # type: ignore
+
+            # Delete old image if it has a different extension
+            if podcast['img'] != imgext:
+                old_imgext = podcast['img']
+                old_imgname = str(id) + old_imgext
+                old_file_path = save_directory + old_imgname
+                if os.path.exists(old_file_path):
+                    os.remove(old_file_path)
 
             result = dao.update_podcast(id, img=imgext)
 
@@ -930,6 +948,67 @@ def post_edit_episode(id_pod: int, id_ep: int):
         flash(message='C\'è stato un errore durante la modifica dell\'episodio - ERR: '+str(e), category='danger')
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
+@app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/audio/edit/elab', methods=['POST'])
+@login_required
+def post_edit_audio(id_pod, id_ep):
+    
+    # Retriving data 
+    audio = request.files['audio']
+
+    # Checking data
+    check = True
+    if not audio or not is_audio(secure_filename(audio.filename)): # type: ignore
+        check = False
+
+    # If the profile doesnt exist or the user that is trying to edit it is not the owner abort (and say it)
+    podcast = dao.get_podcast(id_pod)
+    episode = dao.get_episode(id_ep)
+
+    if not podcast or not episode or not podcast['id'] == episode['id_podcast']:
+        flash('L\'episodio dove hai richiesto la modifica dell\'audio non esiste', 'warning')
+        return redirect(session.get('previous_url', '/'))
+    elif podcast['id'] != current_user.id: # type: ignore
+        flash('Non sei il propriterio del podcast', 'warning')
+    elif not check:
+        flash("Impossibile modificare l'audio, il file fornito non è compatibile", 'warning')
+    else:
+        # Otherwise save the data
+        try:
+
+            # Define filename and file extension
+            filename = secure_filename(audio.filename) # type: ignore
+            audioext = '.' + filename.split('.')[-1] # type: ignore
+            audioname = str(id_ep) + audioext
+
+            # Save the audio
+            save_directory = AUDIOS_PATH
+            if not os.path.exists(save_directory):
+                os.makedirs(save_directory)
+            audio.save(save_directory+audioname) # type: ignore
+
+            # Delete old audio if it has a different extension
+            if episode['audio'] != audioext:
+                old_audioext = episode['audio']
+                old_audioname = str(id_ep) + old_audioext
+                old_file_path = save_directory + old_audioname
+                if os.path.exists(old_file_path):
+                    os.remove(old_file_path)
+
+            # Update the audio extension in the db
+            result = dao.update_episode(id=id_ep, audio=audioext)
+
+            if not result:
+                raise dataManipulationError('Unable to update the audio')
+
+            flash('Audio modificato correttamente', 'success')
+
+        # If something bad happens, abort and say it
+        except Exception as e:
+            flash("Impossibile aggiornare l'audio, qualcosa è andato storto - ERR: " + str(e), 'danger')
+
+    return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+
+
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>/comment/new/elab', methods=['POST'])
 def post_new_comment(id_pod: int, id_ep: int):
 
@@ -1045,7 +1124,7 @@ def post_edit_comment(id_pod: int, id_ep: int):
 
 @app.route('/search')
 def categories():
-    podcasts = dao.get_podcasts_with_tags()
+    podcasts = dao.get_podcasts()
     session['previous_url'] = request.url
     return render_template('categories.html', podcasts=podcasts)
 

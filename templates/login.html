@@ -4,23 +4,24 @@
 
 {% block content %}
 
-<!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
-<div class="row d-flex justify-content-center align-items-center">
+<main class="row d-flex justify-content-center align-items-center">
 
     <!-- Login card -->
     <div class="card text-black rounded-4">
         <div class="card-body p-md-5">
             <div class="row justify-content-center">
                 
-                <!-- Design image -->
+                <!-- Immagine di design -->
                 <div class="col-md-9 col-lg-6 col-xl-5 d-flex justify-content-center justify-content-lg-start align-items-center">
                     <img src="{{url_for('static', filename='design/tech_life_remote.png')}}"
                     class="img-fluid" alt="Immagine di regi">
                 </div>
-                <div class="col-md-8 col-lg-6 col-xl-4 mt-5 mt-lg-0">
+
+                <!-- Titolo e Form -->
+                <section class="col-md-8 col-lg-6 col-xl-4 mt-5 mt-lg-0">
                     
                     <!-- Title -->
-                    <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Accedi</p>
+                    <h1 class="text-center fw-bold mb-5 mx-1 mx-md-4 mt-4">Accedi</h1>
                     
                     <!-- Form -->
                     <form action="{{ url_for('post_login') }}" method="POST">
@@ -60,10 +61,10 @@
                             <p class="small fw-bold mt-2 pt-1 mb-0">Non hai ancora un accunt? <a href="{{ url_for('signup') }}" class="link-danger">Registrati!</a></p>
                         </div>
                     </form>
-                </div>
+                </section>
             </div>
         </div>
     </div>
-</div>
+</main>
 
 {% endblock %}

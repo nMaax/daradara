@@ -162,17 +162,17 @@ def get_follows(id_user):
 
 def get_category(id_podcast):
     conn, cursor = connect()
-    tags = []
+    category = None
 
     try:
-        sql = 'SELECT * FROM categories WHERE id_podcast = ?'
+        sql = 'SELECT category FROM podcasts WHERE id_podcast = ?'
         cursor.execute(sql, (id_podcast,))
-        tags = cursor.fetchone()
+        category = cursor.fetchone()
     except Exception as e:
         print(e)
 
     close(conn, cursor)
-    return tags
+    return category
 
 def get_comments_join_users(id_ep):
     conn, cursor = connect()
@@ -354,28 +354,6 @@ def get_last_id_user():
     close(conn, cursor)    
     return id
 
-def get_podcasts_with_tags():
-    podcasts = []
-    for id in range(1, get_last_podcast_id() + 1):
-        podcast = get_podcast_with_tags(id)
-        if podcast:
-            podcasts.append(podcast)
-    return podcasts
-    
-def get_podcast_with_tags(id):
-    conn, cursor = connect()
-    podcast = None
-
-    try:
-        sql = 'SELECT * FROM podcasts, categories WHERE podcasts.id = categories.id_podcast AND podcasts.id = ?'
-        cursor.execute(sql, (id,))
-        podcast = cursor.fetchone()
-    except Exception as e:
-        print(e)
-
-    close(conn, cursor)
-    return podcast
-
 def get_podcast_extended(id_podcast):
     conn, cursor = connect()
     podcast = None
@@ -486,6 +464,38 @@ def get_last_podcast_id():
 
 # INSERT queries
 
+def follow(id_pod, id_user, timestamp):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'INSERT INTO follows(id_user, id_podcast, timestamp) VALUES (?, ?, ?) '
+        cursor.execute(sql, (id_user, id_pod, timestamp))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
+def save(id_ep, id_user, timestamp):
+    conn, cursor = connect()
+    success = True
+
+    try:
+        sql = 'INSERT INTO saves(id_user, id_ep, timestamp) VALUES (?, ?, ?) '
+        cursor.execute(sql, (id_user, id_ep, timestamp))
+        conn.commit()
+    except Exception as e:
+        success = False
+        print(e)
+        conn.rollback()
+
+    close(conn, cursor)
+    return success
+
 def new_follow(id_user, id_podcast, timestamp):
     conn, cursor = connect()
     success = True
@@ -550,17 +560,13 @@ def new_episode(title, description, audio, timestamp, id_podcast):
     close(conn, cursor)
     return success
 
-def new_podcast(title, description, img, id_user, tag):
+def new_podcast(title, description, img, id_user, category):
     conn, cursor = connect()
     success = True
 
     try:
-        sql = 'INSERT INTO podcasts(title, desc, img, id_user) VALUES (?, ?, ?, ?)'
-        cursor.execute(sql, (title, description, img, id_user))
-
-        id_podcast = get_last_podcast_id() + 1
-        sql = 'INSERT INTO categories(id_podcast, tag) VALUES (?, ?)'
-        cursor.execute(sql, (id_podcast, tag))
+        sql = 'INSERT INTO podcasts(title, desc, img, category, id_user) VALUES (?, ?, ?, ?, ?)'
+        cursor.execute(sql, (title, description, img, category, id_user))
 
         conn.commit()
     except Exception as e_pod:
@@ -578,40 +584,6 @@ def new_user(email, password, name, surname, propic):
     try:
         sql = 'INSERT INTO users(email, password, name, surname, propic) VALUES (?, ?, ?, ?, ?)'
         cursor.execute(sql, (email, password, name, surname, propic))
-        conn.commit()
-    except Exception as e:
-        success = False
-        print(e)
-        conn.rollback()
-
-    close(conn, cursor)
-    return success
-
-# INSERT queries
-
-def follow(id_pod, id_user, timestamp):
-    conn, cursor = connect()
-    success = True
-
-    try:
-        sql = 'INSERT INTO follows(id_user, id_podcast, timestamp) VALUES (?, ?, ?) '
-        cursor.execute(sql, (id_user, id_pod, timestamp))
-        conn.commit()
-    except Exception as e:
-        success = False
-        print(e)
-        conn.rollback()
-
-    close(conn, cursor)
-    return success
-
-def save(id_ep, id_user, timestamp):
-    conn, cursor = connect()
-    success = True
-
-    try:
-        sql = 'INSERT INTO saves(id_user, id_ep, timestamp) VALUES (?, ?, ?) '
-        cursor.execute(sql, (id_user, id_ep, timestamp))
         conn.commit()
     except Exception as e:
         success = False
@@ -686,13 +658,13 @@ def switch_priv_saves(id):
     close(conn, cursor)
     return success
 
-def update_tag(id_pod, tag):
+def update_category(id_pod, category):
     conn, cursor = connect()
     success = True
 
     try:
-        sql = 'UPDATE categories SET tag = ? WHERE id_podcast = ?'
-        cursor.execute(sql, (tag, id_pod))
+        sql = 'UPDATE podcasts SET category = ? WHERE id_podcast = ?'
+        cursor.execute(sql, (category, id_pod))
         conn.commit()
     except Exception as e:
         success = False
@@ -738,7 +710,7 @@ def update_episode_field(id, field, value):
         if field == 'title' or field == 'description' or field == 'timestamp':
             sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
         elif field == 'audio':
-            sql = 'UPDATE episodes SET audio = ?, timestamp = '+ datetime.now().strftime(ISO_TIMESTAMP) +' WHERE id = ?'
+            sql = 'UPDATE episodes SET audio = ?, timestamp = "'+ datetime.now().strftime(ISO_TIMESTAMP) +'" WHERE id = ?'
         else:
             raise ValueError('Invalid field name')
 
@@ -928,7 +900,7 @@ def delete_podcast(id):
         episodes = get_episodes(id_podcast=id)
         for episode in episodes:
             id_ep = episode[0]
-            success &= delete_episode(id_ep)
+            success &= delete_episode(id_ep)        
 
         if not success:
             raise dataManipulationError('Failed to delete podcast')

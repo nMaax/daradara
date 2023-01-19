@@ -31,6 +31,12 @@ Non esiste un tasto che dalla homepage rimandi direttamente alla registrazione, 
 
 Ogni icona rappresentante un occhio indica se si vuole tenere quella data sezione del profilo pubblica o privata a gli altri utenti. Se l'icona consiste in un normale un occhio allora la data sezione è pubblica a gli altri utenti, se c'è una barra sopra l'occhio allora la sezione è privata e solo il proprietario del profilo può vederla
 
+### Come scegli i podcast più in voga?
+
+I 4 podcast più in voga, visualizzabili esclusivamente nella home, sono i podcast con più seguaci su DaraDara, condizione necesaria affinché un podcast possa finire in voga è di aver almeno 1 seguace e almeno 1 episodio
+
+Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti ve ne sono
+
 ### Cosa fa il tasto "sorprendimi"?
 
 Il tasto "sorprendimi", presente nella navabar, sceglie semplicemente a caso un podcast tra i vari disponibili su DaraDara e lo mostra all'utente
@@ -43,7 +49,6 @@ Per facilitare il debug sono state aggiunte due root "nascoste" per ripulire i d
 * Route per ripulire il login: ```/clear_login```
 
 Si consieri che queste route non sarebbero ovviamente pubblicate in un applicazione web aperta al pubblico, sono da utilizzare solo a scopo di debugging.
-
 
 ## Utenti e serie già presenti
 
@@ -101,5 +106,5 @@ DaraDara è stato inoltre creato utilizzando varie librerie e risorse esterne, t
 5. La collezione di immagini [TechLife](https://blush.design/it/collections/EcYTq93px20ptlPRSq1C/tech-life) di Karthik Srinivas per rendere la UI/UX più piacevole
 6. Il sito di design [Canva](https://www.canva.com/it_it/) per sviluppare il logo visibile nella barra di navigazione
 7. I siti [Pexels](https://www.pexels.com/it-it/) e [FreeMusicArchive](https://freemusicarchive.org/home) per reperire le immagini e gli audio già presenti nell'applicazione
-8. Le librerie python [Dateutil](https://pypi.org/project/python-dateutil/) e [Pillow](https://pypi.org/project/Pillow/)
+8. Le librerie python [Dateutil](https://pypi.org/project/python-dateutil/) e [Pillow](https://pypi.org/project/Pillow/) per gestire le date e la modifica delle immagini server-side
 9. La libreria javascript [Dayjs](https://day.js.org/) per gestire al meglio le date client-side

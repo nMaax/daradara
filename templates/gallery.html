@@ -8,9 +8,9 @@
 
 {% block content %}
 
-<div class="row">
+<header class="row">
     {% block header %}{% endblock %}
-</div>
+</header>
 
 {% block searchbar %}
 <div class="row mb-5">
@@ -21,9 +21,9 @@
 {% endblock %}
 
 {% block main %}
-<div class="row row-cols-1 row-cols-md-4 g-4">
+<main class="row row-cols-1 row-cols-md-4 g-4">
     {% block gallery %}{% endblock %}
-</div>
+</main>
 {% endblock %}
 
 {% endblock %}
