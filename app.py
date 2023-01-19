@@ -25,17 +25,15 @@ SESSION_TYPE = 'filesystem'
 SESSION_PERMANENT = False
 
 # Flask-Login constants
-LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60minuti
-#? Mi servono queste costanti?
-LOGIN_VIEW = 'post_login'
-LOGIN_MSG = 'Accedi per visualizzare questa pagina'
-LOGIN_MSG_CATEGORY = 'warning'
+LOGIN_MAX_DURATION = timedelta(seconds=60*60) # I login senza 'remember me' saranno cancellati dopo 60 minuti
 
-# Auxiliary constants
+# Date constants
 ISO_DATE = "%Y-%m-%d"
-ISO_TIMESTAMP = "%Y-%m-%d %H:%M:%S"
+ISO_TIME = "%H:%M:%S"
+ISO_TIMESTAMP = ISO_DATE + " " + ISO_TIME
 DEFAULT_HOUR = "00:00:00"
 
+# Saving path constants
 PROPICS_PATH = 'static/uploads/images/propics/'
 COVERS_PATH = 'static/uploads/images/covers/'
 AUDIOS_PATH = 'static/uploads/audios/'
@@ -51,23 +49,17 @@ Session(app)
 
 # Login init
 login_manager = LoginManager()
-#? Cosa significano questi attributi?
-#login_manager.login_view = LOGIN_VIEW # type: ignore
-#login_manager.login_message = LOGIN_MSG
-#login_manager.login_message_category = LOGIN_MSG_CATEGORY
 login_manager.init_app(app)
 
 # Routes
 @app.route('/')
 def index():
+    saves= []
     if current_user.is_authenticated: # type: ignore
         saves = dao.get_saves_join_episodes_podcasts(current_user.id) # type: ignore
-    else:
-        saves = []
-    onfire = dao.get_podcasts_onfire(number_of_podcasts=3)
-    onfire = add_days_ago(onfire)
+    onfire = add_days_ago(dao.get_podcasts_onfire(number_of_podcasts=3))
     session['previous_url'] = request.url
-    return render_template('index.html', saves=saves, onfire = onfire)
+    return render_template('index.html', saves=saves, onfire=onfire)
 
 @app.route('/login')
 def login():
@@ -112,7 +104,6 @@ def signup():
 @app.route('/signup/elab', methods=['POST'])
 def post_signup():
 
-    #TODO! con js controlla che le lunghezze dei campi siano giuste senza gli whitespace, controlla anche che la email non sia già registrata
     # Retrive data from the form
     name = request.form['name']
     surname = request.form['surname']
@@ -188,44 +179,53 @@ def post_signup():
 @app.route('/profile/<int:id>')
 def profile(id: int):
     user = dao.get_user(id)
+    
+
+    if not user:
+        flash(message='L\'utente cercato non esiste', category='warning')
+        return redirect(session.get('previous_url', '/'))
+
+    podcasts = dao.get_podcasts_by_user(id_user=id)
+    follows = dao.get_follows_join_podcasts(id_user=id)
+    saves = dao.get_saves_join_episodes_podcasts(id_user=id)
+    privacy = [dao.get_priv_owned(id), dao.get_priv_follows(id), dao.get_priv_saves(id)]
+
     creators = dao.get_creators()
     is_creator = False
-    if user and creators:
-        podcasts = dao.get_podcasts_by_user(id_user=id)
-        follows = dao.get_follows_join_podcasts(id_user=id)
-        saves = dao.get_saves_join_episodes_podcasts(id_user=id)
-        privacy = [dao.get_priv_owned(id), dao.get_priv_follows(id), dao.get_priv_saves(id)]
+    if creators:
         for creator in creators:
             if creator['id'] == user['id']:
                 is_creator = True
-        is_owner = False
-        if current_user.is_authenticated: # type: ignore
-            is_owner = current_user.id == id # type: ignore
-        session['previous_url'] = request.url
-        return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, is_creator=is_creator, is_owner=is_owner, privacy=privacy)
-    else:
-        flash(message='L\'utente cercato non esiste', category='warning')
-        return redirect(session.get('previous_url', '/'))
+
+    is_owner = False
+    if current_user.is_authenticated and current_user.id == id: # type: ignore
+        is_owner = True
+
+    session['previous_url'] = request.url
+    return render_template('profile.html', user=user, podcasts=podcasts, follows=follows, saves=saves, privacy=privacy, is_creator=is_creator, is_owner=is_owner)
+        
     
 @app.route('/profile/<int:id>/podcasts')
 def owned(id: int):
     user = dao.get_user(id)
-    if user:
 
-        podcasts = dao.get_podcasts_by_user(id)
-        is_owner = False
-        if current_user.is_authenticated and current_user.id == id: # type: ignore
-            is_owner = True
-
-        if not is_owner and user['priv_owned'] == 1:
-            flash('A gli altri utenti non è permesso vedere i podcast di questo profilo', 'info')
-            return redirect(url_for('profile', id=id))
-
-        session['previous_url'] = request.url
-        return render_template('owned.html', podcasts=podcasts, user=user, is_owner=is_owner)
-    else:
-        flash('Il profilo cercato non esiste', 'warning')
+    if not user:
+        flash('L\'utente cercato non esiste', 'warning')
         return redirect(session.get('previous_url', '/'))
+
+    podcasts = dao.get_podcasts_by_user(id)
+
+    is_owner = False
+    if current_user.is_authenticated and current_user.id == id: # type: ignore
+        is_owner = True
+
+    if not is_owner and user['priv_owned'] == 1:
+        flash('A gli altri utenti non è permesso vedere i podcast di questo profilo', 'info')
+        return redirect(url_for('profile', id=id))
+
+    session['previous_url'] = request.url
+    return render_template('owned.html', user=user, podcasts=podcasts, is_owner=is_owner)
+        
 
 @app.route('/profile/<int:id>/priv_owned')
 @login_required
@@ -240,24 +240,25 @@ def privatize_owned(id: int):
 
 @app.route('/profile/<int:id>/follows')
 def follows(id: int):
-    #TODO! Controlla la privacy utente qui
     user = dao.get_user(id)
-    if user:
 
-        podcasts = dao.get_follows_join_podcasts(id)
-        is_owner = False
-        if current_user.is_authenticated and current_user.id == id: # type: ignore
-            is_owner = True
-
-        if not is_owner and user['priv_follows'] == 1:
-            flash('A gli altri utenti non è permesso vedere i seguiti di questo profilo', 'info')
-            return redirect(url_for('profile', id=id))
-
-        session['previous_url'] = request.url
-        return render_template('follows.html', podcasts=podcasts, user=user, is_owner=is_owner)
-    else:
+    if not user:
         flash('L\'utente cercato non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
+
+    podcasts = dao.get_follows_join_podcasts(id)
+
+    is_owner = False
+    if current_user.is_authenticated and current_user.id == id: # type: ignore
+        is_owner = True
+
+    if not is_owner and user['priv_follows'] == 1:
+        flash('A gli altri utenti non è permesso vedere i seguiti di questo profilo', 'info')
+        return redirect(url_for('profile', id=id))
+
+    session['previous_url'] = request.url
+    return render_template('follows.html', user=user, podcasts=podcasts, is_owner=is_owner)
+        
 
 @app.route('/profile/<int:id>/priv_follows')
 @login_required
@@ -265,7 +266,7 @@ def privatize_follows(id: int):
     user = dao.get_user(id)
     if user and current_user.id == id: # type: ignore 
         dao.switch_priv_follows(id)
-        return redirect(url_for('profile', id=id)+"#follows")
+        return redirect(url_for('profile', id=id))
     else:
         flash('Non puoi modificare i le impostazioni di un altro account', 'warning')
         return redirect(session.get('previous_url', '/'))
@@ -273,22 +274,24 @@ def privatize_follows(id: int):
 @app.route('/profile/<int:id>/saves')
 def saves(id: int):
     user = dao.get_user(id)
-    if user:
 
-        episodes = dao.get_saves_join_episodes_podcasts(id)
-        is_owner = False
-        if current_user.is_authenticated and current_user.id == id: # type: ignore
-            is_owner = True
-
-        if not is_owner and user['priv_saves'] == 1:
-            flash('A gli altri utenti non è permesso vedere gli episodi salvati di questo profilo', 'info')
-            return redirect(url_for('profile', id=id))
-
-        session['previous_url'] = request.url
-        return render_template('saves.html', episodes=episodes, user=user, is_owner=is_owner)
-    else:
+    if not user:
         flash('L\'utente cercato non esiste', 'warning')
-        return redirect(url_for('index'))
+        return redirect(session.get('previous_url', '/'))
+
+    episodes = dao.get_saves_join_episodes_podcasts(id)
+
+    is_owner = False
+    if current_user.is_authenticated and current_user.id == id: # type: ignore
+        is_owner = True
+
+    if not is_owner and user['priv_saves'] == 1:
+        flash('A gli altri utenti non è permesso vedere gli episodi salvati di questo profilo', 'info')
+        return redirect(url_for('profile', id=id))
+
+    session['previous_url'] = request.url
+    return render_template('saves.html', user=user, episodes=episodes, is_owner=is_owner)
+        
 
 @app.route('/profile/<int:id>/priv_saves')
 @login_required
@@ -687,7 +690,7 @@ def episode(id_pod: int, id_ep: int):
     if episode and episode['id_podcast'] == id_pod:
         daysago = days_ago(episode['timestamp'])
         podcast = dao.get_podcast(id_pod)
-        comments = dao.get_comments_extended(id_ep)
+        comments = dao.get_comments_join_users(id_ep)
         if comments:
             comments = add_days_ago(comments)
 

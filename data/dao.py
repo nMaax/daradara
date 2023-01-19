@@ -89,7 +89,7 @@ def has_saved(id_user, id_ep):
 
 def get_saves_join_episodes_podcasts(id_user):
     conn, cursor = connect()
-    saves = False
+    saves = []
 
     try:
         sql = 'SELECT podcasts.id AS "id", episodes.id AS "ep_id", episodes.title AS "title", episodes.description "desc", podcasts.img AS "img", podcasts.title AS "podcast_title" FROM saves, episodes, podcasts WHERE saves.id_ep = episodes.id AND episodes.id_podcast = podcasts.id AND saves.id_user = ? ORDER BY saves.timestamp DESC'
@@ -103,7 +103,7 @@ def get_saves_join_episodes_podcasts(id_user):
 
 def get_saves(id_user):
     conn, cursor = connect()
-    saves = False
+    saves = []
 
     try:
         sql = 'SELECT * FROM saves WHERE id_user = ?'
@@ -133,7 +133,7 @@ def is_following(id_user, id_pod):
 
 def get_follows_join_podcasts(id_user):
     conn, cursor = connect()
-    follows = False
+    follows = []
 
     try:
         # Nonostante non vi siano altre collonne che si chiamino 'id_user' COMUNQUE sqlite vuole che si tolga ambiguità con follows.id_user invece di id_user e basta, uffi :(
@@ -148,7 +148,7 @@ def get_follows_join_podcasts(id_user):
 
 def get_follows(id_user):
     conn, cursor = connect()
-    follows = False
+    follows = []
 
     try:
         sql = 'SELECT * FROM follows WHERE id_user = ? ORDER BY timestamp DESC'
@@ -162,7 +162,7 @@ def get_follows(id_user):
 
 def get_category(id_podcast):
     conn, cursor = connect()
-    tags = False
+    tags = []
 
     try:
         sql = 'SELECT * FROM categories WHERE id_podcast = ?'
@@ -174,9 +174,9 @@ def get_category(id_podcast):
     close(conn, cursor)
     return tags
 
-def get_comments_extended(id_ep):
+def get_comments_join_users(id_ep):
     conn, cursor = connect()
-    comments = False
+    comments = []
     
     try:
         sql = 'SELECT comments.id_user, text, timestamp, name, surname, email, propic FROM comments, users WHERE comments.id_user = users.id AND id_ep = ? ORDER BY timestamp DESC'
@@ -190,7 +190,7 @@ def get_comments_extended(id_ep):
 
 def get_comments(id_ep=None, id_user=None):
     conn, cursor = connect()
-    comments = False
+    comments = []
     data = None
 
     sql = 'SELECT * FROM comments'
@@ -218,7 +218,7 @@ def get_comments(id_ep=None, id_user=None):
 
 def get_comment(id_ep, id_user, timestamp):
     conn, cursor = connect()
-    comment = False
+    comment = None
 
     try:
         sql = 'SELECT * FROM comments WHERE id_ep = ? AND id_user = ? AND timestamp = ?'
@@ -246,7 +246,7 @@ def get_episodes(id_podcast):
 
 def get_episode_by_title(title, id_pod):
     conn, cursor = connect()
-    episode = False
+    episode = None
 
     try:
         sql = 'SELECT * FROM episodes WHERE title = ? AND id_podcast = ?'
@@ -260,7 +260,7 @@ def get_episode_by_title(title, id_pod):
 
 def get_last_episode_id():
     conn, cursor = connect()
-    id = False
+    id = 0
 
     try:
         sql = 'SELECT MAX(id) FROM episodes'
@@ -272,10 +272,9 @@ def get_last_episode_id():
     close(conn, cursor)
     return id
 
-
 def get_episode(id):
     conn, cursor = connect()
-    episode = False
+    episode = None
 
     try:
         sql = 'SELECT * FROM episodes WHERE id = ?'
@@ -289,7 +288,7 @@ def get_episode(id):
 
 def get_creators():
     conn, cursor = connect()
-    user = False
+    user = []
 
     try:
         sql = 'SELECT users.* FROM users, podcasts WHERE users.id = podcasts.id_user'
@@ -311,7 +310,7 @@ def get_users():
 
 def get_user_by_email(email):
     conn, cursor = connect()
-    user = False
+    user = None
 
     try:
         sql = 'SELECT * FROM users WHERE email = ?'
@@ -325,7 +324,7 @@ def get_user_by_email(email):
 
 def get_user(id):
     conn, cursor = connect()
-    user = False
+    user = None
 
     try:
         sql = 'SELECT * FROM users WHERE id = ?'
@@ -339,7 +338,7 @@ def get_user(id):
 
 def get_last_id_user():
     conn, cursor = connect()
-    id = False
+    id = 0
 
     try:
         sql = 'SELECT MAX(id) FROM users'
@@ -361,7 +360,7 @@ def get_podcasts_with_tags():
     
 def get_podcast_with_tags(id):
     conn, cursor = connect()
-    podcast = False
+    podcast = None
 
     try:
         sql = 'SELECT * FROM podcasts, categories WHERE podcasts.id = categories.id_podcast AND podcasts.id = ?'
@@ -375,10 +374,9 @@ def get_podcast_with_tags(id):
 
 def get_podcast_extended(id_podcast):
     conn, cursor = connect()
-    podcast = False
+    podcast = None
 
     try:
-        #['id', 'title', 'desc', 'img', 'id_user', 'id', 'email', 'password', 'name', 'surname', 'propic', 'id', 'title', 'description', 'audio', 'timestamp', 'id_podcast']
         sql = 'SELECT * FROM podcasts, users, episodes WHERE podcasts.id_user = users.id AND episodes.id_podcast = podcasts.id AND id_podcast = ? ORDER BY podcasts.id, episodes.id ASC'
         cursor.execute(sql, (id_podcast,))
         podcast = cursor.fetchall()
@@ -390,25 +388,19 @@ def get_podcast_extended(id_podcast):
 
 def get_last_update(id_pod):
     conn, cursor = connect()
-    date = False
+    timestamp = None
 
     try:
         sql = "SELECT MAX(timestamp) as 'last_update' FROM podcasts, episodes WHERE podcasts.id = episodes.id_podcast AND podcasts.id = ?"
         cursor.execute(sql, (id_pod,))
-        date = cursor.fetchone()
+        timestamp = cursor.fetchone()
     except Exception as e:
         print(e)
 
     close(conn, cursor)
-    return date
+    return timestamp
 
 def get_podcasts_onfire(number_of_podcasts=5):
-    """
-    Questa funzione restituisce una lista di podcast più seguiti e con almeno un episodio
-    
-    :param number_of_podcast: Il numero di podcast che si vuole ricevere come risultato, se troppo alto verranno restituiti quanti più podcast possibili
-    """
-
     conn, cursor = connect()
     podcasts = []
 
@@ -432,8 +424,7 @@ def get_podcasts():
 
 def get_podcasts_by_user(id_user):
     conn, cursor = connect()
-    #TODO? Posso anche togliere il try e podcast = False?
-    podcast = False
+    podcast = []
 
     try:
         sql = 'SELECT * FROM podcasts WHERE id_user = ?'
@@ -447,7 +438,7 @@ def get_podcasts_by_user(id_user):
 
 def get_podcast_by_title(title):
     conn, cursor = connect()
-    podcast = False
+    podcast = None
 
     try:
         sql = 'SELECT * FROM podcasts WHERE title = ?'
@@ -461,7 +452,7 @@ def get_podcast_by_title(title):
 
 def get_podcast(id):
     conn, cursor = connect()
-    podcast = False
+    podcast = None
 
     try:
         sql = 'SELECT * FROM podcasts WHERE id = ?'
@@ -475,7 +466,7 @@ def get_podcast(id):
 
 def get_last_podcast_id():
     conn, cursor = connect()
-    id = False
+    id = 0
 
     try:
         sql = 'SELECT MAX(id) FROM podcasts'
