@@ -387,7 +387,7 @@ def get_podcasts_onfire(number_of_podcasts=5):
     podcasts = []
 
     try:
-        sql = 'SELECT podcasts.id, COUNT(follows.id_user) AS "n_follows", last_update, podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows, (SELECT podcasts.id AS "id_podcast_lu", MAX(timestamp) AS "last_update" FROM podcasts, episodes WHERE podcasts.id = episodes.id_podcast GROUP BY podcasts.id) AS "last_updates"WHERE podcasts.id = follows.id_podcast AND last_updates.id_podcast_lu = podcasts.id GROUP BY podcasts.id ORDER BY n_follows DESC'
+        sql = 'SELECT podcasts.id, COUNT(follows.id_user) AS "n_follows", last_update, last_updates.timestamp, podcasts.title, podcasts.desc, podcasts.img FROM podcasts, follows, (SELECT podcasts.id AS "id_podcast_lu", MAX(timestamp) AS "last_update", MAX(timestamp) AS "timestamp" FROM podcasts, episodes WHERE podcasts.id = episodes.id_podcast GROUP BY podcasts.id) AS "last_updates"WHERE podcasts.id = follows.id_podcast AND last_updates.id_podcast_lu = podcasts.id GROUP BY podcasts.id ORDER BY n_follows DESC'
         cursor.execute(sql)
         podcasts = cursor.fetchmany(size=number_of_podcasts)
     except Exception as e:

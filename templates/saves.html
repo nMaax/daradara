@@ -2,7 +2,9 @@
 
 {% block title %} - Episodi salvati di {{user.name}}{% endblock %}
 
-{% block scripts %}<script src="{{url_for('static', filename='scripts/searchepisodes.js')}}" defer></script>{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='scripts/searchepisodes.js')}}" defer></script>
+{% endblock %}
 
 <!-- Searchbar e script diversi per le gallerie di episodi -->
 {% block searchbar %}

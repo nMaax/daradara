@@ -2,3 +2,8 @@
     max-height: 200px;
     max-width: 200px;
 }
+
+.comment-avatar {
+    width: 25px;
+    height: 25px;
+}

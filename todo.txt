@@ -61,8 +61,8 @@
 [X] Rimetti a posto i tag <a>
 [X] Metti gli alt (testo deltro il tag) negli audio
 [X] Metti gli alt nelle immagini
-[ ] Togli style e script tags
-[ ] Sostituisci le section con article dove possibile
+[X] Togli style e script tags
+[X Sostituisci le section con article dove possibile
 [ ] Controlla gli errori, TODO, !, ? e # type:ignore
 [ ] Cambia i getElementById/Class in searchQuery
 [X] Commenta dove necessario

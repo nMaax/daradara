@@ -68,7 +68,7 @@
                 {% endif %}
             </div>
             <div class="card-footer">
-                Pubblicato {{daysago}}
+                Pubblicato <time datetime="{{episode.timestamp}}">{{daysago}}</time>
             </div>
         </article>
 
@@ -189,11 +189,10 @@
                         <p>{{comments[i].text}}</p>
                         <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
                             <div class="d-flex flex-row align-items-center">
-                                <!--TODO! Togli width e height attributes -->
-                                <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="Immagine profilo di {{comments[i].name}} {{comments[i].surname}}" width="25" height="25">
-                                <address class="small mb-0 ms-2"><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></address>
+                                <img class="comment-avatar" src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="Immagine profilo di {{comments[i].name}} {{comments[i].surname}}">
+                                <p class="mb-0 ms-2"><small><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></small></p>
                             </div>
-                            <p class="mt-2 m-0"><small class="text-muted">{{comments[i].posted}}</small></p>
+                            <p class="mt-2 m-0"><small class="text-muted"><time datetime="{{comments[i].timestamp}}">{{comments[i].posted}}</time></small></p>
                         </div>
                     </article>
 

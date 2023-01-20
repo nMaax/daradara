@@ -422,8 +422,10 @@ def podcast(id: int):
     row_last_update = dao.get_last_update(id)
     last_update = row_last_update['last_update'] # type: ignore
     if last_update:
+        timestamp = last_update 
         last_update = days_ago(last_update)
     else:
+        timestamp = False
         last_update = False
 
     episodes = to_list_of_dict(dao.get_episodes(id_podcast=id))
@@ -441,7 +443,7 @@ def podcast(id: int):
 
     session['last_podcast_visited'] = id
     session['previous_url'] = request.url
-    return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
+    return render_template('podcast.html', id=id, podcast=podcast, episodes=episodes, timestamp=timestamp, last_update=last_update, creator=creator, is_following=is_following, is_owner=is_owner)
 
 @app.route('/podcast/<int:id>/follow')
 def follow(id: int):

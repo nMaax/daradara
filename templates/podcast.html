@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="row">
-                    <p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p>
+                    <a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a>
                 </div>
             </section>
 
@@ -103,8 +103,8 @@
                     {% endif %}
                 </div>
                 <div class="card-footer d-flex flex-column justify-content-evenly">
-                    {% if last_update %}
-                    <p class="m-0 mt-1">Ultimo aggiornamento {{last_update}}</p>
+                    {% if last_update and timestamp %}
+                    <p class="m-0 mt-1">Ultimo aggiornamento <time datetime="{{timestamp}}">{{last_update}}</time></p>
                     <hr class="my-2">
                     {% endif %}
                     <p class="m-0 mb-1">Categoria: <i>{{podcast.category|capitalize}}</i></p> 

@@ -104,7 +104,7 @@
                 </section>
                 <div class="card-footer">
                 {% if podcast.last_update %}
-                    <p class="card-text"><small class="text-muted">Ultimo aggiornamento {{podcast.last_update}}</small></p>
+                    <p class="card-text"><small class="text-muted">Ultimo aggiornamento <time datetime="{{podcast.timestamp}}">{{podcast.last_update}}</time></small></p>
                 {% else %}
                     <p class="card-text"><small class="text-muted">Nessun episodio pubblicato</small></p>
                 {% endif %}
