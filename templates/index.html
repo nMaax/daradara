@@ -23,7 +23,7 @@
                     <div class="row g-0">
                         <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
                             <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">
-                            <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}"  alt='podcast "{{save.title}}" image'>   
+                            <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}"  alt="Immagine podcast {{save.podcast_title}}">   
                             </a> 
                         </div>
                         <div class="col-10 col-lg-8">
@@ -94,7 +94,7 @@
         <div class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
                 <a href="{{url_for('podcast', id=podcast.id)}}" class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                    <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="podcast {{i}} image">    
+                    <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast {{podcast.title}}">    
                 </a>
                 <div class="col-10 col-lg-8">
                     <div class="card-body">

@@ -1,89 +1,88 @@
 {% extends 'layout.html' %}
 
 {% block scripts %}
-    <script src="{{url_for('static', filename='scripts/newpodcast.js')}}" defer></script>
+<script src="{{url_for('static', filename='scripts/newpodcast.js')}}" defer></script>
 {% endblock %}
 
 {% block content %}
 
-<!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
-<div class="row d-flex justify-content-center align-items-center">
-    <!-- New podcast -->
+<main class="row d-flex justify-content-center align-items-center">
+    <!-- Nuovo podcast (bootstrap card) -->
     <div class="card text-black rounded-4">
         <div class="card-body p-md-5">
-        <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+            <div class="row justify-content-center">
+                <section class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-            <!-- Title -->
-            <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Crea nuovo podcast</p>
-            
-            <!-- Form -->
-            <form action="{{url_for('post_new_podcast')}}" method="POST" enctype="multipart/form-data" class="mx-1 mx-md-4" id="new-podcast-form">
-
-                <div class="d-flex flex-row align-items-center mb-4">
-                <i class="fas fa-heading fa-lg me-3 fa-fw"></i>
-                <div class="form-outline flex-fill mb-0">
-                    <input type="text" name="title" id="title-input" class="form-control" minlength="4" maxlength="32" placeholder="IAW: il podcast" required>
-                    <label class="form-label" for="title-input">Titolo</label>
-                </div>
-                </div>
-
-                <div class="d-flex flex-row align-items-center mb-4">
-                <i class="fas fa-quote-right fa-lg me-3 fa-fw"></i>
-                <div class="form-outline flex-fill mb-0">
-                    <textarea name="desc" id="desc-input" class="form-control" minlength="16" maxlength="516" placeholder="Un semplice podcast sulle applicazioni web..." rows="4" required></textarea>
-                    <label class="form-label" for="desc-input">Descrizione</label>
-                </div>
-                </div>
-
-                <div class="d-flex flex-row align-items-center mb-4">
-                <i class="fas fa-solid fa-image fa-lg me-3 fa-fw"></i>
-                <div class="form-outline flex-fill mb-0">
-                    <input type="file" name="img" id="cover-input" class="form-control" accept="image/jpeg, image/jpg, image/png" required>
-                    <label class="form-label" for="cover-input">Immagine di copertina</label>
-                </div>
-                </div>
-
-                <div class="d-flex flex-row align-items-center mb-4">
-                <i class="fas fa-tag fa-lg me-3 fa-fw"></i>
-                <div class="form-outline flex-fill mb-0">
-                    <input type="text" name="category" id="category-input" class="form-control" list="categories" minlength="4" maxlength="32" placeholder="Hi-Tech" required>
-                    <label class="form-label" for="category-input">Categoria</label>
-                </div>
-                </div>
-
-                <!-- Datalist come suggerimento alla categoria da assegnare -->
-                <datalist id="categories">
-                <option value="News e Attualità"></option>
-                <option value="Politica"></option>
-                <option value="Business e Economia"></option>
-                <option value="Hi-Tech"></option>
-                <option value="Svago"></option>
-                <option value="Sport"></option>
-                <option value="Videgiochi, anime e manga"></option>
-                <option value="Crescita personale e finanza personale"></option>
-                <option value="Audiolibri e Storie"></option>
-                <option value="Macchine"></option>
-                <option value="Cucina"></option>
-                <option value="Musica"></option>
-                </datalist>
-
-                <div class="d-flex justify-content-left mx-4 mb-3 mb-lg-4">
-                <button type="submit" class="btn btn-dark btn-outline-light btn-lg">Pubblica podcast</button>
-                </div>
-
-            </form>
-
-            </div>
-            <div class="col-md-10 col-lg-6 col-xl-7 d-flex justify-content-center align-items-center order-1 order-lg-2">
+                <!-- Header carta -->
+                <h1 class="text-center fw-bold mb-5 mx-1 mx-md-4 mt-4">Crea nuovo podcast</h1>
                 
-            <!-- Design image -->
-            <img src="{{url_for('static', filename='design/tech_life_management.png')}}" class="img-fluid" alt="Sample image">
+                <!-- Form -->
+                <form action="{{url_for('post_new_podcast')}}" method="POST" enctype="multipart/form-data" class="mx-1 mx-md-4" id="new-podcast-form">
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-heading fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <input type="text" name="title" id="title-input" class="form-control" minlength="4" maxlength="32" placeholder="IAW: il podcast" required>
+                        <label class="form-label" for="title-input">Titolo</label>
+                    </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-quote-right fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <textarea name="desc" id="desc-input" class="form-control" minlength="16" maxlength="516" placeholder="Un semplice podcast sulle applicazioni web..." rows="4" required></textarea>
+                        <label class="form-label" for="desc-input">Descrizione</label>
+                    </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-solid fa-image fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <input type="file" name="img" id="cover-input" class="form-control" accept="image/jpeg, image/jpg, image/png" required>
+                        <label class="form-label" for="cover-input">Immagine di copertina</label>
+                    </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-tag fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <input type="text" name="category" id="category-input" class="form-control" list="categories" minlength="4" maxlength="32" placeholder="Hi-Tech" required>
+                        <label class="form-label" for="category-input">Categoria</label>
+                    </div>
+                    </div>
+
+                    <!-- Datalist come suggerimento alla categoria da assegnare -->
+                    <datalist id="categories">
+                        <option value="News e Attualità"></option>
+                        <option value="Politica"></option>
+                        <option value="Business e Economia"></option>
+                        <option value="Hi-Tech"></option>
+                        <option value="Svago"></option>
+                        <option value="Sport"></option>
+                        <option value="Videgiochi, anime e manga"></option>
+                        <option value="Crescita personale e finanza personale"></option>
+                        <option value="Audiolibri e Storie"></option>
+                        <option value="Macchine"></option>
+                        <option value="Cucina"></option>
+                        <option value="Musica"></option>
+                    </datalist>
+
+                    <div class="d-flex justify-content-left mx-4 mb-3 mb-lg-4">
+                    <button type="submit" class="btn btn-dark btn-outline-light btn-lg">Pubblica podcast</button>
+                    </div>
+
+                </form>
+
+                </section>
+
+                <!-- Immagine di design -->
+                <div class="col-md-10 col-lg-6 col-xl-7 d-flex justify-content-center align-items-center order-1 order-lg-2">
+                    <img src="{{url_for('static', filename='design/tech_life_management.png')}}" class="img-fluid" alt="Sample image">
+                </div>
 
             </div>
-        </div>
         </div>
     </div>
-</div>
+</main>
 
 {% endblock %}

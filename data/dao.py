@@ -165,7 +165,7 @@ def get_category(id_podcast):
     category = None
 
     try:
-        sql = 'SELECT category FROM podcasts WHERE id_podcast = ?'
+        sql = 'SELECT category FROM podcasts WHERE id = ?'
         cursor.execute(sql, (id_podcast,))
         category = cursor.fetchone()
     except Exception as e:
@@ -663,7 +663,7 @@ def update_category(id_pod, category):
     success = True
 
     try:
-        sql = 'UPDATE podcasts SET category = ? WHERE id_podcast = ?'
+        sql = 'UPDATE podcasts SET category = ? WHERE id = ?'
         cursor.execute(sql, (category, id_pod))
         conn.commit()
     except Exception as e:

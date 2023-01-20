@@ -6,15 +6,15 @@
 
 {% block content %}
 
-<!--TODO cambia id e classi di questa pagina (e di quella di login) che sono rimasti quelli lasciati dal sito-->
-<div class="row d-flex justify-content-center align-items-center">
+<main class="row d-flex justify-content-center align-items-center">
+    <!-- Nuovo episodio (bootstrap card) -->
     <div class="card text-black rounded-4">
         <div class="card-body p-md-5">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                <section class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                     
-                <!-- Title -->
-                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Aggiungi un nuovo episodio a <i>{{podcast.title}}</i></p>
+                <!-- Header carta -->
+                <h1 class="text-center fw-bold mb-5 mx-1 mx-md-4 mt-4">Aggiungi un nuovo episodio a <i>{{podcast.title}}</i></h1>
 
                 <!-- Form -->
                 <form action="{{ url_for('post_new_episode', id_pod=id_pod) }}" method="POST" enctype="multipart/form-data" class="mx-1 mx-md-4" id="new-episode-form">
@@ -57,15 +57,17 @@
 
                 </form>
 
-                </div>
+                </section>
+
+                <!-- Immagine di design -->
                 <div class="col-md-10 col-lg-6 col-xl-7 d-flex justify-content-center align-items-center order-1 order-lg-2">
-                    <!-- Design image -->
                     <img src="{{url_for('static', filename='design/tech_life_media.png')}}"
                         class="img-fluid" alt="Immagine di design">
                 </div>
+                
             </div>
         </div>
     </div>
-</div>
+</main>
 
 {% endblock %}

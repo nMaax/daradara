@@ -2,14 +2,16 @@
 
 {% block title %} - Seguiti di {{user.name}}{% endblock %}
 
+<!-- Titolo della galleria in display-1 -->
 {% block header %}
     {% if is_owner %}
-        <p class="text-center display-1">I podcast che segui</p>
+        <h1 class="text-center display-1">I podcast che segui</h1>
     {% else %}
-        <p class="text-center display-1">Podcast seguiti da {{user.name}}</p>
+        <h1 class="text-center display-1">Podcast seguiti da {{user.name}}</h1>
     {% endif %}
 {% endblock %}
 
+<!-- Main della galleria, contiente tutti i podcast seguiti dall'utente -->
 {% block main %} 
 
 {% if podcasts %}
@@ -17,31 +19,32 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for podcast in podcasts %}
         <div class="col">
-        <a class="podcast card  h-100" href="{{url_for('podcast', id=podcast.id)}}">
-            <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
-            <div class="card-body">
-                <h5 class="podcast-title card-title">{{podcast.title}}</h5>
-                <p class="podcast-description card-text">{{podcast.desc}}</p>
-            </div>
+        <div class="podcast card  h-100">
+            <a href="{{url_for('podcast', id=podcast.id)}}"><img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="Immagine podcast {{podcast.title}}"></a>
+            <section class="card-body">
+                <h5 class="podcast-title card-title"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></h5>
+                <p class="podcast-description card-text"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.desc}}</a></p>
+            </section>
             <div class="card-footer podcast-category">
                 {{podcast.category|capitalize}}
             </div>
-        </a>
+        </div>
         </div>
     {% endfor %}
 </div>
 
+<!-- Se l'utente non segue nessuno scrivilo -->
 {% else %}
     {% if is_owner %}
-        <div class="row">
+        <section class="row">
             <h5 class="text-center">Non segui nessun podcast 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </div>
+        </section>
     {% else %}
-        <div class="row">
+        <section class="row">
             <h5 class="text-center">{{user.name}} non segue nessun podcast 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </div>
+        </section>
     {% endif %}
 {% endif %}
 

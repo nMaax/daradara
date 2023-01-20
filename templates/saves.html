@@ -4,6 +4,7 @@
 
 {% block scripts %}<script src="{{url_for('static', filename='scripts/searchepisodes.js')}}" defer></script>{% endblock %}
 
+<!-- Searchbar e script diversi per le gallerie di episodi -->
 {% block searchbar %}
     <div class="row mb-5">
         <div class="col-12 d-flex align-items-center">
@@ -12,14 +13,16 @@
     </div>
 {% endblock %}
 
+<!-- Titolo della galleria in display-1 -->
 {% block header %}
     {% if is_owner %}
-        <p class="text-center display-1">I tuoi episodi salvati</p>
+        <h1 class="text-center display-1">I tuoi episodi salvati</h1>
     {% else %}
-        <p class="text-center display-1">Episodi salvati da {{user.name}}</p>
+        <h1 class="text-center display-1">Episodi salvati da {{user.name}}</h1>
     {% endif %}
 {% endblock %}
 
+<!-- Main della galleria, contiente tutti i podcast seguiti dall'utente -->
 {% block main %} 
 
 {% if episodes %}
@@ -27,28 +30,29 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for episode in episodes %}
         <div class="col">
-        <a class="episode card h-100" href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">
-            <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+episode.id|string+episode.img)}}" alt="episode {{episode.title}} image">
-            <div class="card-body">
-                <h5 class="episode-title card-title">{{episode.title}}</h5>
-                <p class="episode-description card-text">{{episode.desc}}</p>
-            </div>
-        </a>
+        <div class="episode card h-100">
+            <a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}"><img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+episode.id|string+episode.img)}}" alt="episode {{episode.title}} image"></a>
+            <section class="card-body">
+                <h5 class="episode-title card-title"><a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">{{episode.title}}</a></h5>
+                <p class="episode-description card-text"><a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">{{episode.desc}}</a></p>
+            </section>
+        </div>
         </div>
     {% endfor %}
 </div>
 
+<!-- Se l'utente non segue nessuno scrivilo -->
 {% else %}
     {% if is_owner %}
-        <div class="row">
+        <section class="row">
             <h5 class="text-center">Non hai salvato nessun episodio 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </div>
+        </section>
     {% else %}
-        <div class="row">
+        <section class="row">
             <h5 class="text-center">{{user.name}} non ha salvato nessun episodio 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </div>
+        </section>
     {% endif %}
 {% endif %}
 

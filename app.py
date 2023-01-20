@@ -625,7 +625,7 @@ def post_edit_podcast(id: int):
                 title = None
             if podcast['desc'] == desc:
                 desc = None
-            if podcast['tag'] == category:
+            if podcast['category'] == category:
                 category = None
 
             if dao.get_podcast_by_title(title):
@@ -638,13 +638,13 @@ def post_edit_podcast(id: int):
                 pod_result = True
 
             if category:
-                tag_result = dao.update_category(id_pod=id, category=category)
+                category_result = dao.update_category(id_pod=id, category=category)
             else:
-                tag_result = True
+                category_result = True
 
             if not pod_result:
                 raise dataManipulationError('Unable to update title or description')
-            elif not tag_result:
+            elif not category_result:
                 raise dataManipulationError('Unable to update category')
 
             flash(message='Podcast modificato correttamente', category='success')
@@ -789,7 +789,6 @@ def post_new_episode(id_pod: int):
     title = title.strip()
     desc = desc.strip()
     
-    #TODO! Check, via javascript, in the form that the max-min lengt is in the range ignoring whitespaces: ask to chatGPT how to do it
     # Checking that the data is valid
     check = True
     if not title or not desc or not audio:
@@ -876,8 +875,6 @@ def post_delete_episode(id_pod: int, id_ep: int):
     else:
         result = dao.delete_episode(id_ep)
         if result:
-            #TODO! in cascata devi eliminare anche tutti gli audio
-            #path = os.path.join(app.root_path, url_for('static', filename='uploads/audios/'+str(episode['id'])+episode['img']))
             file_path = AUDIOS_PATH+str(episode['id'])+episode['audio']
             abs_path = os.path.abspath(file_path)
             if os.path.exists(abs_path):

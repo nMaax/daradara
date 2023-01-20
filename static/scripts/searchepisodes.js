@@ -3,7 +3,9 @@
 const searchbar = document.getElementById('searchbar');
 const episodes = document.getElementsByClassName('episode');
 
-searchbar.addEventListener('input', function() {
+searchbar.addEventListener('input', search);
+
+function search() {
   const searchString = this.value.toLowerCase();
   for (let episode of episodes) {
 
@@ -25,4 +27,4 @@ searchbar.addEventListener('input', function() {
       episode.parentNode.classList.add('d-none');
     }
   }
-});
+}

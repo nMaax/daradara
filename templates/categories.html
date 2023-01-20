@@ -4,23 +4,24 @@
 {% block searchActive %}active{% endblock %}
 
 {% block header %}
-    <p class="text-center display-1">I nostri podcast</p>
+    <h1 class="text-center display-1">I nostri podcast</h1>
 {% endblock %}
 
+<!-- Tutti i podcast di DaraDara -->
 {% block gallery %} 
 
 {% for podcast in podcasts %}
     <div class="col">
-    <a class="podcast card h-100" href="{{url_for('podcast', id=podcast.id)}}">
-        <img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image">
-        <div class="card-body">
-            <h5 class="podcast-title card-title">{{podcast.title}}</h5>
-            <p class="podcast-description card-text">{{podcast.desc}}</p>
-        </div>
+    <div class="podcast card h-100">
+        <a href="{{url_for('podcast', id=podcast.id)}}"><img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="Immagine podcast {{podcast.title}}"></a>
+        <section class="card-body">
+            <h5 class="podcast-title card-title"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></h5>
+            <p class="podcast-description card-text"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.desc}}</a></p>
+        </section>
         <div class="card-footer podcast-category">
             {{podcast.category|capitalize}}
         </div>
-    </a>
+    </div>
     </div>
 {% endfor %}
 

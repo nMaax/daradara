@@ -195,13 +195,19 @@
                                     <!-- Traccia audio -->
                                     <audio controls class="w-100">
                                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{episode.mime_type}}">
-                                        Il tuo browser non supporta l'elemento audio.
+                                        Audio {{episode.title}} del podcast {{podcast.title}} - Il tuo browser non supporta l'elemento audio.
                                     </audio>
 
                                     {% else %}
                                     
                                     <!-- Placeholder per i non iscritti -->
                                     <div class="d-flex flex-column align-items-center">
+
+                                        <!-- Descrizione episodio -->
+                                        <p class="episode-description d-flex card-text text-center justify-content-center align-items-center my-4">
+                                            {{episode.description}}
+                                        </p>
+
                                         <!-- Placeholder shiny di bootstrap -->
                                         <p class="placeholder-glow d-flex justify-content-center align-items-center">
                                             <span class="placeholder col-12 px-0 px-md-5">

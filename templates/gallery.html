@@ -8,10 +8,12 @@
 
 {% block content %}
 
+<!-- L'header conterrà il titolo della galleria in display-1 -->
 <header class="row">
     {% block header %}{% endblock %}
 </header>
 
+<!-- Searchbar di default per le gallerie di episodi, sostituibile con una serchbar per episodi cambiando anche il tag script -->
 {% block searchbar %}
 <div class="row mb-5">
     <div class="col-12 d-flex align-items-center">
@@ -20,6 +22,7 @@
 </div>
 {% endblock %}
 
+<!-- Main della galleria, conterrà una serie di carte bootstrap per ogni podcast/episodio -->
 {% block main %}
 <main class="row row-cols-1 row-cols-md-4 g-4">
     {% block gallery %}{% endblock %}

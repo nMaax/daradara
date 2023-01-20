@@ -2,24 +2,24 @@
 
 {% block content %}
 
-<div class="d-flex flex-column justify-content-evenly">
+<main class="d-flex flex-column justify-content-evenly">
 
     <!-- Immagine di design -->
     <div class="d-flex justify-content-center align-items-center">
-        <img src="{{url_for('static', filename='design/tech_life_blockchain.png')}}" class="img-fluid" alt="Sample image">
+        <img src="{{url_for('static', filename='design/tech_life_blockchain.png')}}" class="img-fluid" alt="Error design image">
     </div>
 
     <!-- Messaggio di errore -->
-    <div class="d-flex flex-column justify-content-center align-items-center mt-5">
-        <p class="text-center display-1">Error {{code}}</p>
-        <h5 class="text-center w-75 ">{{error}}</h5>
-    </div>
+    <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+        <h1 class="text-center display-1">Error {{code}}</h1>
+        <p class="text-center w-75 h5">{{error}}</p>
+    </section>
 
     <!-- Bottone torna indietro -->
     <div class="d-flex justify-content-center align-items-center mt-4">
         <a href="{{previous_url}}" class="btn btn-lg text-light btn-dark">Torna indietro</a>
     </div>
 
-</div>
+</main>
 
 {% endblock %}

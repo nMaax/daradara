@@ -18,23 +18,23 @@
     
     <!-- Immagine podcast dell'episodio -->
     <div class="col-12 col-lg-2 d-flex justify-content-center">
-        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast" class="card-img p-1 p-lg-2 episode-img">
+        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(id_pod, podcast.img))}}" alt="Immagine podcast {{podcast.title}}" class="card-img p-1 p-lg-2 episode-img">
     </div>
 
     <!-- Info episodio -->
     <div class="col mt-4 mt-lg-0">
         
         <!-- Titolo episodio -->
-        <div class="row d-flex justify-content-center align-items-center mb-3">
-            <h1 class="">
+        <section class="row d-flex justify-content-center align-items-center mb-3">
+            <h1>
                 {{episode.title}}
                 {% if is_owner %}
                 <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
                 <a href="#" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a>
                 {% endif %}
             </h1>
-            <a href="{{url_for('podcast', id=podcast.id)}}"><p class="card-text"><small class="text-muted">{{podcast.title}}</small></p></a>
-        </div>
+            <p class="card-text"><small class="text-muted"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></small></p>
+        </section>
 
         <!-- Modal (Modifica info episodio) -->
         <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="editEpisodeLabel" aria-hidden="true" id="edit-episode-form">
@@ -108,13 +108,14 @@
     <!-- Traccia audio-->
     <!--TODO? implementa un audio player da una libreria js: howler, wavesurfer, amplitude, plyr, mediaelements etc. -->
     <div class="row d-flex justify-content-center">
+
         {% if current_user.is_authenticated %}
         <div id="player" class="col-md-7 w-100">
             <div class="row g-2">
                 <div class="text-light p-3">
                     <audio controls class="row w-100">
                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
-                        Il tuo browser non supporta l'elemento audio.
+                        Audio {{episode.title}} del podcast {{podcast.title}} - Il tuo browser non supporta l'elemento audio.
                     </audio>
                     {% if is_owner %}
                     <div class="row">
@@ -147,6 +148,7 @@
         </div>
 
         {% else %}
+
         <!-- CTA per i non registrati -->
         <div class="d-flex flex-column align-items-center">
             <p class="placeholder-glow d-flex justify-content-center align-items-center">
@@ -154,7 +156,9 @@
             </p>
             <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi per ascoltare!</a>
         </div>
+
         {% endif %}
+
     </div>
 
     <!-- Sezione commenti (bootstrap card) -->
@@ -163,6 +167,7 @@
             <div class="">
                 <div class="card shadow-0 border bg-ligth">
                 <div class="card-body p-4">
+
                     <!-- Nuovo commento: form -->
                     <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
                         <div class="row">
@@ -178,11 +183,13 @@
                     {% for i in range(comments|length) %}
 
                     <div class="card mb-4">
+
+                        <!-- Contenuto del commento -->
                         <div class="card-body">
                             <p>{{comments[i].text}}</p>
                             <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="avatar" width="25"
+                                    <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="Immagine profilo di {{comments[i].name}} {{comments[i].surname}}" width="25"
                                         height="25"/>
                                     <p class="small mb-0 ms-2"><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></p>
                                 </div>
@@ -190,7 +197,7 @@
                             </div>
                         </div>
 
-                        <!-- Modifica / Eliminazione del commento -->
+                        <!-- Tasti di Modifica / Eliminazione del commento -->
                         {% if current_user.is_authenticated and current_user.id == comments[i].id_user %}
                         <div class="card-footer d-flex justify-content-between">
                             
@@ -208,6 +215,7 @@
                             
                         </div>
                         {% endif %}
+
                     </div>
                     
                     <!-- Modale (modifica comento) -->
@@ -237,7 +245,7 @@
             </div>
         </div>
     </div>
-    
+
 </main>
 
 {% endblock %}
