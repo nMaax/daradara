@@ -1,6 +1,6 @@
 # DaraDara
 
-DaraDara è una semplice applicazione web per l'ascolto e la pubblicazione di podcast.
+DaraDara è un'applicazione web per l'ascolto e la pubblicazione di podcast.
 
 Il nome deriva dall'onomatopea giapponese「だらだら」che, secondo [Tofugu](https://www.tofugu.com/japanese/japanese-onomatopoeia/), si usa per indicare il "vocio" che si crea quando una persona sta "parlando o spiegando qualcosa di molto poco chiaro e ci sta mettendo tantissimo tempo per farlo"
 
@@ -13,11 +13,13 @@ pip install -r requirements.txt
 flask run
 ```
 
-Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito.
+Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito (Google Chrome o Firefox).
 
 ## Dispositivi compatibili
 
-DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 350px di larghezza e 600x di altezza). DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
+DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 350px di larghezza e 600x di altezza)
+
+DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
 
 ## Alcune linee guida per utilizzare DaraDara
 
@@ -29,13 +31,13 @@ Non esiste un tasto che dalla homepage rimandi direttamente alla registrazione, 
 
 ### Cosa indicano le icone dell'occhio nel profilo?
 
-Ogni icona rappresentante un occhio indica se si vuole tenere quella data sezione del profilo pubblica o privata a gli altri utenti. Se l'icona consiste in un normale un occhio allora la data sezione è pubblica a gli altri utenti, se c'è una barra sopra l'occhio allora la sezione è privata e solo il proprietario del profilo può vederla
+Ogni icona rappresentante un occhio che indica se si vuole tenere quella data sezione del profilo pubblica o privata a gli altri utenti. Se l'icona è un normale un occhio allora la data sezione è pubblica a gli altri utenti, se c'è una barra sopra l'occhio allora la sezione è privata e solo il proprietario del profilo può vederla
 
 ### Come scegli i podcast più in voga?
 
 I 4 podcast più in voga, visualizzabili esclusivamente nella home, sono i podcast con più seguaci su DaraDara, condizione necesaria affinché un podcast possa finire in voga è di aver almeno 1 seguace e almeno 1 episodio
 
-Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti ve ne sono
+> Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti ve ne sono
 
 ### Cosa fa il tasto "sorprendimi"?
 
@@ -61,7 +63,7 @@ In DaraDara ci sono già 6 utenti: **2 ascoltatori** e **4 creatori**
 Ogni utente è identificato da un indirizzo email e il suo account è protetto da una password
 
 > ***Note***
-> Gli utenti forniti di default *non* rispettano gli standard di sicurezza di DaraDara in materia di password, ovvero, le loro password sono lunghe meno di 8 caratteri e contengono solo lettere minuscole, tuttavia questo non significa che un nuovo utente non debba rispettare questi standard, infatti ogni nuovo utente, come si potrà notare nella UI, deve rispettare degli standard per quanto riguarda la complessità della password. Questa scelta è stata fatta per facilitare il debugging dell'applicazione.
+> Per motivi di debugging gli utenti forniti di default *non* rispettano gli standard di sicurezza di DaraDara in materia di password, ovvero le loro password sono lunghe meno di 8 caratteri e contengono solo lettere minuscole. Tuttavia questo non significa che un nuovo utente non debba rispettare questi standard, infatti ogni nuovo utente, come si potrà notare nella UI, deve rispettare una serie di regole in fase di registrazione per quanto riguarda la complessità della password
 
 #### Creatori
 
@@ -103,8 +105,8 @@ DaraDara è stato inoltre creato utilizzando varie librerie e risorse esterne, t
 2. [Bootstrap](https://getbootstrap.com/) per standardizzare e rendere più intuitiva e responsive la UI
 3. [SQLite](https://www.sqlite.org/index.html) per salvare i dati in maniera permanente
 4. [Googlefonts](https://fonts.google.com/specimen/League%20Spartan) e [Fontawesome](https://fontawesome.com/icons) per font e icone utilizzate nell'applicazione
-5. La collezione di immagini [TechLife](https://blush.design/it/collections/EcYTq93px20ptlPRSq1C/tech-life) di Karthik Srinivas per rendere la UI/UX più piacevole
-6. Il sito di design [Canva](https://www.canva.com/it_it/) per sviluppare il logo visibile nella barra di navigazione
+5. La collezione di immagini [TechLife](https://blush.design/it/collections/EcYTq93px20ptlPRSq1C/tech-life) di Karthik Srinivas per rendere la UI più gradevole
+6. Il sito di design [Canva](https://www.canva.com/it_it/) per sviluppare il logo visibile nella barra di navigazione e come .ico nella scheda del browser
 7. I siti [Pexels](https://www.pexels.com/it-it/) e [FreeMusicArchive](https://freemusicarchive.org/home) per reperire le immagini e gli audio già presenti nell'applicazione
 8. Le librerie python [Dateutil](https://pypi.org/project/python-dateutil/) e [Pillow](https://pypi.org/project/Pillow/) per gestire le date e la modifica delle immagini server-side
-9. La libreria javascript [Dayjs](https://day.js.org/) per gestire al meglio le date client-side
+9. La libreria javascript [Dayjs](https://day.js.org/) per gestire le date client-side
