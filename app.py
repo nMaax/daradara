@@ -538,6 +538,7 @@ def post_new_podcast():
             if not os.path.exists(save_directory):
                 os.makedirs(save_directory)
             img.save(save_directory+imgname) # type: ignore
+            app.logger.info(imgname)
 
             flash("Podcast aggiunto con successo!", 'success')
             return redirect(url_for('profile', id = user_id))
@@ -966,7 +967,7 @@ def post_edit_audio(id_pod, id_ep):
     if not podcast or not episode or not podcast['id'] == episode['id_podcast']:
         flash('L\'episodio dove hai richiesto la modifica dell\'audio non esiste', 'warning')
         return redirect(session.get('previous_url', '/'))
-    elif podcast['id'] != current_user.id: # type: ignore
+    elif podcast['id_user'] != current_user.id: # type: ignore
         flash('Non sei il propriterio del podcast', 'warning')
     elif not check:
         flash("Impossibile modificare l'audio, il file fornito non è compatibile", 'warning')
@@ -1135,7 +1136,7 @@ def random_pod():
     except KeyError as e:
         visited_id = 0
     id = randint(1, max_id)
-    while id == visited_id:
+    while id == visited_id or not dao.get_podcast(id):
         id = randint(1, max_id)
 
     session['previous_url'] = request.url

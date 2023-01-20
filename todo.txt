@@ -84,15 +84,13 @@
 *** Extra ***
 
 [ ] Guarda video di FAQ di IAW
-[ ] Utilizza più CSS?
+[ ] Utilizza più CSS? --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 [ ] Rendi il codice di app più leggibile e metti i commenti
 [ ] Definisci dipositivi compatibili
 [ ] Rileggi documento del prof e aggiungi il necessario
 [ ] Testa il sito sul mac
 [X] Evita variabili js globali
     Non ne usi. Il prof intendeva delle variabili globali in layout o comunque che si condividano da pagina a pagina
-
---> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 
 [X] Controlla i TODO?
 [X] Aggiungi sistema di modifica profilo

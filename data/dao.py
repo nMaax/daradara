@@ -263,9 +263,9 @@ def get_last_episode_id():
     id = 0
 
     try:
-        sql = 'SELECT MAX(id) FROM episodes'
+        sql = "SELECT seq FROM sqlite_sequence WHERE name = 'episodes'"
         cursor.execute(sql)
-        id = cursor.fetchone()['MAX(id)']
+        id = cursor.fetchone()['seq']
         if id == None:
             id = 0
     except Exception as e:
@@ -343,9 +343,9 @@ def get_last_id_user():
     id = 0
 
     try:
-        sql = 'SELECT MAX(id) FROM users'
+        sql = "SELECT seq FROM sqlite_sequence WHERE name = 'users'"
         cursor.execute(sql)
-        id = cursor.fetchone()['MAX(id)']
+        id = cursor.fetchone()['seq']
         if id == None:
             id = 0
     except Exception as e:
@@ -451,9 +451,9 @@ def get_last_podcast_id():
     id = 0
 
     try:
-        sql = 'SELECT MAX(id) FROM podcasts'
+        sql = "SELECT seq FROM sqlite_sequence WHERE name = 'podcasts'"
         cursor.execute(sql)
-        id = cursor.fetchone()['MAX(id)']
+        id = cursor.fetchone()['seq']
         if id == None:
             id = 0
     except Exception as e:
