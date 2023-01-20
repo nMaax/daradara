@@ -19,16 +19,16 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for podcast in podcasts %}
         <div class="col">
-        <div class="podcast card h-100" >
+        <article class="podcast card h-100" >
             <a href="{{url_for('podcast', id=podcast.id)}}"><img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+podcast.id|string+podcast.img)}}" alt="podcast {{podcast.title}} image"></a>
             <section class="card-body">
-                <h5 class="podcast-title card-title"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></h5>
+                <h4 class="podcast-title card-title"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></h4>
                 <p class="podcast-description card-text"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.desc}}</a></p>
             </section>
             <div class="card-footer podcast-category">
                 {{podcast.category|capitalize}}
             </div>
-        </div>
+        </article>
         </div>
     {% endfor %}
 </div>
@@ -36,14 +36,14 @@
 <!-- Se l'utente non segue nessuno scrivilo -->
 {% else %}
     {% if is_owner %}
-        <section class="row">
+        <article class="row">
             <h5 class="text-center">Non sei un podcaster, vai sul tuo profilo e pubblica il tuo primo podcast per diventarlo! 🤗</h5>
-        </section>
+        </article>
     {% else %}
-        <section class="row">
+        <article class="row">
             <h5 class="text-center">{{user.name}} non è unə podcaster 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </section>
+        </article>
     {% endif %}
 {% endif %}
 

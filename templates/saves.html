@@ -30,13 +30,13 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for episode in episodes %}
         <div class="col">
-        <div class="episode card h-100">
+        <article class="episode card h-100">
             <a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}"><img class="card-img-top img-fluid p-1 p-lg-3" src="{{url_for('static', filename='uploads/images/covers/'+episode.id|string+episode.img)}}" alt="episode {{episode.title}} image"></a>
             <section class="card-body">
-                <h5 class="episode-title card-title"><a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">{{episode.title}}</a></h5>
+                <h4 class="episode-title card-title"><a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">{{episode.title}}</a></h4>
                 <p class="episode-description card-text"><a href="{{url_for('episode', id_ep=episode.ep_id, id_pod=episode.id)}}">{{episode.desc}}</a></p>
             </section>
-        </div>
+        </article>
         </div>
     {% endfor %}
 </div>
@@ -44,15 +44,15 @@
 <!-- Se l'utente non segue nessuno scrivilo -->
 {% else %}
     {% if is_owner %}
-        <section class="row">
+        <article class="row">
             <h5 class="text-center">Non hai salvato nessun episodio 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </section>
+        </article>
     {% else %}
-        <section class="row">
+        <article class="row">
             <h5 class="text-center">{{user.name}} non ha salvato nessun episodio 😢</h5>
             <p class="text-center"><small>(per ora...)</small></p>
-        </section>
+        </article>
     {% endif %}
 {% endif %}
 

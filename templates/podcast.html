@@ -53,26 +53,28 @@
         </div>
         
         <!-- Info podcast -->
-        <div class="col">
+        <article class="col">
             
             <!-- Info primarie podcast (Titolo e podcaster) -->
-            <div class="row d-flex justify-content-between align-content-center mx-0 mx-lg-2 mx-lg-0 my-2">
-                <h1 class="col-8 text-wrap display-3 ps-1 ps-lg-0">{{podcast.title}}</h1>
-                {% if is_owner %}
-                <i class="col-1 display-4 fa-solid fa-pen-to-square mx-3 me-lg-0 pe-0" data-bs-toggle="modal" data-bs-target="#editPodcast"></i>
-                {% endif %}
-            </div>
+            <section>
+                <div class="row d-flex justify-content-between align-content-center mx-0 mx-lg-2 mx-lg-0 my-2">
+                    <h2 class="col-8 text-wrap display-3 ps-1 ps-lg-0">{{podcast.title}}</h2>
+                    {% if is_owner %}
+                    <i class="col-1 display-4 fa-solid fa-pen-to-square mx-3 me-lg-0 pe-0" data-bs-toggle="modal" data-bs-target="#editPodcast"></i>
+                    {% endif %}
+                </div>
 
-            <div class="row">
-                <p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p>
-            </div>
+                <div class="row">
+                    <p><a href="{{url_for('profile', id=creator.id)}}">di {{creator.name}} {{creator.surname}}</a></p>
+                </div>
+            </section>
 
             <!-- Modal (edit podcast) -->
             <div class="modal fade" id="editPodcast" tabindex="-1" aria-labelledby="editInfoPodcastLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="editInfoPodcastLabel">Modifica informazioni podcast</h1>
+                    <h2 class="modal-title fs-5" id="editInfoPodcastLabel">Modifica informazioni podcast</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -91,7 +93,7 @@
             </div>
             
             <!-- Info secondarie podcast (decrizione, ultimo aggiornamento, categoria) -->
-            <div class="card">
+            <section class="card">
                 <div class="card-body">
                     <p class="card-text">{{podcast.desc}}</p>
                     {% if not is_following %}
@@ -107,7 +109,7 @@
                     {% endif %}
                     <p class="m-0 mb-1">Categoria: <i>{{podcast.category|capitalize}}</i></p> 
                 </div>
-            </div>
+            </section>
 
             {% if is_owner %}
             <div class="row mx-2 mx-lg-0 my-2 d-flex justify-content-center align-content-center display-5">
@@ -117,7 +119,7 @@
                 </button>
             </div>
             {% endif %}
-        </div>
+        </article>
     </header>
 
     <!-- Modal (eliminazione podcast) -->
@@ -153,89 +155,90 @@
         <!-- Tasto di creazione episodio (solo se sei il proprietario) -->
         {% if is_owner %}
 
-            <div class="row d-flex justify-content-center">
-                <div class="row mt-3">
-                    <!-- Bottone nuovo episodio -->
-                    <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-dark text-light d-flex justify-content-center align-content-center ">Nuovo episodio</a>
-                </div>
+        <div class="row d-flex justify-content-center">
+            <div class="row mt-3">
+                <!-- Bottone nuovo episodio -->
+                <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-light btn-outline-dark d-flex justify-content-center align-content-center ">Nuovo episodio</a>
             </div>
+        </div>
         
         {% endif %}
 
         {% if episodes %}
 
-            <!-- Episodi (bootstrap cards disposte una dopo l'altra) -->
-            {% for episode in episodes %}
-            <div class="row d-flex justify-content-center">
+        <!-- Episodi (bootstrap cards disposte una dopo l'altra) -->
+        {% for episode in episodes %}
+        <div class="row d-flex justify-content-center">
 
-                <!-- Episodio (bootstrap card) -->
-                <div class="row mt-3 episode">
-                    <div class="card mb-3">
-                        <div class="row">
-                            
-                            <!-- Titolo episodio -->
-                            <!-- Nota bene: il tag <p> è dentro <a> e non il contrario perché altrimenti il bg-light non si applicherebbe corretta,emte alla carta, peggiorando la UI -->
-                            <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="col-md-4 bg-light d-flex justify-content-center align-items-center">
-                                <p class="episode-title text-center display-6 mx-2 my-4">{{episode.title}}</p>
-                            </a>
+            <!-- Episodio (bootstrap card) -->
+            <div class="row mt-3 episode">
+                <article class="card mb-3">
+                    <div class="row">
+                        
+                        <!-- Titolo episodio -->
+                        <!-- Nota bene: il tag <p> è dentro <a> e non il contrario perché altrimenti il bg-light non si applicherebbe corretta,emte alla carta, peggiorando la UI -->
+                        <a href="{{ url_for('episode', id_pod=id, id_ep=episode.id) }}" class="col-md-4 bg-light d-flex justify-content-center align-items-center">
+                            <p class="episode-title text-center display-6 mx-2 my-4">{{episode.title}}</p>
+                        </a>
 
-                            <!-- Traccia audio -->
-                            <div class="col-md-7">
-                                <div class="card-body row g-2">
-                                    {% if current_user.is_authenticated %}
-                                    
-                                    <!--TODO tagliare la descrizione a meno caratteri se troppo lunga -->
+                        <!-- Traccia audio -->
+                        <div class="col-md-7">
+                            <div class="card-body row g-2">
+                                {% if current_user.is_authenticated %}
+                                
+                                <!--TODO tagliare la descrizione a meno caratteri se troppo lunga -->
+                                <!-- Descrizione episodio -->
+                                <p class="episode-description d-flex card-text text-center justify-content-center align-items-center my-4">
+                                    {{episode.description}}
+                                </p>
+                                
+                                <hr>
+
+                                <!-- Traccia audio -->
+                                <audio controls class="w-100">
+                                    <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{episode.mime_type}}">
+                                    Audio {{episode.title}} del podcast {{podcast.title}} - Il tuo browser non supporta l'elemento audio.
+                                </audio>
+
+                                {% else %}
+                                
+                                <!-- Placeholder per i non iscritti -->
+                                <div class="d-flex flex-column align-items-center">
+
                                     <!-- Descrizione episodio -->
                                     <p class="episode-description d-flex card-text text-center justify-content-center align-items-center my-4">
                                         {{episode.description}}
                                     </p>
+
+                                    <!-- Placeholder shiny di bootstrap -->
+                                    <p class="placeholder-glow d-flex justify-content-center align-items-center">
+                                        <span class="placeholder col-12 px-0 px-md-5">
+                                            Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti!
+                                        </span>
+                                    </p>
                                     
-                                    <hr>
-
-                                    <!-- Traccia audio -->
-                                    <audio controls class="w-100">
-                                        <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{episode.mime_type}}">
-                                        Audio {{episode.title}} del podcast {{podcast.title}} - Il tuo browser non supporta l'elemento audio.
-                                    </audio>
-
-                                    {% else %}
-                                    
-                                    <!-- Placeholder per i non iscritti -->
-                                    <div class="d-flex flex-column align-items-center">
-
-                                        <!-- Descrizione episodio -->
-                                        <p class="episode-description d-flex card-text text-center justify-content-center align-items-center my-4">
-                                            {{episode.description}}
-                                        </p>
-
-                                        <!-- Placeholder shiny di bootstrap -->
-                                        <p class="placeholder-glow d-flex justify-content-center align-items-center">
-                                            <span class="placeholder col-12 px-0 px-md-5">
-                                                Accedi a DaraDara per iniziare ad ascoltare i tuoi podcast preferiti!
-                                            </span>
-                                        </p>
-                                        <!-- Bottone CTA per iscriversi -->
-                                        <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">
-                                            Accedi per ascoltare!
-                                        </a>
-                                    </div>
-
-                                    {% endif %}
-
+                                    <!-- Bottone CTA per iscriversi -->
+                                    <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">
+                                        Accedi per ascoltare!
+                                    </a>
                                 </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
 
+                                {% endif %}
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                </article>
             </div>
-            {% endfor%}
+
+        </div>
+        {% endfor%}
 
         {% else %}
 
             <!-- Nessun episodio (bootstrap card) -->
-            <div class="row card text-center mt-3">
+            <article class="row card text-center mt-3">
                 <div class="card-body">
                 <h5 class="card-title">Non c'è nulla da vedere qui 👀</h5>
                 {% if is_owner %}
@@ -244,7 +247,7 @@
                     <p class="card-text">Il proprietario del podcast non ha ancora pubblicato nessun episodio!</p>
                 {% endif %}
                 </div>
-            </div>
+            </article>
 
         {% endif %}
 

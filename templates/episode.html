@@ -25,19 +25,19 @@
     <div class="col mt-4 mt-lg-0">
         
         <!-- Titolo episodio -->
-        <section class="row d-flex justify-content-center align-items-center mb-3">
-            <h1>
+        <article class="row d-flex justify-content-center align-items-center mb-3">
+            <h2>
                 {{episode.title}}
                 {% if is_owner %}
                 <!-- NOTA: ho scelto di usare il tag a senza un vero href perchè così il puntatore del mouse diventa la mano bianca che indica il click e di conseguenza rende la UI più intuitiva -->
                 <a href="#" class="col-1 fa-solid fa-xs fa-pen-to-square mx-3" data-bs-toggle="modal" data-bs-target="#editEpisode"></a>
                 {% endif %}
-            </h1>
+            </h2>
             <p class="card-text"><small class="text-muted"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></small></p>
-        </section>
+        </article>
 
         <!-- Modal (Modifica info episodio) -->
-        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="editEpisodeLabel" aria-hidden="true" id="edit-episode-form">
+        <div class="modal fade" id="editEpisode" tabindex="-1" aria-labelledby="editEpisodeLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -46,9 +46,9 @@
                 </div>
                 <div class="modal-body">
                     <form class="d-flex flex-column" action="{{url_for('post_edit_episode', id_pod=id_pod, id_ep=id)}}" method="POST">
-                        <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{episode.title}}"/>
+                        <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{episode.title}}">
                         <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
-                        <textarea type="text" id="desc-input" name="desc" class="form-control mt-2" rows="16" minlength="16" maxlength="516">{{episode.description}}</textarea>
+                        <textarea id="desc-input" name="desc" class="form-control mt-2" rows="16" minlength="16" maxlength="516">{{episode.description}}</textarea>
                         <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
                         <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                     </form>
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Episode info (bootstrap card) -->
-        <div class="card">
+        <article class="card">
             <div class="card-body">
                 <p class="card-text">{{episode.description}}</p>
                 {% if not has_saved %}
@@ -70,10 +70,11 @@
             <div class="card-footer">
                 Pubblicato {{daysago}}
             </div>
-        </div>
+        </article>
+
+        <!-- Bottone trigger modale di eliminazione -->
         {% if is_owner %}
         <div class="row mx-0 my-2 d-flex justify-content-center align-content-center display-5">
-            <!-- Bottone trigger modale di eliminazione -->
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEpisodeModal">
                 Elimina episodio
             </button>
@@ -81,6 +82,7 @@
         {% endif %}
 
     </div>
+    
 </header>
 
 <!-- Modal (eliminazione episodio) -->
@@ -96,7 +98,7 @@
         </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-        <a href = "{{ url_for('post_delete_episode', id_ep=id, id_pod=id_pod) }}" type="button" id="delEpBtn" class="btn btn-danger">Ho capito, elimina l'episodio</a>
+        <a href = "{{ url_for('post_delete_episode', id_ep=id, id_pod=id_pod) }}" id="delEpBtn" class="btn btn-danger">Ho capito, elimina l'episodio</a>
         </div>
     </div>
     </div>
@@ -110,10 +112,10 @@
     <div class="row d-flex justify-content-center">
 
         {% if current_user.is_authenticated %}
-        <div id="player" class="col-md-7 w-100">
+        <div class="col-md-7 w-100">
             <div class="row g-2">
                 <div class="text-light p-3">
-                    <audio controls class="row w-100">
+                    <audio id="player" controls class="row w-100">
                         <source src="{{url_for('static', filename='uploads/audios/'+episode.id|string+episode.audio)}}" type="audio/{{mime_type}}">
                         Audio {{episode.title}} del podcast {{podcast.title}} - Il tuo browser non supporta l'elemento audio.
                     </audio>
@@ -164,84 +166,79 @@
     <!-- Sezione commenti (bootstrap card) -->
     <div class="row d-flex justify-content-center align-content-center my-2">
         <div class="row d-flex justify-content-center">
-            <div class="">
-                <div class="card shadow-0 border bg-ligth">
-                <div class="card-body p-4">
+            <div class="card shadow-0 border bg-ligth">
+            <div class="card-body p-4">
 
-                    <!-- Nuovo commento: form -->
-                    <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
-                        <div class="row">
-                            <textarea type="text" name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." rows="4" maxlength="300"></textarea>
-                        </div>
-                        <div class="row d-flex justify-content-between mt-3">
-                            <label class="col-6 form-label" for="addANote">+ Commento</label>
-                            <button type="submit" class="col-12 col-lg-2 btn btn-outline-dark">Pubblica</button>
-                        </div>
-                    </form>
-                    
-                    <!-- Commenti (serie di bootstrap card) -->
-                    {% for i in range(comments|length) %}
+                <!-- Nuovo commento: form -->
+                <form class="form-outline mb-4 mx-2" action="{{ url_for('post_new_comment', id_ep=id, id_pod=id_pod) }}" method="POST">
+                    <div class="row">
+                        <textarea name="text" id="addANote" class="form-control" placeholder="Scrivi un commento..." rows="4" maxlength="300"></textarea>
+                    </div>
+                    <div class="row d-flex justify-content-between mt-3">
+                        <label class="col-6 form-label" for="addANote">+ Commento</label>
+                        <button type="submit" class="col-12 col-lg-2 btn btn-outline-dark">Pubblica</button>
+                    </div>
+                </form>
+                
+                <!-- Commenti (serie di bootstrap card) -->
+                {% for i in range(comments|length) %}
 
-                    <div class="card mb-4">
-
-                        <!-- Contenuto del commento -->
-                        <div class="card-body">
-                            <p>{{comments[i].text}}</p>
-                            <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
-                                <div class="d-flex flex-row align-items-center">
-                                    <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="Immagine profilo di {{comments[i].name}} {{comments[i].surname}}" width="25"
-                                        height="25"/>
-                                    <p class="small mb-0 ms-2"><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></p>
-                                </div>
-                                <p class="mt-2 m-0"><small class="text-muted">{{comments[i].posted}}</small></p>
+                <div class="card mb-4">
+                    <!-- Contenuto del commento -->
+                    <article class="card-body">
+                        <p>{{comments[i].text}}</p>
+                        <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <!--TODO! Togli width e height attributes -->
+                                <img src="{{url_for('static', filename='uploads/images/propics/{0}{1}'.format(comments[i].id_user, comments[i].propic))}}" alt="Immagine profilo di {{comments[i].name}} {{comments[i].surname}}" width="25" height="25">
+                                <address class="small mb-0 ms-2"><a href="{{url_for('profile', id=comments[i].id_user)}}">{{comments[i].name}} {{comments[i].surname}}</a></address>
                             </div>
+                            <p class="mt-2 m-0"><small class="text-muted">{{comments[i].posted}}</small></p>
                         </div>
+                    </article>
 
-                        <!-- Tasti di Modifica / Eliminazione del commento -->
-                        {% if current_user.is_authenticated and current_user.id == comments[i].id_user %}
-                        <div class="card-footer d-flex justify-content-between">
-                            
-                            <div class="col-4 col-sm-3 col-lg-2">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-dark btn-outline-light" data-bs-toggle="modal" data-bs-target="#editComment-{{i}}">
-                                    Modifica
-                                </button>
-                            </div>
-                            
-                            <form class="col-8 col-sm-7 col-md-6 col-lg-5 d-flex justify-content-end" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
+                    <!-- Tasti di Modifica / Eliminazione del commento -->
+                    {% if current_user.is_authenticated and current_user.id == comments[i].id_user %}
+                    <div class="card-footer d-flex justify-content-between">
+                        
+                        <div class="col-4 col-sm-3 col-lg-2">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-dark btn-outline-light" data-bs-toggle="modal" data-bs-target="#editComment-{{i}}">
+                                Modifica
+                            </button>
+                        </div>
+                        
+                        <form class="col-8 col-sm-7 col-md-6 col-lg-5 d-flex justify-content-end" action="{{ url_for('post_delete_comment', id_pod=id_pod, id_ep=id) }}" method="POST">
+                            <input hidden name="timestamp" value="{{comments[i].timestamp}}">
+                            <button type="submit" class="col-8 col-lg-3 btn btn-danger">Elimina</button>
+                        </form>
+                        
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Modale (modifica comento) -->
+                <div class="modal fade" id="editComment-{{i}}" tabindex="-1" aria-labelledby="editCommentLabel-{{i}}" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editCommentLabel-{{i}}">Nuovo commento</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="d-flex flex-column" action="{{url_for('post_edit_comment', id_pod=id_pod, id_ep=id)}}" method="POST">
+                                <textarea name="new-text" class="form-control" rows="8" maxlength="300">{{comments[i].text}}</textarea>
                                 <input hidden name="timestamp" value="{{comments[i].timestamp}}">
-                                <button type="submit" class="col-8 col-lg-3 btn btn-danger">Elimina</button>
+                                <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                             </form>
-                            
-                        </div>
-                        {% endif %}
-
-                    </div>
-                    
-                    <!-- Modale (modifica comento) -->
-                    <div class="modal fade" id="editComment-{{i}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Nuovo commento</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form class="d-flex flex-column" action="{{url_for('post_edit_comment', id_pod=id_pod, id_ep=id)}}" method="POST">
-                                    <textarea type="text" name="new-text" class="form-control" rows="8" maxlength="300">{{comments[i].text}}</textarea>
-                                    <input hidden name="timestamp" value="{{comments[i].timestamp}}">
-                                    <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
-                                </form>
-                            </div>
-                        </div>
                         </div>
                     </div>
-  
+                    </div>
+                </div>
 
-                    {% endfor %}
-          
-                </div>
-                </div>
+                {% endfor %}
+        
+            </div>
             </div>
         </div>
     </div>

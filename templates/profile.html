@@ -37,18 +37,19 @@
         </div>
     </div>
 
-    <section class="col">
+    <article class="col">
 
         <!-- Nome e cognome -->
-        <h1 class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2">
-            <p class="text-nowrap text-center text-lg-start">{{user.name}} {{user.surname}}
+        <section class="row display-4 mt-3 mt-lg-0 mb-3 mx-lg-0 mx-2">
+            <h1 class="text-nowrap text-center text-lg-start">{{user.name}} {{user.surname}}
                 {% if is_creator %}
                 <i class="ms-2 fa-solid fa-podcast fa-xs"></i>
                 {% endif %}
-            </p>
-        </h1>
+            </h1>
+        </section>
+
         <!-- Biografia del profilo -->
-        <div class="row mx-lg-0 mx-2 ps-2">
+        <section class="row mx-lg-0 mx-2 ps-2">
             {% if not user.bio %}
                 {% if is_owner %}
                 <p class="text-muted">
@@ -66,14 +67,14 @@
                     {% endif %}
                 </p>
             {% endif %}
-        </div>
+        </section>
         
         <!-- Modal (update bio) -->
         <div class="modal fade" id="editBio" tabindex="-1" aria-labelledby="editBioLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editBioLabel">Modifica biografia profilo</h1>
+                <h2 class="modal-title fs-5" id="editBioLabel">Modifica biografia profilo</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -86,7 +87,7 @@
             </div>
         </div>
 
-    </section>
+    </article>
 </header>
 
 <!-- Profile body (podcast pubblicati e seguiti) -->
@@ -96,10 +97,12 @@
     {% if is_owner or (is_creator and privacy[0] == 0) %}
     <!-- Lista podcast pubblicati (bootstrap card orizzontale) -->
     <div class="row mt-3">
-        <div id="owned" class="card mb-3 mx-lg-0 mx-2 p-0">
+
+        <article id="owned" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
+
                 <!-- Card header -->
-                <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
+                <section class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <p class="row text-nowrap text-wrapper">Podcast 🎙️</p>
                     
                     <!-- Se l'utente che visualizza è il proprietario mostra i tasti per privatizzare o rendere pubblica la sezione (icona dell'occhio) -->
@@ -112,9 +115,10 @@
                     </div>
                     {% endif %}
                     
-                </div>
+                </section>
+
                 <!-- Card body -->
-                <div class="col">
+                <section class="col">
                     <div class="card-body row g-2">
                         {% if is_creator %}
 
@@ -122,48 +126,51 @@
                             <!-- Mostra massimo 5 podcast, per gli altri l'utente potrà premere il tasto "Visualizza tutti" -->
                             {% for podcast in podcasts[:5] %}
                             
-                            <div class="d-inline-block mx-2 border rounded-2 px-2">
+                            <article class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                 <a href="{{url_for('podcast', id=podcast.id)}}" class="col-4 d-flex align-items-center justify-content-center">
-                                    <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="img-card img-fluid" alt="Immagine {{podcast.title}}" style="max-width: 100px;">
+                                    <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" class="card-scroll-img img-card img-fluid" alt="Immagine {{podcast.title}}">
                                 </a>
-                                <section class="col-8 mt-2" style="max-width: 250px;">
+                                <section class="card-scroll-info col-8 mt-2">
                                     {% if podcast.title|length > 23 %}
                                         <h5 class="text-wrap text-break"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title[:20]}}...</a></h5>
                                     {% else %}
                                         <h5 class="text-wrap text-break"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></h5>
                                     {% endif %}
                                     {% if podcast.desc|length > 70 %}
-                                        <p class="text-wrap text-break">{{podcast.desc[:67]}}...</p>
+                                        <p class="card-scroll-info-text text-wrap text-break">{{podcast.desc[:67]}}...</p>
                                     {% else %}
-                                        <p class="text-wrap text-break" style="min-height: 72px;">{{podcast.desc}}</p>
+                                        <p class="card-scroll-info-text text-wrap text-break">{{podcast.desc}}</p>
                                     {% endif %}
                                 </section>
                                 </div>
-                            </div>
+                            </article>
 
                             {% endfor %}
                         </div>
 
                         {% else %}
-                            <section>
+                            <article>
                                 <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                                 <p class="card-text">Diventa un podcaster per pubblicare il tuo primo podcast!</p>
-                            </section>
+                            </article>
                         {% endif %}                            
                         
                     </div>
-                </div>
+                </section>
+
                 <!-- Se il visualizzatore è il proprietario del profilo metti un tasto "Nuovo podcast/Diventa podcaster" -->
                 {% if current_user.id == user.id %}
                 <!-- Card footer -->
                 <a href="{{url_for('new_podcast')}}" class="col-12 col-lg-1 btn btn-lg btn-light border-start rounded-0-start border-dark-start bg-light d-flex flex-lg-column justify-content-center align-items-center" role="button">
                     <div>{% if podcasts %}Nuovo podcast{% else %}Diventa podcaster!{% endif %}</div>
-                    <i class="fa-solid fa-microphone mt-0 ms-3 mt-lg-3 ms-lg-0" style="font-size: x-large;"></i>
+                    <i class="fa-solid fa-microphone mt-0 ms-3 mt-lg-3 ms-lg-0"></i>
                 </a>
                 {% endif %}
+
             </div>
-        </div>
+        </article>
+
     </div>
     {% endif %}
 
@@ -171,10 +178,12 @@
     {% if is_owner or (not is_owner and privacy[1] == 0) %}
     <!-- Lista podcast seguiti (bootstrap card orizzontale) -->
     <div class="row mt-3">
-        <div id="follows" class="card mb-3 mx-lg-0 mx-2 p-0">
+
+        <article id="follows" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
+
                 <!-- Card header -->
-                <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
+                <section class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <div class="row my-4 d-flex justify-content-center align-items-center">
                         <p class="text-nowrap text-center mb-0">Seguiti 🥳</p>
                     </div>
@@ -201,10 +210,10 @@
                         </div>
                         {% endif %}
                     {% endif %}
+                </section>
 
-                </div>
                 <!-- Card body -->
-                <div class="col">
+                <section class="col">
                     <div class="card-body row g-2">
                         <!-- Se ci sono podcast mostrali -->
                         {% if follows %}
@@ -213,54 +222,58 @@
                             <!-- Mostra massimo 5 podcast, per gli altri l'utente potrà premere il tasto "Visualizza tutti" -->
                             {% for follow in follows[:5] %}
                             
-                            <div class="d-inline-block mx-2 border rounded-2 px-2">
+                            <article class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                     <a href="{{url_for('podcast', id=follow.id_podcast)}}" class="col-4 d-flex align-items-center justify-content-center">
-                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(follow.id, follow.img))}}" class="img-fluid" alt="Immagine {{follow.title}}" style="max-width: 100px;">
+                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(follow.id, follow.img))}}" class="card-scroll-img img-card img-fluid" alt="Immagine {{follow.title}}">
                                     </a>
-                                    <section class="col-8 mt-2" style="max-width: 250px;">
+                                    <section class="card-scroll-info col-8 mt-2">
                                         {% if follow.title|length > 23 %}
                                             <h5 class="text-wrap text-break"><a href="{{url_for('podcast', id=follow.id_podcast)}}">{{follow.title[:20]}}...</a></h5>
                                         {% else %}
                                             <h5 class="text-wrap text-break"><a href="{{url_for('podcast', id=follow.id_podcast)}}">{{follow.title}}</a></h5>
                                         {% endif %}
                                         {% if follow.desc|length > 70 %}
-                                            <p class="text-wrap text-break">{{follow.desc[:67]}}...</p>
+                                            <p class="card-scroll-info-text text-wrap text-break">{{follow.desc[:67]}}...</p>
                                         {% else %}
-                                            <p class="text-wrap text-break" style="min-height: 72px;">{{follow.desc}}</p>
+                                            <p class="card-scroll-info-text text-wrap text-break">{{follow.desc}}</p>
                                         {% endif %}
                                     </section>
                                 </div>
-                            </div>
+                            </article>
 
                             {% endfor %}
                             
                         </div>
                         <!-- Altrimenti mostra delle frasi che dicono che non ci sono podcast da visualizzare -->
                         {% else %}
-                            <section>
+                            <article>
                                 <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                                 {% if is_owner %}
                                     <p class="card-text"><small class="text-muted">Segui i tuoi podcast preferiti per vederli qui la prossima volta!</small></p>
                                 {% else %}
                                     <p class="card-text"><small class="text-muted">{{user.name}} non segue nessun podcast!</small></p>
                                 {% endif %}
-                            </section>
+                            </article>
                         {% endif %}
                     </div>
-                </div>
+                </section>
+
             </div>
-        </div>
+
+        </article>
     </div>
     {% endif %}
 
     {% if is_owner or (not is_owner and privacy[2] == 0) %}
     <!-- Lista episodi salvati -->
     <div class="row mt-3">
-        <div id="saves" class="card mb-3 mx-lg-0 mx-2 p-0">
+
+        <article id="saves" class="card mb-3 mx-lg-0 mx-2 p-0">
             <div class="row g-0">
+
                 <!-- Card header -->
-                <div class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
+                <section class="col-12 col-xxl-3 card-header d-flex flex-column justify-content-evenly align-items-center display-6">
                     <div class="row my-4 d-flex justify-content-center align-items-center">
                         <p class="text-nowrap text-center mb-0">Episodi salvati 📋</p>
                     </div>
@@ -288,9 +301,10 @@
                         {% endif %}
                     {% endif %}
 
-                </div>
+                </section>
+
                 <!-- Card body -->
-                <div class="col">
+                <section class="col">
                     <div class="card-body g-2">
                         {% if saves %}
                         <div class="card-scroll">
@@ -298,45 +312,46 @@
                             <!-- Mostra solo i 5 primi episodi, per gli altri c'è il tasto "Visualizza tutti" -->
                             {% for save in saves[:5] %}
                             
-                            <div class="d-inline-block mx-2 border rounded-2 px-2">
+                            <article class="d-inline-block mx-2 border rounded-2 px-2">
                                 <div class="row">
                                     <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}" class="col-4 d-flex align-items-center justify-content-center">
-                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="img-fluid" alt="Immagine {{save.title}}" style="max-width: 100px;">
+                                        <img src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}" class="card-scroll-img img-card img-fluid" alt="Immagine {{save.title}}">
                                     </a>
-                                    <!--TODO! Rimovi l'attribute style-->
-                                    <section class="col-8 mt-2" style="max-width: 250px;">
+                                    <section class="card-scroll-info col-8 mt-2">
                                         {% if save.title|length > 23 %}
                                             <h5 class="text-wrap text-break"><a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">{{save.title[:20]}}...</a></h5>
                                         {% else %}
                                             <h5 class="text-wrap text-break"><a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">{{save.title}}</a></h5>
                                         {% endif %}
                                         {% if save.desc|length > 70 %}
-                                            <p class="text-wrap text-break">{{save.desc[:67]}}...</p>
+                                            <p class="card-scroll-info-text text-wrap text-break">{{save.desc[:67]}}...</p>
                                         {% else %}
-                                            <p class="text-wrap text-break" style="min-height: 72px;">{{save.desc}}</p>
+                                            <p class="card-scroll-info-text text-wrap text-break">{{save.desc}}</p>
                                         {% endif %}
                                     </section>
                                 </div>
-                            </div>
+                            </article>
 
                             {% endfor %}
                             
                         </div>
                         <!-- Altrimenti mostra della frasi che dicono che non ci sono episodi salvati -->
                         {% else %}
-                            <section>
+                            <article>
                                 <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                                 {% if is_owner %}
                                     <p class="card-text"><small class="text-muted">Salva i tuoi episodi preferiti per vederli qui la prossima volta!</small></p>
                                 {% else %}
                                     <p class="card-text"><small class="text-muted">{{user.name}} non ha ancora salvato nessun episodio!</small></p>
                                 {% endif %}
-                            </section>
+                            </article>
                         {% endif %}
                     </div>
-                </div>
+                </section>
+
             </div>
-        </div>
+        </article>
+
     </div>
     {% endif %}
 

@@ -10,7 +10,7 @@
     <aside class="col-12 col-lg-3">
 
         <!-- Header -->
-        <div class="row text-nowrap d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati 🎙️</div>
+        <h2 class="row text-nowrap d-flex justify-content-center display-6 my-4 my-lg-5">Episodi salvati 🎙️</h2>
 
         {% if current_user.is_authenticated %}
 
@@ -19,24 +19,24 @@
 
                 {% for save in saves[:4] %}
                 <!-- Saved episode (bootstrap card) -->
-                <div class="row card mb-3 mx-2 mx-lg-0">
+                <article class="row card mb-3 mx-2 mx-lg-0">
                     <div class="row g-0">
                         <div class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
                             <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">
-                            <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}"  alt="Immagine podcast {{save.podcast_title}}">   
+                            <img class="card-img-left img-fluid d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(save.id, save.img))}}"  alt="Immagine podcast {{save.podcast_title}}">   
                             </a> 
                         </div>
-                        <div class="col-10 col-lg-8">
+                        <section class="col-10 col-lg-8">
                             <div class="card-body">
-                                <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}"><h5 class="card-title">{{ save.title }}</h5></a>
-                                <a href="{{url_for('podcast', id=save.id)}}"><p class="card-text"><small class="text-muted">{{save.podcast_title}}</small></p></a>
+                                <h5 class="card-title"><a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}">{{ save.title }}</a></h5>
+                                <p class="card-text"><small class="text-muted"><a href="{{url_for('podcast', id=save.id)}}">{{save.podcast_title}}</a></small></p>
                             </div>
-                        </div>
+                        </section>
                         <div class="card-footer d-flex justify-content-center justify-content-lg-start">
                             <a href="{{url_for('episode', id_pod=save.id, id_ep=save.ep_id)}}#player" class="btn btn-light btn-outline-dark"><i class="fa-solid fa-play me-2"></i>Riproduci l'episodio</a>
                         </div>
                     </div>
-                </div>
+                </article>
                 {% endfor %}
 
                 <div class="d-flex justify-content-center align-items-center">
@@ -50,7 +50,7 @@
             {% else %}
 
                 <!-- Placeholder for no-saves case (bootstrap card) -->
-                <div class="card text-center">
+                <article class="card text-center">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Nulla da vedere! 👀</h5>
                     </div>
@@ -59,14 +59,14 @@
                         <a href="{{url_for('categories')}}" class="btn btn-light btn-outline-dark">Cerca nuovi podcast</a>
                     </div>
                     
-                </div>
+                </article>
 
             {% endif %}
 
         {% else%}
 
             <!-- Placeholder for no-logged users (bootstrap card) -->
-            <div class="card text-center">
+            <article class="card text-center">
                 <div class="card-header">
                     Sai che puoi salvare i tuoi episodi preferiti? 🤔
                 </div>
@@ -75,7 +75,7 @@
                     <p class="card-text">Entra in DaraDara con il bottone qui sotto o in alto a destra</p>
                     <a href="{{url_for('login')}}" class="btn btn-outline-dark btn-light">Accedi o registrati</a>
                 </div>
-            </div>
+            </article>
 
         {% endif %}
         
@@ -85,25 +85,23 @@
     <main class="col-12 col-lg offset-lg-1">
 
         <!-- Header -->
-        <div class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga 🔥</div>
+        <h2 class="row d-flex justify-content-center display-6 my-4 my-lg-5">I podcast più in voga 🔥</h2>
 
         <!-- Body -->
         {% for podcast in onfire %}
 
         <!-- Podcast (bootstrap card) -->
-        <div class="row card mb-3 mx-2 mx-lg-0">
+        <article class="row card mb-3 mx-2 mx-lg-0">
             <div class="row g-0">
                 <a href="{{url_for('podcast', id=podcast.id)}}" class="col-2 col-lg-4 d-flex justify-content-around align-items-center">
-                    <img class="card-img-left img-fluid h-100 w-100 d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast {{podcast.title}}">    
+                    <img class="card-img-left img-fluid d-block mx-auto p-1 p-lg-2" src="{{url_for('static', filename='uploads/images/covers/{0}{1}'.format(podcast.id, podcast.img))}}" alt="Immagine podcast {{podcast.title}}">    
                 </a>
-                <div class="col-10 col-lg-8">
+                <section class="col-10 col-lg-8">
                     <div class="card-body">
-                        <a href="{{url_for('podcast', id=podcast.id)}}">
-                        <p class="card-title display-6">{{podcast.title}}</p>
-                        </a>
+                        <p class="card-title display-6"><a href="{{url_for('podcast', id=podcast.id)}}">{{podcast.title}}</a></p>
                         <p class="card-text">{{podcast.desc}}</p>
                     </div>
-                </div>
+                </section>
                 <div class="card-footer">
                 {% if podcast.last_update %}
                     <p class="card-text"><small class="text-muted">Ultimo aggiornamento {{podcast.last_update}}</small></p>
@@ -112,7 +110,7 @@
                 {% endif %}
                 </div>
             </div>
-        </div>
+        </article>
         {% endfor %}
 
     </main>

@@ -25,4 +25,20 @@
     background-color: #000000; /*colore scrollbar*/
 }
 
+.card-scroll-img-holder {
+    max-width: 100px;
+}
 
+.card-scroll-img {
+    overflow: hidden;
+    max-width: 85px;
+    max-height: 85px;
+}
+
+.card-scroll-info {
+    max-width: 250px;
+}
+
+.card-scroll-info-text {
+    min-height: 75px;
+}

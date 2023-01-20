@@ -17,7 +17,7 @@ Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5
 
 ## Dispositivi compatibili
 
-DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 450px di larghezza e 800x di altezza). DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
+DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 350px di larghezza e 600x di altezza). DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
 
 ## Alcune linee guida per utilizzare DaraDara
 
