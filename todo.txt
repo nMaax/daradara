@@ -55,7 +55,7 @@
 [X] Imposta modifica immagine del profilo
 [X] Metti Humaaans
 [X] Fai funzionare il tasto di ricerca podcast sulla nav
-[ ] Rendi il codice di app e dao più leggibile
+[X] Rendi il codice di dao più leggibile
 [X] Ripulisci data.db (resetta le sql-sequences)
 
 [X] Rimetti a posto i tag <a>
@@ -63,32 +63,36 @@
 [X] Metti gli alt nelle immagini
 [X] Togli style e script tags
 [X Sostituisci le section con article dove possibile
-[ ] Controlla gli errori, TODO, !, ? e # type:ignore
-[ ] Cambia i getElementById/Class in searchQuery
+[X] Controlla gli errori, TODO, !, ? e # type:ignore
+[-] Cambia i getElementById/Class in searchQuery
 [X] Commenta dove necessario
 [X] Fai la javadoc di tutti i programmi al di fuori di dao e app
 [X] Commenta ogni statemnt jinja (almeno i {%%})
 [-] Sostituisci tutti i dict[ ] con dict.get( )
-[ ] Fai html validator
+[X] Fai html validator
 
-[ ] Risolvi problemi scrollable cards in profile.html
+[X] Risolvi problemi scrollable cards in profile.html
 
 [X] Definisci pagine di footer, link social e altre pagine
 [X] Definisci pagine di errore
 [X] Definsci colori, icone e font
     Cambia colori dei bottoni: usa nero bianco e rosso
-[ ] Metti controllo whitespaces anche su modifica bio user 
-[ ] Sostituisci gli alert di js con altro
+[-] Metti controllo whitespaces anche su modifica bio user
+    Non è necessario
+[-] Sostituisci gli alert di js con altro
 
 *** Extra ***
 
+[ ] Guarda video di FAQ di IAW
 [ ] Utilizza più CSS?
-[ ] Evita variabili js globali
+[ ] Rendi il codice di app più leggibile e metti i commenti
+[X] Evita variabili js globali
+    Non ne usi. Il prof intendeva delle variabili globali in layout o comunque che si condividano da pagina a pagina
 
 --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 
-[ ] Controlla i TODO?
+[X] Controlla i TODO?
 [X] Aggiungi sistema di modifica profilo
 [X] Aggiungi bio del profilo
-[ ] Cambia attirbuto tabella episode in desc e non description
-[ ] Fai una schermata di welcome
+[-] Cambia attirbuto tabella episode in desc e non description
+[-] Fai una schermata di welcome

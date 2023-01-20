@@ -3,6 +3,9 @@
 }
 
 img {
+    min-width: 10px;
+    min-height: 10px;
+
     max-width: 800px;
     max-height: 800px;
 }
