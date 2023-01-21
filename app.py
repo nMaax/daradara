@@ -917,7 +917,28 @@ def post_edit_episode(id_pod: int, id_ep: int):
     elif len(desc)<16 or len(desc) > 516:
         check = False
 
-    # Controls that the data is in the rigth range
+    # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
+    episode = dao.get_episode(id_ep)
+    podcast = dao.get_podcast(id_pod)
+    if not episode:
+        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
+        return redirect(session.get('previous_url', '/'))
+    elif podcast['id_user'] != current_user.id: # type: ignore
+        flash(message='Non sei il proprietario del podcast', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    elif episode['id_podcast'] != id_pod or not podcast:
+        flash(message='Podcast e episodio non corrispondono, oppure non esistono', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+    elif not check:
+        flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
+        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
+
+    if episode['title'] == title:
+            title = None
+    if episode['description'] == desc:
+        desc = None
+
+    # Checking the data
     try:
         py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
         min_date = datetime(2022, 1, 1)
@@ -940,28 +961,7 @@ def post_edit_episode(id_pod: int, id_ep: int):
         flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
         timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
-    # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
-    episode = dao.get_episode(id_ep)
-    podcast = dao.get_podcast(id_pod)
-    if not episode:
-        flash(message='Il podcast che hai richiesto di eliminare non esiste', category='warning')
-        return redirect(session.get('previous_url', '/'))
-    elif podcast['id_user'] != current_user.id: # type: ignore
-        flash(message='Non sei il proprietario del podcast', category='warning')
-        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-    elif episode['id_podcast'] != id_pod or not podcast:
-        flash(message='Podcast e episodio non corrispondono, oppure non esistono', category='warning')
-        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-    elif not check:
-        flash(message='I dati sono mancanti o erronei, riprovare', category='warning')
-        return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
-
     try:
-
-        if episode['title'] == title:
-            title = None
-        if episode['description'] == desc:
-            desc = None
 
         # Otherwise edit the podcast
         if title or desc or timestamp:
@@ -1164,7 +1164,7 @@ def random_pod():
     max_id = dao.get_last_podcast_id()
     try:
         visited_id = session['last_podcast_visited']
-    except KeyError as e:
+    except KeyError:
         visited_id = 0
     id = randint(1, max_id)
     while id == visited_id or not dao.get_podcast(id):
