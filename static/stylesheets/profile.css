@@ -1,27 +1,29 @@
+/* Classi definite per avere le varie sezioni orizzontali nel profilo con overflow-scrolling (dato che bootstrap non fornisce delle vere classi per le carte orizzontali ma si limita a usare row e col) */
+
+/* Il card scroller */
 .card-scroll {
     overflow-x: scroll;
     white-space: nowrap;
 }
 
+/* Le immagini delle carte contenute nel card scroller */
 .card-scroll-img {
     overflow: hidden;
     max-width: 85px;
     max-height: 85px;
 }
 
-.card-scroll-img-holder {
-    max-width: 100px;
-}
-
+/* Definisce come ogni carta dentro il card scroll debba essere, in questo caso non più larghe di 250px */
 .card-scroll-info {
     max-width: 250px;
 }
 
+/* Definisce il testo contenuto in descrizione delle carte contenute in card scroll */
 .card-scroll-info-text {
     min-height: 75px;
 }
 
-/* Elementi CSS per modificare la barra di scrolling orizzontale, preso da google */
+/* Elementi CSS per modificare la barra di scrolling orizzontale, preso da Google */
 
 /* Webkit (Chromium) */
 .card-scroll::-webkit-scrollbar {

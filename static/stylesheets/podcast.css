@@ -1,3 +1,4 @@
+/* Definisco l'upperbound delle immagini che stanno come icona del podcast */
 .podcast-img {
     max-height: 300px;
     max-width: 300px;

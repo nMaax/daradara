@@ -1,8 +1,10 @@
+/* Definisco l'upper bound di dimenioni dell'immagine del podcast nella pagina dell'episodio */
 .episode-img {
     max-height: 200px;
     max-width: 200px;
 }
 
+/* Definisco le dimensioni della propic dei commentatori */
 .comment-avatar {
     width: 25px;
     height: 25px;

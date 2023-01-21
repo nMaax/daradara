@@ -715,10 +715,13 @@ def post_update_podcast_img(id: int):
 @app.route('/podcast/<int:id_pod>/episode/<int:id_ep>')
 def episode(id_pod: int, id_ep: int):
     episode = dao.get_episode(id_ep)
+
     if episode and episode['id_podcast'] == id_pod:
-        daysago = days_ago(episode['timestamp'])
+        
         podcast = dao.get_podcast(id_pod)
         comments = dao.get_comments_join_users(id_ep)
+        daysago = days_ago(episode['timestamp'])
+
         if comments:
             comments = add_days_ago(comments)
 
@@ -735,7 +738,9 @@ def episode(id_pod: int, id_ep: int):
         session['last_podcast_visited'] = id_pod
         session['previous_url'] = request.url
         return render_template('episode.html', id=id_ep, id_pod=id_pod, podcast=podcast, episode=episode, daysago=daysago, comments=comments, mime_type=mime_type, has_saved=has_saved, is_owner=is_owner)
+    
     else:
+    
         flash(message='L\'episodio che hai provato di aprire non appartiene a questo podcast', category='warning')
         return redirect(session.get('previous_url', '/'))
 

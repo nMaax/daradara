@@ -1,7 +1,9 @@
+/* Regole globali, definisco il font del sito preso da Google Fonts */
 * {
     font-family: 'League Spartan', sans-serif;
 }
 
+/* Definisco il range massimo e minimo di pixel per qualsiasi immagine su DaraDara */
 img {
     min-width: 10px;
     min-height: 10px;
@@ -16,25 +18,29 @@ a:not(.stock-a, .vanilla-a, .nav-link) {
     text-decoration: none;
 }
 
+/* Definisco una versione del tag a che non sia sempre blu */
 .vanilla-a {
     color: inherit;
 }
 
-/* Forzo il logo in navbar a essere dentro un 50x50 */
+/* Forzo il logo in navbar a essere dentro un 60x60 */
 .nav-img {
     max-width: 60px;
     max-height: 60px;
 }
 
+/* Creo un bordo sulla sinistra dell'elemento, utilizzato per il tasto "Nuovo podcast" nel profilo */
 .rounded-0-start {
     border-top-left-radius: 0rem;
     border-bottom-left-radius: 0rem;
 }
 
+/* Creo una classe aggiuntiva per le fa icons */
 .fa-xxs {
     font-size: 0.5em; /* adjust as needed */
 }
 
+/* Definsci l'icona di dialogo che compare sotto il field password nella pagina di registrazione */
 .form-tooltip {
     background-color: #f5f5f5;
     border-radius: 3px;
