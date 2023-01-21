@@ -896,13 +896,14 @@ def post_edit_episode(id_pod: int, id_ep: int):
     # Retriving data 
     title = request.form['title']
     desc = request.form['desc']
+    date = request.form['date']
 
     # Cleaning data
     title = title.strip()
     desc = desc.strip()
     
     check = True
-    if not title or not desc:
+    if not title or not desc or not date:
         check = False
     elif len(title) < 4 or len(title) > 32:
         check = False
@@ -927,14 +928,36 @@ def post_edit_episode(id_pod: int, id_ep: int):
 
     try:
 
+        try:
+            py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
+            min_date = datetime(2022, 1, 1)
+            max_date = datetime.now()
+
+            app.logger.info(episode['timestamp'][:10])
+
+            if py_date.date() < min_date.date():
+                raise ValueError("The date is before the date lower bound")
+            elif py_date.date() > max_date.date():
+                raise ValueError("The date is after the date upper bound (today)")
+            elif py_date.date() == datetime.now().date():
+                timestamp = datetime.now().strftime(ISO_TIMESTAMP)
+            elif py_date.date() == date_parser.parse(episode['timestamp'][:10]).date():
+                app.logger.info('setted to None')
+                timestamp = None
+            else:
+                timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
+        except Exception as e:
+            flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
+            timestamp = datetime.now().strftime(ISO_TIMESTAMP)
+
         if episode['title'] == title:
             title = None
         if episode['description'] == desc:
             desc = None
 
         # Otherwise edit the podcast
-        if title or desc:
-            ep_result = dao.update_episode(id=id_ep, title=title, desc=desc)
+        if title or desc or timestamp:
+            ep_result = dao.update_episode(id=id_ep, title=title, desc=desc, timestamp=timestamp)
         else:
             ep_result = True
 

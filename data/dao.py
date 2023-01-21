@@ -707,10 +707,8 @@ def update_episode_field(id, field, value):
     success = True
 
     try:
-        if field == 'title' or field == 'description' or field == 'timestamp':
+        if field == 'title' or field == 'description' or field == 'timestamp' or field == 'audio':
             sql = 'UPDATE episodes SET '+ field +' = ? WHERE id = ?'
-        elif field == 'audio':
-            sql = 'UPDATE episodes SET audio = ?, timestamp = "'+ datetime.now().strftime(ISO_TIMESTAMP) +'" WHERE id = ?'
         else:
             raise ValueError('Invalid field name')
 

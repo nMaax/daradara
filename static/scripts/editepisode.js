@@ -22,3 +22,7 @@ form.addEventListener("submit", function(event) {
         form.submit();
     }
 });
+
+// Setting the maximum input date to today
+let inputDate = document.getElementById('date-input');
+inputDate.setAttribute('max', dayjs().format('YYYY-MM-DD'));

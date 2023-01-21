@@ -4,9 +4,9 @@ DaraDara è un'applicazione web per l'ascolto e la pubblicazione di podcast.
 
 Il nome deriva dall'onomatopea giapponese「だらだら」che, secondo [Tofugu](https://www.tofugu.com/japanese/japanese-onomatopoeia/), si usa per indicare il "vocio" che si crea quando una persona sta "parlando o spiegando qualcosa di molto poco chiaro e ci sta mettendo tantissimo tempo per farlo"
 
-## Installazione veloce
+## Installazione veloce 🚀
 
-Per avviare l'applicazioe è sufficente collocarsi nel percorso file opportuno e digitare i seguenti comandi sul proprio terminale
+Per avviare l'applicazione è sufficente collocarsi nel percorso file opportuno e digitare i seguenti comandi sul proprio terminale
 
 ```prompt
 pip install -r requirements.txt
@@ -15,7 +15,29 @@ flask run
 
 Dopodichè sarà necessario aprire una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito (Google Chrome o Firefox).
 
-## Dispositivi compatibili
+Per terminare l'applicazione basterà premere ```CTRL + C``` ripetutamente nello stesso terminale
+
+### Installazione con virtual enviroment
+
+Eventualmente, se non si volessero installare le dipendenze pyhton contenute in requirements.txt a livello globale, prima di avviare i comandi sopra elencati, è possibile creare e attivare un *python virtual enviroment* con i seguenti comandi
+
+Per macchine *OSX / Linux*
+
+```prompt
+python3 -m venv venv
+. venv/bin/activate
+```
+
+Per macchine *Windows*
+
+```prompt
+python -m venv venv
+. venv/Scripts/activate
+```
+
+per terminare il virtual enviroment è sufficiente digitate ```deactivate``` sempre nello stesso terminale
+
+## Dispositivi compatibili 📲
 
 DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 375px di larghezza e 600x di altezza)
 
@@ -37,6 +59,7 @@ Ogni icona rappresentante un occhio che indica se si vuole tenere quella data se
 
 I 4 podcast più in voga, visualizzabili esclusivamente nella home, sono i podcast con più seguaci su DaraDara, condizione necesaria affinché un podcast possa finire in voga è di aver almeno 1 seguace e almeno 1 episodio
 
+> ***Note***
 > Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti se ne può
 
 ### Cosa fa il tasto "sorprendimi" nella navabar?
@@ -52,7 +75,7 @@ Per facilitare il debug sono state aggiunte due root "nascoste" per ripulire i d
 
 Si consieri che queste route non sarebbero ovviamente pubblicate in un applicazione web aperta al pubblico, sono da utilizzare solo a scopo di debugging.
 
-## Utenti e serie già presenti
+## Utenti e serie già presenti 🙋
 
 DaraDara è già fornito di alcuni dati di esempio per fornire un esperienza utente basilare per testare tutte le feature messe a disposizione e richieste dal tema d'esame
 
@@ -90,7 +113,7 @@ Alcuni utenti già seguono alcune serie, altri ancora hanno già salvato degli e
 * Basketball (di Jane)
 * Tennis (di Michael)
 
-## Risorse utilizzate
+## Risorse utilizzate 🗃️
 
 DaraDara è stato scritto utilizzando i seguenti linguaggi:
 
