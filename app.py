@@ -861,6 +861,7 @@ def post_new_episode(id_pod: int):
 
             flash("Episodio aggiunto con successo!", 'success')
             return redirect(url_for('podcast', id = id_pod))
+
         except Exception as e:
             flash("Impossibile aggiugere l'episodio, qualcosa è andato storto - ERR: " + str(e), 'danger')
             return redirect(url_for('new_episode', id_pod=id_pod))
@@ -907,6 +908,7 @@ def post_edit_episode(id_pod: int, id_ep: int):
     title = title.strip()
     desc = desc.strip()
     
+    # Checking data
     check = True
     if not title or not desc or not date:
         check = False
@@ -914,6 +916,29 @@ def post_edit_episode(id_pod: int, id_ep: int):
         check = False
     elif len(desc)<16 or len(desc) > 516:
         check = False
+
+    # Controls that the data is in the rigth range
+    try:
+        py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
+        min_date = datetime(2022, 1, 1)
+        max_date = datetime.now()
+
+        app.logger.info(episode['timestamp'][:10])
+
+        if py_date.date() < min_date.date():
+            raise ValueError("The date is before the date lower bound")
+        elif py_date.date() > max_date.date():
+            raise ValueError("The date is after the date upper bound (today)")
+        elif py_date.date() == datetime.now().date():
+            timestamp = datetime.now().strftime(ISO_TIMESTAMP)
+        elif py_date.date() == date_parser.parse(episode['timestamp'][:10]).date():
+            app.logger.info('setted to None')
+            timestamp = None
+        else:
+            timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
+    except Exception as e:
+        flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
+        timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
     # If the podcast doesnt exist or the user that is trying to edit it is not the owner abort
     episode = dao.get_episode(id_ep)
@@ -932,28 +957,6 @@ def post_edit_episode(id_pod: int, id_ep: int):
         return redirect(url_for('episode', id_ep=id_ep, id_pod=id_pod))
 
     try:
-
-        try:
-            py_date = date_parser.parse(date) # date_parser(date) takes a string and converts it to a datetime object (if the parameter is not recognized as a date raises an Error that the try except will catch)
-            min_date = datetime(2022, 1, 1)
-            max_date = datetime.now()
-
-            app.logger.info(episode['timestamp'][:10])
-
-            if py_date.date() < min_date.date():
-                raise ValueError("The date is before the date lower bound")
-            elif py_date.date() > max_date.date():
-                raise ValueError("The date is after the date upper bound (today)")
-            elif py_date.date() == datetime.now().date():
-                timestamp = datetime.now().strftime(ISO_TIMESTAMP)
-            elif py_date.date() == date_parser.parse(episode['timestamp'][:10]).date():
-                app.logger.info('setted to None')
-                timestamp = None
-            else:
-                timestamp = py_date.strftime(ISO_DATE) + " " + DEFAULT_HOUR
-        except Exception as e:
-            flash("E' stata inserita una data in un formato non corretto, conseguentemente questa è stata cambiata all'istante odierno - ERR: "+str(e), 'info')
-            timestamp = datetime.now().strftime(ISO_TIMESTAMP)
 
         if episode['title'] == title:
             title = None
@@ -1186,6 +1189,10 @@ def load_user(user_id):
     return User(dao.get_user(user_id))
 
 # Error handling routes
+@app.errorhandler(400)
+def bad_request(error):
+  return render_template('error.html', error=error, code=400, previous_url=session.get('previous_url', '/'))
+
 @app.errorhandler(401)
 def unauthorized(error):
   return render_template('error.html', error=error, code=401, previous_url=session.get('previous_url', '/'))
@@ -1202,10 +1209,13 @@ def not_found(error):
 def handle_method_not_allowed(error):
     return render_template('error.html', error=error, code=405, previous_url=session.get('previous_url', '/'))
 
-# Route for testing pages (ignore this)
-@app.route('/test')
-def test():
-    return render_template('error.html')
+@app.errorhandler(500)
+def internal_server_error(error):
+  return render_template('error.html', error=error, code=500, previous_url=session.get('previous_url', '/'))
+
+@app.errorhandler(503)
+def service_unavailable(error):
+  return render_template('error.html', error=error, code=503, previous_url=session.get('previous_url', '/'))
 
 # Route for cleaning data stoared by Flask-Session and Flask-Login
 @app.route('/clear_session')
