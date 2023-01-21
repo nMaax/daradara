@@ -75,6 +75,18 @@ Per facilitare il debug sono state aggiunte due root "nascoste" per ripulire i d
 
 Si consieri che queste route non sarebbero ovviamente pubblicate in un applicazione web aperta al pubblico, sono da utilizzare solo a scopo di debugging.
 
+### Reset del database
+
+In aggiunta è possibile trovare dentro la cartella ```data``` una sottocartella chiamata ```backup``` dove vi risiedono alcuni file utili a riprendere un backup passato del database
+
+Vi si possono già trovare
+
+* 1 copia di backup del database chiamata ```data.db``` con tutti i dati di default forniti con questo progetto senza le eventuali aggiunte che possono essere state fatte durante il debugging dell'app
+* 1 database vuoto chiamato ```empty.db``` con la stessa struttura di questo database, dov'é possibile riempirlo di dati nuovi, eventualmente con lo script ```dao_filler.py```
+* 1 script python chiamato ```dao_filler.py``` che attraverso il DAO aggiunge i dati di base forniti con questo progetto
+
+Si consideri che l'app è progettata per avere un minimo di serie ed episodi e **non** per essere completamente vuota.
+
 ## Utenti e serie già presenti 🙋
 
 DaraDara è già fornito di alcuni dati di esempio per fornire un esperienza utente basilare per testare tutte le feature messe a disposizione e richieste dal tema d'esame
