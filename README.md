@@ -13,19 +13,19 @@ pip install -r requirements.txt
 flask run
 ```
 
-Dopodichè sarà necessario aprirle una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito (Google Chrome o Firefox).
+Dopodichè sarà necessario aprire una pagina web all'inidirizzo ```127.0.0.1:5000``` nel proprio browser preferito (Google Chrome o Firefox).
 
 ## Dispositivi compatibili
 
-DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 350px di larghezza e 600x di altezza)
+DaraDara è ideato per funzionare sui moderni smartphone, tablet e desktop (tutti i dispositivi con almeno 375px di larghezza e 600x di altezza)
 
 DaraDara è responsive e si adatta alle dimensoni di vari schermi grazie all'utilizzo di bootstrap
 
 ## Alcune linee guida per utilizzare DaraDara
 
-Qui sotto potete trovare elencate una serie di linee guida utili per utilizzare e debuggare DaraDara
+Qui sotto potete trovare elencate una serie di linee guida per utilizzare e debuggare DaraDara
 
-### Come posso registrarmi?
+### Come posso registrarmi a DaraDara?
 
 Non esiste un tasto che dalla homepage rimandi direttamente alla registrazione, bisogna prima dirigersi nella pagina di login con il tasto accedi e poi premere sulla scritta rossa "Registrati!"
 
@@ -37,9 +37,9 @@ Ogni icona rappresentante un occhio che indica se si vuole tenere quella data se
 
 I 4 podcast più in voga, visualizzabili esclusivamente nella home, sono i podcast con più seguaci su DaraDara, condizione necesaria affinché un podcast possa finire in voga è di aver almeno 1 seguace e almeno 1 episodio
 
-> Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti ve ne sono
+> Se ci sono meno di 4 podcast con almeno 1 seguace e 1 episodio vengono visualizzati quanti se ne può
 
-### Cosa fa il tasto "sorprendimi"?
+### Cosa fa il tasto "sorprendimi" nella navabar?
 
 Il tasto "sorprendimi", presente nella navabar, sceglie semplicemente a caso un podcast tra i vari disponibili su DaraDara e lo mostra all'utente
 
