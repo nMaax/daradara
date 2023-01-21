@@ -48,3 +48,20 @@ a:not(.stock-a, .vanilla-a, .nav-link) {
     padding: 10px;
     text-align: center;
 }
+
+/* Personalizzazione bootstrap */
+
+.bg-light {
+    background-color: #f8f9fa !important
+}
+
+.btn-danger {
+    border-color: rgb(95, 95, 95);
+    background-color: rgba(222, 26, 33, 0.926) !important
+}
+
+.modal-body > form > label {
+    margin-top: 0.2em !important;
+    font-weight: 400;
+    font-style: italic;
+}

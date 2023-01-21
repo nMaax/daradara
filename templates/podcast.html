@@ -80,11 +80,11 @@
                     <div class="modal-body">
                         <form class="d-flex flex-column" action="{{url_for('post_edit_podcast', id=id)}}" method="POST" id="edit-podcast-form">
                             <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.title}}">
-                            <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
+                            <label class="form-label" for="title-input">Nuovo titolo</label>
                             <textarea id="desc-input" name="desc" class="form-control mt-2" rows="16" maxlength="516">{{podcast.desc}}</textarea>
-                            <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
+                            <label class="form-label" for="desc-input">Nuova descrizione</label>
                             <input type="text" id="category-input" name="category" class="form-control mt-2" minlength="4" maxlength="32" value="{{podcast.category|capitalize}}">
-                            <label class="form-label mt-2" for="category-input">Nuova categoria</label>
+                            <label class="form-label" for="category-input">Nuova categoria</label>
                             <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                         </form>
                     </div>
@@ -158,7 +158,7 @@
         <div class="row d-flex justify-content-center">
             <div class="row mt-3">
                 <!-- Bottone nuovo episodio -->
-                <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-light btn-outline-dark d-flex justify-content-center align-content-center ">Nuovo episodio</a>
+                <a href = "{{ url_for('new_episode', id_pod = id) }}" class="row g-0 btn btn-light btn-new-episode d-flex justify-content-center align-content-center ">Nuovo episodio</a>
             </div>
         </div>
         
@@ -171,8 +171,8 @@
         <div class="row d-flex justify-content-center">
 
             <!-- Episodio (bootstrap card) -->
-            <div class="row mt-3 episode">
-                <article class="card mb-3">
+            <div class="row mt-5 rounded-2 episode">
+                <article class="card mb-3 card-episode">
                     <div class="row">
                         
                         <!-- Titolo episodio -->

@@ -1,3 +1,15 @@
+/* Box shadow rossa colore logo per ogni episodio */
+.card-episode {
+    box-shadow: 10px 10px 2px 0.5px #fe303a8d;
+    border-color: rgb(80, 80, 80);
+}
+
+/* Rendo il bottone di nuovo episodio più scuro per renderlo più visibile */
+.btn-new-episode {
+    background-color: rgb(227, 227, 227) !important;
+    border-color: rgb(80, 80, 80);
+}
+
 /* Definisco l'upperbound delle immagini che stanno come icona del podcast */
 .podcast-img {
     max-height: 300px;

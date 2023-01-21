@@ -28,7 +28,6 @@
             </div>
             <div class="modal-body">
                 <form class="d-flex flex-column" action="{{url_for('post_update_propic', id=user.id)}}" method="POST" enctype="multipart/form-data">
-                    <label class="form-label" for="img-input">Nuova immagine</label>
                     <input type="file" id="img-input" name="img" class="form-control mt-2">
                     <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                 </form>
@@ -163,7 +162,7 @@
                 {% if current_user.id == user.id %}
                 <!-- Card footer -->
                 <a href="{{url_for('new_podcast')}}" class="col-12 col-lg-1 btn btn-lg btn-light border-start rounded-0-start border-dark-start bg-light d-flex flex-lg-column justify-content-center align-items-center" role="button">
-                    <div>{% if podcasts %}Nuovo podcast{% else %}Diventa podcaster!{% endif %}</div>
+                    {% if podcasts %}Nuovo podcast{% else %}Diventa podcaster!{% endif %}
                     <i class="fa-solid fa-microphone mt-0 ms-3 mt-lg-3 ms-lg-0"></i>
                 </a>
                 {% endif %}

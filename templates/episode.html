@@ -47,11 +47,11 @@
                 <div class="modal-body">
                     <form class="d-flex flex-column" action="{{url_for('post_edit_episode', id_pod=id_pod, id_ep=id)}}" method="POST" id="edit-episode-form">
                         <input type="text" id="title-input" name="title" class="form-control mt-2" minlength="4" maxlength="32" value="{{episode.title}}" required>
-                        <label class="form-label mt-2" for="title-input">Nuovo titolo</label>
+                        <label class="form-label" for="title-input">Nuovo titolo</label>
                         <textarea id="desc-input" name="desc" class="form-control mt-2" rows="16" minlength="16" maxlength="516" required>{{episode.description}}</textarea>
-                        <label class="form-label mt-2" for="desc-input">Nuova descrizione</label>
+                        <label class="form-label" for="desc-input">Nuova descrizione</label>
                         <input type="date" name="date" id="date-input" class="form-control mt-3" min="2022-01-01" value="{{episode.timestamp[:10]}}" required>
-                        <label class="form-label mt-2" for="date-input">Nuova Data</label>
+                        <label class="form-label" for="date-input">Nuova Data</label>
                         <button type="submit" class="btn btn-dark btn-outline-light mt-3">Conferma</button>
                     </form>
                 </div>

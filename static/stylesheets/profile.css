@@ -1,3 +1,9 @@
+/* Box shadow rossa colore logo per ogni sezione */
+#owned, #follows, #saves {
+    box-shadow: 10px 10px 2px 0.5px #fe303a8d;
+    border-color: rgb(80, 80, 80);
+}
+
 /* Classi definite per avere le varie sezioni orizzontali nel profilo con overflow-scrolling (dato che bootstrap non fornisce delle vere classi per le carte orizzontali ma si limita a usare row e col) */
 
 /* Il card scroller */
