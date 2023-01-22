@@ -83,8 +83,8 @@
 
 *** Extra ***
 
-[ ] Guarda video di FAQ di IAW
-[ ] Utilizza più CSS? --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
+[X] Guarda video di FAQ di IAW
+[X] Utilizza più CSS? --> colore di sfondo alternativo: #f0f2f5, simile a bg-light
 [X] Rendi il codice di app più leggibile e metti i commenti
 [X] Definisci dipositivi compatibili
 [X] Rileggi documento del prof e aggiungi il necessario
